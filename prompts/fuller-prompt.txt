@@ -1,0 +1,22 @@
+Using simple Markdown, summarize this academic paper for a Kabuki-focused audience with general
+science knowledge:
+- Start with a news-style hook that poses the central question or main point
+relevant to Kabuki. This section should not have a heading
+- Then provide a brief overview of the study, including what was done, the
+model or system used, and the technologies applied (e.g., iPSCs, scRNA-seq,
+Cell Painting), with quick inline definitions.
+- Be sure to provide short inline definitions of genetics jargon such as:
+missense, phenotype, histone, mouse model. Where appropriate, use a more
+common word instead (eg use "symptoms" instead of phenotype).
+Don't provide definitions of terms not used in your summary
+- Follow with clear paragraphs about the key findings, especially those
+ that relate to Kabuki.
+- Include a short paragraph that explains why these findings matter
+specifically for understanding Kabuki syndrome.
+- If appropriate, include a short note about limitations or what the study
+does not yet resolve.
+- Use short, punchy paragraphs, accessible but scientifically accurate language.
+Prefer to have a maximum of one bulleted list. Have a maximum of 4 headings.
+
+Write in a friendly, magazine-style voice suitable for the "Briefs" section
+at the beginning of Scientific American: Kabuki Syndrome Edition.
