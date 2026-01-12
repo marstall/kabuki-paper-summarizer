@@ -7,7 +7,6 @@ class MultiUploader
   attr_accessor :files
   attr_accessor :file_objects
 
-
   def perform_uploads
     openai = Config.openai_client
     @file_objects = files.map do |file|

@@ -5,6 +5,7 @@ require './paper_summarizer.rb'
 require './discourse/client.rb'
 require './discourse/topic.rb'
 require './discourse/topic_creator.rb'
+require './discourse/category.rb'
 
 PDF_PATH = "/Users/marstall/openai/kabuki-review-papers"
 DISCOURSE_USERNAME = "ChrisMarstall"
@@ -21,6 +22,12 @@ OptionParser.new do |parser|
   end
   parser.on("-p", "--prompt-path [STRING]") do |f|
     options[:prompt_path] = f
+  end
+  parser.on("-c", "--category-id [STRING]") do |f|
+    options[:category_id] = f
+  end
+  parser.on("-s", "--salt-titles") do |f|
+    options[:salt_titles] = true
   end
 end.parse!
 
@@ -44,6 +51,8 @@ end
 
 puts "summarizing and uploading files ..."
 
+category_id = Discourse::Category.create
+
 uploader.process_uploads do |file_id,file_path|
   begin
     puts "summarizing file #{file_path} (#{file_id}) ..."
@@ -55,9 +64,10 @@ uploader.process_uploads do |file_id,file_path|
     topic = Discourse::Topic.new
     topic.username = DISCOURSE_USERNAME
     topic.title = summary[:title]
+    topic.title += " (#{Random.rand(100000)})" if options[:salt_titles]
     topic.body = summary[:body]
     topic.tags = summary[:tags]
-    topic.category_id = 5
+    topic.category_id = options[:category_id] || category_id
 
     Discourse::TopicCreator.create(topic)
   # rescue => e
@@ -66,4 +76,16 @@ uploader.process_uploads do |file_id,file_path|
   end
 end
 
-
+=begin
+ideas for storing stuff
+- paper
+  - service (openai, etc.)
+  - file_id handle
+  - prompt_id
+  - version
+  - title
+  - opening_paragraph
+  - rest_of_body
+  - tag_set_id
+  - embedding
+=end

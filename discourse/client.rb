@@ -41,7 +41,7 @@ module Discourse
         'Api-Username'=>apiUsername
       }
       response = HTTParty.post(url(path), {body:params, headers:headers})
-      puts response
+      response
     end
 
   end

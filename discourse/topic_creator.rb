@@ -15,15 +15,17 @@ module Discourse
       response = client.post("/posts.json",{
         "title":topic.title,
         "raw":topic.body,
-        "category":topic.category_id
+        "category":topic.category_id,
+        "tags":topic.tags
       })
-      puts response
     end
   end
 end
 
 topic = Discourse::Topic.new
-topic.title="Provide a URL from a remote system to associate a forum topic with that URL, typically for using"
+topic.title="34 Provide a URL from a remote system to associate a forum topic with that URL, typically for using"
 topic.body="Provide an external_id from a remote system to associate a forum topic with that id."
-topic.category_id=5
-Discourse::TopicCreator.create(topic)
+topic.tags=["tag-a","tag-b"]
+topic.category_id=16
+response = Discourse::TopicCreator.create(topic)
+puts response

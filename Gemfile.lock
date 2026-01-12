@@ -1,11 +1,14 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    Ascii85 (2.0.1)
+    afm (1.0.0)
     base64 (0.3.0)
-    bigdecimal (4.0.1)
+    bigdecimal (3.1.9)
     connection_pool (3.0.2)
     csv (3.3.5)
     diff-lcs (1.6.2)
+    hashery (2.1.2)
     httparty (0.24.0)
       csv
       mini_mime (>= 1.0.0)
@@ -16,6 +19,14 @@ GEM
     openai (0.42.0)
       base64
       connection_pool
+    pdf-reader (2.15.1)
+      Ascii85 (>= 1.0, < 3.0, != 2.0.0)
+      afm (>= 0.2.1, < 2)
+      hashery (~> 2.0)
+      ruby-rc4
+      ttfunk
+    random_word (0.2.0)
+      wordsdotdat (~> 0.1, >= 0.1.0)
     rspec (3.13.2)
       rspec-core (~> 3.13.0)
       rspec-expectations (~> 3.13.0)
@@ -29,6 +40,11 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
     rspec-support (3.13.6)
+    ruby-rc4 (0.1.5)
+    rubyzip (2.4.1)
+    ttfunk (1.8.0)
+      bigdecimal (~> 3.1)
+    wordsdotdat (0.2.0)
 
 PLATFORMS
   arm64-darwin-24
@@ -37,7 +53,11 @@ PLATFORMS
 DEPENDENCIES
   httparty (~> 0.24.0)
   openai (~> 0.42.0)
+  pdf-reader (~> 2.11)
+  random_word (~> 0.2.0)
   rspec (~> 3.13)
+  rspec-mocks (~> 3.13)
+  rubyzip (~> 2.3)
 
 BUNDLED WITH
    2.7.2

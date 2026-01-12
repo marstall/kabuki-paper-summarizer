@@ -2,9 +2,11 @@ Using simple Markdown, summarize this academic paper for a Kabuki-focused audien
 science knowledge:
 - Start with a news-style hook that poses the central question or main point
 relevant to Kabuki. This section should not have a heading
+
 - Then provide a brief overview of the study, including what was done, the
 model or system used, and the technologies applied (e.g., iPSCs, scRNA-seq,
-Cell Painting), with quick inline definitions.
+Cell Painting), with quick inline definitions. include a phrase like "authored
+in 2024 by researchers at U Penn" and have this phrase link to the original url.
 - Be sure to provide short inline definitions of genetics jargon such as:
 missense, phenotype, histone, mouse model. Where appropriate, use a more
 common word instead (eg use "symptoms" instead of phenotype).
