@@ -463,7 +463,7 @@ def extract_paragraphs(data)
     end
   end
 
-  collected.each_with_index.map do |p, i|
+  paragraphs = collected.each_with_index.map do |p, i|
     {
       index: i + 1,
       text: p[:text],
@@ -471,12 +471,58 @@ def extract_paragraphs(data)
       page: p[:page]
     }
   end
+
+  merge_split_paragraphs(paragraphs)
 end
 
 def write_paragraphs_json(download_folder, paragraphs)
   out_path = File.join(download_folder, "paragraphs.json")
   File.write(out_path, JSON.pretty_generate({ paragraphs: paragraphs }))
   out_path
+end
+
+def terminal_punctuation?(text)
+  t = text.to_s.strip
+  return false if t.empty?
+  t.match?(/[\.!\?]["'\)\]\}”’]*\z/)
+end
+
+def merge_split_paragraphs(paragraphs)
+  merged = []
+  i = 0
+  while i < paragraphs.length
+    cur = paragraphs[i]
+    nxt = paragraphs[i + 1]
+
+    if nxt && !terminal_punctuation?(cur[:text])
+      cur_page = cur[:page].to_i
+      nxt_page = nxt[:page].to_i
+      same_page = cur_page == nxt_page
+      next_page = (cur_page + 1) == nxt_page
+
+      cross_page_continuation_ok = true
+      if next_page
+        first_char = nxt[:text].to_s.strip[0]
+        cross_page_continuation_ok = first_char && first_char.match?(/[a-z]/)
+      end
+
+      if same_page || (next_page && cross_page_continuation_ok)
+        combined = cur.dup
+        combined[:text] = "#{cur[:text]} #{nxt[:text]}".gsub(/\s+/, " ").strip
+        combined[:is_abstract] = (cur[:is_abstract] || nxt[:is_abstract]) ? true : false
+        merged << combined
+        i += 2
+        next
+      end
+    end
+
+    merged << cur
+    i += 1
+  end
+
+  merged.each_with_index.map do |p, idx|
+    p.merge(index: idx + 1)
+  end
 end
 
 def element_path_type(element)
