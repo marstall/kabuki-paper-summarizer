@@ -31,6 +31,10 @@ OptionParser.new do |parser|
   parser.on("-d", "--download-folder [STRING]") do |f|
     options[:download_folder] = f
   end
+
+  parser.on("--paragraphs") do
+    options[:paragraphs] = true
+  end
 end.parse!
 
 file_paths+=options[:file_paths] ? options[:file_paths].split(",") : []
@@ -57,6 +61,8 @@ unless File.directory?(download_folder)
   puts "Download folder is not a directory: #{download_folder}"
   exit(1)
 end
+
+paragraphs_mode = options[:paragraphs] == true
 
 def adobe_token(client_id:, client_secret:)
   uri = URI("https://pdf-services.adobe.io/token")
@@ -236,6 +242,15 @@ def extract_text_from_adobe_zip(zip_bytes)
   text_parts.join("\n")
 end
 
+def structured_data_from_adobe_zip(zip_bytes)
+  io = StringIO.new(zip_bytes)
+  Zip::File.open_buffer(io) do |zip|
+    entry = zip.find_entry("structuredData.json")
+    raise "Adobe result zip missing structuredData.json" if entry.nil?
+    return JSON.parse(entry.get_input_stream.read)
+  end
+end
+
 def list_renditions_from_adobe_zip(zip_bytes)
   io = StringIO.new(zip_bytes)
   files = []
@@ -273,6 +288,195 @@ def extract_renditions_to_folder(zip_bytes, download_folder)
   end
 
   extracted
+end
+
+def paragraphish_element?(el)
+  return false unless el.is_a?(Hash)
+  text = el["Text"]
+  return false unless text.is_a?(String)
+  t = text.strip
+  return false if t.empty?
+
+  short_limit = 200
+  return false if t.length < short_limit
+
+  path = el["Path"].to_s
+  last = path.split("/").last.to_s
+  return true if last.start_with?("P")
+  return true if last == "LBody"
+  return true if path.match?(/\/P(\[|$)/)
+
+  # Fallback: some PDFs don't expose /P tags. Treat generic text-like elements as paragraph candidates.
+  disallowed = ["Title", "H1", "H2", "H3", "Figure", "Table", "TH", "TR", "TOC", "TOCI"]
+  return false if disallowed.any? { |d| last.start_with?(d) }
+  true
+end
+
+def heading_element?(el)
+  return false unless el.is_a?(Hash)
+  path = el["Path"].to_s
+  last = path.split("/").last.to_s
+  ["Title", "H1", "H2", "H3"].any? { |h| last.start_with?(h) }
+end
+
+def bounds_box(el)
+  b = el["Bounds"] || el["bounds"]
+  return nil unless b.is_a?(Array) && b.length == 4
+  x0, y0, x1, y1 = b
+  return nil unless [x0, y0, x1, y1].all? { |v| v.is_a?(Numeric) }
+  # normalize just in case
+  left = [x0, x1].min
+  right = [x0, x1].max
+  bottom = [y0, y1].min
+  top = [y0, y1].max
+  { left: left, right: right, bottom: bottom, top: top }
+end
+
+def box_horizontal_overlap_ratio(a, b)
+  overlap = [0, [a[:right], b[:right]].min - [a[:left], b[:left]].max].max
+  denom = [a[:right] - a[:left], b[:right] - b[:left]].max
+  return 0.0 if denom <= 0
+  overlap.to_f / denom.to_f
+end
+
+def vertical_gap(a, b)
+  # distance between boxes vertically (0 if overlapping)
+  return 0.0 if a[:bottom] <= b[:top] && b[:bottom] <= a[:top]
+  if a[:bottom] > b[:top]
+    (a[:bottom] - b[:top]).to_f
+  else
+    (b[:bottom] - a[:top]).to_f
+  end
+end
+
+def near_figure_or_table?(text_box, figure_box)
+  return false if text_box.nil? || figure_box.nil?
+  overlap = box_horizontal_overlap_ratio(text_box, figure_box)
+  return false if overlap < 0.25
+
+  gap = vertical_gap(text_box, figure_box)
+  gap <= 60.0
+end
+
+def figure_or_table_element?(el)
+  return false unless el.is_a?(Hash)
+  path = el["Path"].to_s
+  last = path.split("/").last.to_s
+  return true if last.start_with?("Figure") || last.start_with?("Table")
+  down = path.downcase
+  down.include?("/figure") || down.include?("/table")
+end
+
+def collect_figure_table_boxes_by_page(elements)
+  boxes = Hash.new { |h, k| h[k] = [] }
+  elements.each do |el|
+    next unless figure_or_table_element?(el)
+    page = el["Page"].to_i
+    box = bounds_box(el)
+    next if box.nil?
+    boxes[page] << box
+  end
+  boxes
+end
+
+def normalize_para_text(text)
+  t = text.to_s
+  t = t.gsub(/\s+/, " ").strip
+  t
+end
+
+def extract_paragraphs(data)
+  elements = data["elements"]
+  return [] unless elements.is_a?(Array)
+
+  figure_boxes_by_page = collect_figure_table_boxes_by_page(elements)
+
+  abstract_marker_index = elements.find_index do |el|
+    next false unless el.is_a?(Hash)
+    txt = el["Text"].to_s.strip
+    txt.casecmp("abstract").zero?
+  end
+
+  first_para_index = elements.find_index { |el| paragraphish_element?(el) }
+  start_index = abstract_marker_index ? abstract_marker_index + 1 : first_para_index
+  return [] if start_index.nil?
+
+  collecting = true
+  in_abstract = !abstract_marker_index.nil?
+  collected = []
+  current = nil
+
+  stop_headings = ["references", "bibliography", "acknowledgements", "acknowledgments"]
+
+  elements.each_with_index do |el, idx|
+    next if idx < start_index
+
+    if heading_element?(el)
+      heading_text = el["Text"].to_s.strip
+      heading_text_down = heading_text.downcase
+
+      if stop_headings.include?(heading_text_down)
+        collecting = false
+        in_abstract = false
+      elsif heading_text_down == "abstract"
+        collecting = true
+        in_abstract = true
+      elsif collecting && in_abstract
+        # first heading after abstract ends abstract section
+        in_abstract = false
+      end
+
+      next
+    end
+
+    next unless collecting
+    next unless paragraphish_element?(el)
+
+    # Caption filter: skip paragraph elements that are spatially near a figure/table on the same page.
+    page = el["Page"].to_i
+    text_box = bounds_box(el)
+    if text_box && !figure_boxes_by_page[page].empty?
+      next if figure_boxes_by_page[page].any? { |fb| near_figure_or_table?(text_box, fb) }
+    end
+
+    # If the abstract marker itself is a paragraph-ish element, skip it.
+    next if el["Text"].to_s.strip.casecmp("abstract").zero?
+
+    path = el["Path"].to_s
+    page = el["Page"].to_i
+    text = normalize_para_text(el["Text"])
+    next if text.empty?
+
+    # Prefer grouping by explicit paragraph paths when present; otherwise treat each element as its own paragraph.
+    is_explicit_para = path.match?(/\/P(\[|$)/) || path.split("/").last.to_s.start_with?("P")
+
+    if is_explicit_para
+      if current && current[:path] == path && current[:page] == page
+        current[:text] = "#{current[:text]} #{text}".strip
+      else
+        current = { text: text, is_abstract: in_abstract, page: page, path: path }
+        collected << current
+      end
+    else
+      current = { text: text, is_abstract: in_abstract, page: page, path: path }
+      collected << current
+    end
+  end
+
+  collected.each_with_index.map do |p, i|
+    {
+      index: i + 1,
+      text: p[:text],
+      is_abstract: p[:is_abstract],
+      page: p[:page]
+    }
+  end
+end
+
+def write_paragraphs_json(download_folder, paragraphs)
+  out_path = File.join(download_folder, "paragraphs.json")
+  File.write(out_path, JSON.pretty_generate({ paragraphs: paragraphs }))
+  out_path
 end
 
 def element_path_type(element)
@@ -441,6 +645,18 @@ downloads.each do |uri|
 end
 
 if zip_bytes.nil?
+  if paragraphs_mode && json_download
+    data = JSON.parse(json_download.fetch(:bytes))
+    paragraphs = extract_paragraphs(data)
+    out_path = write_paragraphs_json(download_folder, paragraphs)
+    paragraphs.each do |p|
+      puts p[:text]
+      puts ""
+    end
+    puts out_path
+    exit(0)
+  end
+
   if json_download
     snippet = json_download[:bytes].byteslice(0, 500)
     snippet = snippet ? snippet.force_encoding("UTF-8") : ""
@@ -448,14 +664,6 @@ if zip_bytes.nil?
   end
 
   raise "Adobe did not provide a ZIP for renditions. Download URLs tried:\n#{downloads.join("\n")}"
-end
-
-if download[:content_type]&.downcase&.include?("application/json")
-  data = JSON.parse(zip_bytes)
-  print_structured_metadata(data)
-  puts "== Extracted Text =="
-  puts extract_text_from_adobe_json(zip_bytes)
-  #exit(0)
 end
 
 unless zip_bytes.start_with?("PK\x03\x04".b) || zip_bytes.start_with?("PK\x05\x06".b) || zip_bytes.start_with?("PK\x07\x08".b)
@@ -468,4 +676,15 @@ puts "== Renditions =="
 extracted = extract_renditions_to_folder(zip_bytes, download_folder)
 puts extracted
 
-puts extract_text_from_adobe_zip(zip_bytes)
+#puts extract_text_from_adobe_zip(zip_bytes)
+
+if paragraphs_mode
+  data = structured_data_from_adobe_zip(zip_bytes)
+  paragraphs = extract_paragraphs(data)
+  out_path = write_paragraphs_json(download_folder, paragraphs)
+  paragraphs.each do |p|
+    puts p[:text]
+    puts "--------------------------"
+  end
+  puts out_path
+end
