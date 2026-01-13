@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 require 'bundler/setup'
 
+require 'fileutils'
 require 'json'
 require 'net/http'
 require 'optparse'
+require 'pathname'
 require 'stringio'
 require 'uri'
 
@@ -25,6 +27,10 @@ OptionParser.new do |parser|
   parser.on("-p", "--prompt-path [STRING]") do |f|
     options[:prompt_path] = f
   end
+
+  parser.on("-d", "--download-folder [STRING]") do |f|
+    options[:download_folder] = f
+  end
 end.parse!
 
 file_paths+=options[:file_paths] ? options[:file_paths].split(",") : []
@@ -35,6 +41,22 @@ end
 puts ""
 
 pdf_path = file_paths[0]
+
+download_folder = options[:download_folder]
+if download_folder.nil? || download_folder.strip.empty?
+  puts "Missing required --download-folder"
+  exit(1)
+end
+
+unless Dir.exist?(download_folder)
+  puts "Download folder does not exist: #{download_folder}"
+  exit(1)
+end
+
+unless File.directory?(download_folder)
+  puts "Download folder is not a directory: #{download_folder}"
+  exit(1)
+end
 
 def adobe_token(client_id:, client_secret:)
   uri = URI("https://pdf-services.adobe.io/token")
@@ -85,7 +107,12 @@ def adobe_extract_job_location(client_id:, token:, asset_id:, elements_to_extrac
   req["x-api-key"] = client_id
   req["Authorization"] = "Bearer #{token}"
   req["Content-Type"] = "application/json"
-  req.body = JSON.dump({ "assetID" => asset_id, "elementsToExtract" => elements_to_extract })
+  payload = { "assetID" => asset_id, "elementsToExtract" => elements_to_extract }
+  if block_given?
+    extra = yield
+    payload.merge!(extra) if extra.is_a?(Hash)
+  end
+  req.body = JSON.dump(payload)
 
   res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) { |http| http.request(req) }
   unless res.code.to_i == 201
@@ -118,6 +145,22 @@ def find_download_uri(value)
   nil
 end
 
+def find_download_uris(value, acc = [])
+  case value
+  when Hash
+    value.each do |k, v|
+      if k.to_s.downcase.include?("download") && v.is_a?(String) && v.start_with?("http")
+        acc << v
+      end
+      find_download_uris(v, acc)
+    end
+  when Array
+    value.each { |v| find_download_uris(v, acc) }
+  end
+
+  acc
+end
+
 def adobe_poll_until_done(client_id:, token:, location:, sleep_seconds: 1, max_attempts: 120)
   uri = URI(location)
 
@@ -133,9 +176,9 @@ def adobe_poll_until_done(client_id:, token:, location:, sleep_seconds: 1, max_a
     status = json["status"]
 
     if status == "done"
-      download_uri = find_download_uri(json)
-      raise "Adobe job status is done but missing downloadUri. Payload: #{JSON.dump(json)}" if download_uri.nil? || download_uri.empty?
-      return download_uri
+      download_uris = find_download_uris(json).uniq
+      raise "Adobe job status is done but missing downloadUri. Payload: #{JSON.dump(json)}" if download_uris.empty?
+      return { download_uris: download_uris, status_payload: json }
     end
 
     raise "Adobe job failed: #{res.body}" if status == "failed"
@@ -191,6 +234,45 @@ def extract_text_from_adobe_zip(zip_bytes)
   end
 
   text_parts.join("\n")
+end
+
+def list_renditions_from_adobe_zip(zip_bytes)
+  io = StringIO.new(zip_bytes)
+  files = []
+
+  Zip::File.open_buffer(io) do |zip|
+    zip.each do |entry|
+      next if entry.name.end_with?("/")
+      next if entry.name == "structuredData.json"
+      files << entry.name
+    end
+  end
+
+  files
+end
+
+def extract_renditions_to_folder(zip_bytes, download_folder)
+  io = StringIO.new(zip_bytes)
+  extracted = []
+  base = File.expand_path(download_folder)
+
+  Zip::File.open_buffer(io) do |zip|
+    zip.each do |entry|
+      next if entry.name.end_with?("/")
+      next if entry.name == "structuredData.json"
+
+      target = File.expand_path(File.join(base, entry.name))
+      unless target.start_with?(base + File::SEPARATOR) || target == base
+        raise "Refusing to write zip entry outside download folder: #{entry.name}"
+      end
+
+      FileUtils.mkdir_p(File.dirname(target))
+      File.binwrite(target, entry.get_input_stream.read)
+      extracted << target
+    end
+  end
+
+  extracted
 end
 
 def element_path_type(element)
@@ -333,17 +415,47 @@ raise "Missing ENV PDF_SERVICES_CLIENT_SECRET" if client_secret.nil? || client_s
 token = adobe_token(client_id: client_id, client_secret: client_secret)
 asset = adobe_create_asset(client_id: client_id, token: token, media_type: "application/pdf")
 adobe_upload_asset(upload_uri: asset[:upload_uri], media_type: "application/pdf", file_path: pdf_path)
-location = adobe_extract_job_location(client_id: client_id, token: token, asset_id: asset[:asset_id], elements_to_extract: ["text"])
-download_uri = adobe_poll_until_done(client_id: client_id, token: token, location: location)
-download = download_bytes(download_uri)
-zip_bytes = download.fetch(:bytes)
+location = adobe_extract_job_location(client_id: client_id, token: token,
+                                      asset_id: asset[:asset_id],
+                                      elements_to_extract: ["text", "tables"]) do
+  { "renditionsToExtract" => ["figures", "tables"] }
+end
+poll_result = adobe_poll_until_done(client_id: client_id, token: token, location: location)
+downloads = poll_result.fetch(:download_uris)
+
+download = nil
+zip_bytes = nil
+json_download = nil
+
+downloads.each do |uri|
+  d = download_bytes(uri)
+  bytes = d.fetch(:bytes)
+
+  if bytes.start_with?("PK\x03\x04".b) || bytes.start_with?("PK\x05\x06".b) || bytes.start_with?("PK\x07\x08".b)
+    download = d
+    zip_bytes = bytes
+    break
+  end
+
+  json_download ||= d if d[:content_type]&.downcase&.include?("application/json")
+end
+
+if zip_bytes.nil?
+  if json_download
+    snippet = json_download[:bytes].byteslice(0, 500)
+    snippet = snippet ? snippet.force_encoding("UTF-8") : ""
+    raise "Adobe did not provide a ZIP for renditions. Got JSON instead. content-type=#{json_download[:content_type].inspect} status=#{json_download[:status]}. First 500 bytes: #{snippet.inspect}"
+  end
+
+  raise "Adobe did not provide a ZIP for renditions. Download URLs tried:\n#{downloads.join("\n")}"
+end
 
 if download[:content_type]&.downcase&.include?("application/json")
   data = JSON.parse(zip_bytes)
   print_structured_metadata(data)
   puts "== Extracted Text =="
   puts extract_text_from_adobe_json(zip_bytes)
-  exit(0)
+  #exit(0)
 end
 
 unless zip_bytes.start_with?("PK\x03\x04".b) || zip_bytes.start_with?("PK\x05\x06".b) || zip_bytes.start_with?("PK\x07\x08".b)
@@ -351,5 +463,9 @@ unless zip_bytes.start_with?("PK\x03\x04".b) || zip_bytes.start_with?("PK\x05\x0
   snippet = snippet ? snippet.force_encoding("UTF-8") : ""
   raise "Downloaded asset is not a ZIP. content-type=#{download[:content_type].inspect} status=#{download[:status]}. First 500 bytes: #{snippet.inspect}"
 end
+
+puts "== Renditions =="
+extracted = extract_renditions_to_folder(zip_bytes, download_folder)
+puts extracted
 
 puts extract_text_from_adobe_zip(zip_bytes)
