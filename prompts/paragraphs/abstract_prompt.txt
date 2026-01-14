@@ -1,0 +1,22 @@
+Using simple Markdown, summarize in a MAXIMUM of 3 paragraphs (important) this academic paper abstract for a Kabuki-focused audience
+with general science knowledge:
+- Begin with a short, punchy "lede" paragraph that poses a question or states a provocative finding. 2 short sentences max.
+- Don't cite the year or the University affiliation of the researchers.
+- follow with two similarly punchy short paragraphs describing what the paper explores/finds.
+- The first sentence of the first paragraph should be a news-style hook that poses the central question or main point
+relevant to Kabuki. This section should not have a heading or a "hook" question.
+- the third paragraph should explain this paper's relevance to Kabuki Syndrome.
+- accessible but scientifically accurate language. Do not use bulleted lists
+- Write in a friendly, magazine-style voice suitable for the "Briefs" section
+at the beginning of Scientific American: Kabuki Syndrome Edition.
+- Be sure to provide short inline definitions of genetics jargon such as:
+missense, phenotype, histone, mouse model. Where appropriate, use a more
+common word instead (eg use "symptoms" instead of phenotype).
+- Don't provide definitions of terms not used in your summary
+- Write in a friendly, magazine-style voice suitable for the "Briefs" section
+at the beginning of Scientific American: Kabuki Syndrome Edition.
+- End each sentence with a period, including the last sentence.
+
+Here is the abstract:
+
+High-fat diet (HFD)-induced obesity impairs cognition and hippocampal neurogenesis, linked to reduced metabolic flexibility between mitochondrial fatty acid β-oxidation (FAO) and cytosolic de novo lipogenesis (DNL). It is not fully understood if switching to a high-carbohydrate diet (HCD) or a ketogenic diet (KD) could reverse these HFD-induced deficits, or if they do so through different mechanisms. Male C57BL/6J mice received HFD for 8 weeks to induce obesity. Mice were then either maintained on the HFD or switched to an HCD or KD for an additional 8 weeks. We evaluated systemic metabolism (body weight, serum biochemistry), tissue-specific metabolic remodeling (RNA-seq, histology, RT-qPCR, Western blot) and cognitive function (Y-maze test, novel object recognition test). Both HCD and KD interventions reversed HFD‑induced systemic abnormalities, including reducing ALT/AST, cholesterol, and LDL, and attenuating hepatic steatosis and adipocyte hypertrophy. Metabolically, KD markedly increased β‑hydroxybutyrate, whereas HCD showed a distinct triglyceride profile. Both diets improved hippocampus-dependent working and recognition memory. Hippocampal RNA‑seq revealed diet-specific mechanisms. HCD enriched anabolic processes, including upregulation of glucose transporters (Glut 1, 2, 3, 4) and DNL pathway (ACLY-ACC-FASN-SCD1). Conversely, KD enriched AMPK signaling, increasing monocarboxylate transporters (Mct 1, 2, 4) for ketone uptake and activating the neurotrophic AMPK–ERK–CREB–BDNF pathway. In conclusion, post-HFD switching to HCD or KD restores hippocampal structure and cognition via complementary mechanisms. HCD drives a substrate-centric, lipogenic program supporting proliferation, whereas KD engages a signaling-centric, neurotrophic program enhancing plasticity. Metabolic flexibility is a promising target for obesity-associated cognitive decline.

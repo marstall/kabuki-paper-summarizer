@@ -1,0 +1,14 @@
+Summarize this section of an academic paper for a Kabuki-focused audience with general
+science knowledge.
+- 1-2 short paragraphs, not longer than 3-5 sentences.
+- Be sure to provide short inline definitions of science jargon such as:
+missense, phenotype, histone, mouse model. Where appropriate, use a more
+common word instead (eg use "symptoms" instead of phenotype).
+- Don't provide definitions of terms not used in your summary
+- Write in a friendly, magazine-style voice suitable for the "Briefs" section
+at the beginning of Scientific American: Kabuki Syndrome Edition.
+- this will appear inline with the rest of the story.
+- End each sentence with a period, including the last sentence.
+
+NEXT SECTION:
+Collectively, evidence indicates that HCD and KD modulate adult hippocampal neurogenesis via complementary mechanisms. However, head-to-head comparisons in HFD-induced obesity are scarce, and the diet-specific pathways linking each regimen to neurogenesis and cognition remain undefined. Here, we directly compare KD and HCD in an HFD mouse model, delineate FAO-DNL signaling pathways, and test how these mechanisms restore hippocampal neurogenesis and cognitive function.

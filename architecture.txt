@@ -1,0 +1,39 @@
+- form to enter:
+ - original_title
+ - generated_title
+ - year
+ - attribution
+ - url
+ - full text
+ - upload images
+
+ upon pressing enter - divide full text into sections based on line break.
+
+ create article record with title, year, attribution, url
+ for each section, create section record with full text
+ for each image, create image record - need image + original caption
+
+ this is all in react /react server components, talking to a NEON postgres instance
+
+ section record:
+ - original_text
+ - generated_text
+ - generated_heading
+ - status (unprocessed/processed)
+
+ - backend "generate_ai_versions.rb" ruby process can be run at anytime, which goes through each article record:
+  - loops through sections. for first section, generate abstract summary
+  - for other sections, generate section heading, section body
+  - for each section, generate tags
+  - for each section, generate embeddings
+
+  features:
+  - see rich, newpaper/blog style front page of articles - one for homepage, one for tag page
+  - for each article, see full generated text, with tags on each section.
+  - each section has a "show original" button, clicking on it shows the original text of that section, and button changes to "show ai version"
+  - "similar sections" button based on embeddings
+
+other concepts:
+- break entire paper down into single sentence concepts which are embeddings, that allow finding of similar papers.
+- process that unifies tags. go through all tags and find tags that are similar, coalesce them and then modify the tagging of original articles.
+- new article tagging should prefer using existing tags.

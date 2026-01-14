@@ -385,6 +385,63 @@ def normalize_para_text(text)
   t
 end
 
+def detect_two_column_split_x(boxes)
+  centers = boxes.map { |b| (b[:left] + b[:right]).to_f / 2.0 }.sort
+  return nil if centers.length < 6
+
+  min = centers.first
+  max = centers.last
+  span = max - min
+  return nil if span <= 0
+
+  median = centers[centers.length / 2]
+  left = centers.count { |c| c < median }
+  right = centers.count { |c| c >= median }
+  return nil if left < 3 || right < 3
+
+  # Require meaningful horizontal spread on both sides of the split.
+  return nil if (median - min) < (span * 0.15)
+  return nil if (max - median) < (span * 0.15)
+
+  median
+end
+
+def sort_collected_reading_order(collected)
+  by_page = collected.group_by { |p| p[:page].to_i }
+  pages = by_page.keys.sort
+  sorted = []
+
+  pages.each do |page|
+    items = by_page[page]
+    boxes = items.map { |p| p[:box] }.compact
+    split_x = detect_two_column_split_x(boxes)
+
+    if split_x
+      sorted.concat(
+        items.sort_by do |p|
+          box = p[:box]
+          center_x = box ? ((box[:left] + box[:right]).to_f / 2.0) : 0.0
+          col = center_x < split_x ? 0 : 1
+          top = box ? -box[:top].to_f : 0.0
+          left = box ? box[:left].to_f : 0.0
+          [col, top, left]
+        end
+      )
+    else
+      sorted.concat(
+        items.sort_by do |p|
+          box = p[:box]
+          top = box ? -box[:top].to_f : 0.0
+          left = box ? box[:left].to_f : 0.0
+          [top, left]
+        end
+      )
+    end
+  end
+
+  sorted
+end
+
 def extract_paragraphs(data)
   elements = data["elements"]
   return [] unless elements.is_a?(Array)
@@ -454,14 +511,16 @@ def extract_paragraphs(data)
       if current && current[:path] == path && current[:page] == page
         current[:text] = "#{current[:text]} #{text}".strip
       else
-        current = { text: text, is_abstract: in_abstract, page: page, path: path }
+        current = { text: text, is_abstract: in_abstract, page: page, path: path, box: text_box }
         collected << current
       end
     else
-      current = { text: text, is_abstract: in_abstract, page: page, path: path }
+      current = { text: text, is_abstract: in_abstract, page: page, path: path, box: text_box }
       collected << current
     end
   end
+
+  collected = sort_collected_reading_order(collected)
 
   paragraphs = collected.each_with_index.map do |p, i|
     {

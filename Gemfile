@@ -14,3 +14,6 @@ gem "pdf-reader", "~> 2.11"
 gem "rubyzip", "~> 2.3"
 
 gem 'random_word', '~> 0.2.0'
+
+gem "nokogiri", "~> 1.16"
+gem "ruby-readability", "~> 0.7.3"
