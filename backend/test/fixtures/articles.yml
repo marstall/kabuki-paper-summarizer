@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  original_title: MyString
+  generated_title: MyString
+  url: MyString
+  year: 1
+  attribution: MyString
+  url: MyString
+  full_text: MyString
+
+two:
+  original_title: MyString
+  generated_title: MyString
+  url: MyString
+  year: 1
+  attribution: MyString
+  url: MyString
+  full_text: MyString
