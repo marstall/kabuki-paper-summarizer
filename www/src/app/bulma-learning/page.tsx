@@ -1,10 +1,10 @@
 export default function Form() {
-  return <section class="section">
+  return <section className="section">
     <div className="container">
-      <h1 class="title">
+      <h1 className="title">
         Bulma
       </h1>
-      <h2 class="subtitle">
+      <h2 className="subtitle">
         Examples of Elements
       </h2>
       <div className="block">
@@ -146,7 +146,7 @@ export default function Form() {
         a neque. Donec dui urna, vehicula et sem eget, facilisis sodales sem.
       </div>
     </article>
-    <div class="block">
+    <div className="block">
       <span className="icon is-large">
   <span className="fa-stack fa-lg">
     <i className="fas fa-camera fa-stack-1x"></i>

@@ -4,6 +4,7 @@ export default async function Create({productId}) {
   async function submit(formData) {
     'use server'
     console.log({formData})
+
   }
   console.log("rendering ...")
   return (
