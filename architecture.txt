@@ -37,3 +37,4 @@ other concepts:
 - break entire paper down into single sentence concepts which are embeddings, that allow finding of similar papers.
 - process that unifies tags. go through all tags and find tags that are similar, coalesce them and then modify the tagging of original articles.
 - new article tagging should prefer using existing tags.
+
