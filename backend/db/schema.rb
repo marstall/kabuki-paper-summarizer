@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_14_201858) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_16_233124) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "uuid-ossp"
@@ -39,11 +39,61 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_14_201858) do
     t.string "status", limit: 255, null: false
   end
 
+  create_table "llms", force: :cascade do |t|
+    t.string "api_key"
+    t.datetime "created_at", null: false
+    t.string "provider"
+    t.string "secret_key"
+    t.string "settings"
+    t.datetime "updated_at", null: false
+    t.string "version"
+  end
+
+  create_table "paragraphs", force: :cascade do |t|
+    t.string "body"
+    t.datetime "created_at", null: false
+    t.bigint "section_id", null: false
+    t.string "status"
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.index ["section_id"], name: "index_paragraphs_on_section_id"
+  end
+
+  create_table "prompts", force: :cascade do |t|
+    t.string "body"
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
+  end
+
   create_table "revenue", id: false, force: :cascade do |t|
     t.string "month", limit: 4, null: false
     t.integer "revenue", null: false
 
     t.unique_constraint ["month"], name: "revenue_month_key"
+  end
+
+  create_table "sections", force: :cascade do |t|
+    t.bigint "article_id", null: false
+    t.datetime "created_at", null: false
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.index ["article_id"], name: "index_sections_on_article_id"
+  end
+
+  create_table "translations", force: :cascade do |t|
+    t.string "body"
+    t.datetime "created_at", null: false
+    t.string "extra_prompt"
+    t.bigint "llm_id", null: false
+    t.bigint "paragraph_id", null: false
+    t.bigint "prompt_id", null: false
+    t.string "status"
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.index ["llm_id"], name: "index_translations_on_llm_id"
+    t.index ["paragraph_id"], name: "index_translations_on_paragraph_id"
+    t.index ["prompt_id"], name: "index_translations_on_prompt_id"
   end
 
   create_table "users", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
@@ -53,4 +103,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_14_201858) do
 
     t.unique_constraint ["email"], name: "users_email_key"
   end
+
+  add_foreign_key "paragraphs", "sections"
+  add_foreign_key "sections", "articles"
+  add_foreign_key "translations", "llms"
+  add_foreign_key "translations", "paragraphs"
+  add_foreign_key "translations", "prompts"
 end
