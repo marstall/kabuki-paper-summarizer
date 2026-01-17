@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model articles {
+  id              BigInt     @id @default(autoincrement())
+  original_title  String?    @db.VarChar
+  generated_title String?    @db.VarChar
+  year            Int?
+  attribution     String?    @db.VarChar
+  url             String?    @db.VarChar
+  full_text       String?    @db.VarChar
+  created_at      DateTime   @db.Timestamp(6)
+  updated_at      DateTime   @db.Timestamp(6)
+  sections        sections[]
+}
+
+model llms {
+  id           BigInt         @id @default(autoincrement())
+  provider     String?        @db.VarChar
+  version      String?        @db.VarChar
+  settings     String?        @db.VarChar
+  api_key      String?        @db.VarChar
+  secret_key   String?        @db.VarChar
+  created_at   DateTime       @db.Timestamp(6)
+  updated_at   DateTime       @db.Timestamp(6)
+  translations translations[]
+}
+
+model paragraphs {
+  id           BigInt         @id @default(autoincrement())
+  section_id   BigInt
+  title        String?        @db.VarChar
+  body         String?        @db.VarChar
+  status       String?        @db.VarChar
+  created_at   DateTime       @db.Timestamp(6)
+  updated_at   DateTime       @db.Timestamp(6)
+  sections     sections       @relation(fields: [section_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_9bd6b24ac1")
+  translations translations[]
+
+  @@index([section_id], map: "index_paragraphs_on_section_id")
+}
+
+model prompts {
+  id           BigInt         @id @default(autoincrement())
+  name         String?        @db.VarChar
+  body         String?        @db.VarChar
+  created_at   DateTime       @db.Timestamp(6)
+  updated_at   DateTime       @db.Timestamp(6)
+  translations translations[]
+}
+
+model sections {
+  id         BigInt       @id @default(autoincrement())
+  article_id BigInt
+  title      String?      @db.VarChar
+  created_at DateTime     @db.Timestamp(6)
+  updated_at DateTime     @db.Timestamp(6)
+  paragraphs paragraphs[]
+  articles   articles     @relation(fields: [article_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_61151fb22d")
+
+  @@index([article_id], map: "index_sections_on_article_id")
+}
+
+model translations {
+  id           BigInt     @id @default(autoincrement())
+  paragraph_id BigInt
+  llm_id       BigInt
+  prompt_id    BigInt
+  title        String?    @db.VarChar
+  body         String?    @db.VarChar
+  extra_prompt String?    @db.VarChar
+  status       String?    @db.VarChar
+  created_at   DateTime   @db.Timestamp(6)
+  updated_at   DateTime   @db.Timestamp(6)
+  paragraphs   paragraphs @relation(fields: [paragraph_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_568e087fee")
+  llms         llms       @relation(fields: [llm_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_dc36eb302b")
+  prompts      prompts    @relation(fields: [prompt_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_fff8b2d94e")
+
+  @@index([llm_id], map: "index_translations_on_llm_id")
+  @@index([paragraph_id], map: "index_translations_on_paragraph_id")
+  @@index([prompt_id], map: "index_translations_on_prompt_id")
+}
+
+model users {
+  id       String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name     String @db.VarChar(255)
+  email    String @unique
+  password String
+}
