@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  paragraph: one
+  llm: one
+  prompt: one
+  title: MyString
+  body: MyString
+  extra_prompt: MyString
+  status: MyString
+
+two:
+  paragraph: two
+  llm: two
+  prompt: two
+  title: MyString
+  body: MyString
+  extra_prompt: MyString
+  status: MyString
