@@ -2,13 +2,8 @@ import postgres from 'postgres';
 import Link from "next/link";
 import { prisma } from '../lib/prisma'
 
-const query = postgres(process.env.POSTGRES_URL, {ssl: 'require'});
 
 export default async function Articles() {
-  // const articles = await query
-  //   `select *
-  //    from articles
-  //    order by id desc`;
   const articles = await prisma.articles.findMany()
 
   return <div>
