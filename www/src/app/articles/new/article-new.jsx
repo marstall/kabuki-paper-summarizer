@@ -23,11 +23,11 @@ async function submit(prevState, formData) {
   const full_text = formData.get('full_text')||"";
 
   const errors = []
-  if (url?.length<20) errors.push("URL is not long enough")
-  if (url?.length<20) errors.push("Original title is not long enough")
-  if (year?.length<4) errors.push("Year must be in format 1929, 2024, etc.")
-  if (full_text?.length<100) errors.push("Body is not long enough")
-  if (attribution?.length<100) errors.push("Attribution is not long enough")
+  if (url?.length<1) errors.push("URL is not long enough")
+  if (url?.length<1) errors.push("Original title is not long enough")
+  if (year?.length<1) errors.push("Year must be in format 1929, 2024, etc.")
+  //if (full_text?.length<1) errors.push("Body is not long enough")
+  if (attribution?.length<1) errors.push("Attribution is not long enough")
 
   if (errors.length===0) {
     await query
@@ -36,14 +36,13 @@ async function submit(prevState, formData) {
                            url,
                            original_title,
                            year,
-                           attribution,
-                           full_text)
+                           attribution)
      values (now(), now(),
              ${url},
              ${original_title},
              ${year},
-             ${attribution},
-             ${full_text})`;
+             ${attribution}
+             )`;
 
     redirect('/articles')
   } else return {

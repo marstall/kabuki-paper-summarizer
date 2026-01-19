@@ -2,14 +2,14 @@
 
 import Submit from './submit-button'
 import {useActionState} from "react";
-//import Errors from './errors'
+import Errors from '../components/errors'
 
 export default function ArticleForm({ action }){
-  const [formData, signupAction] = useActionState(action, null);
+  const [formData, submitAction] = useActionState(action, {original_title:"foo"});
   console.log({formData})
   return  <>
-    {/*<Errors errors={formData}/>*/}
-    <form id='_form' action={signupAction}>
+    <Errors errors={formData}/>
+    <form id='_form' action={submitAction}>
 
     <div className="field">
 
@@ -47,7 +47,7 @@ export default function ArticleForm({ action }){
           name="attribution"
           defaultValue={formData?.attribution}
           placeholder="Text input"
-          rows="3"
+          rows="1"
           style={{ resize: 'vertical' }}
         ></textarea>
       </div>
