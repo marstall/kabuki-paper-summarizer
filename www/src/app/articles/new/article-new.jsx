@@ -43,7 +43,6 @@ async function submit(prevState, formData) {
         }
       })
     } catch (e) {
-      console.log("message",e.message)
       errors.push(e.message)
     }
     if (errors.length===0) {

@@ -6,7 +6,6 @@ import Errors from '../components/errors'
 
 export default function ArticleForm({ action }){
   const [formData, submitAction] = useActionState(action, {original_title:"foo"});
-  console.log({formData})
   return  <>
     <Errors errors={formData}/>
     <form id='_form' action={submitAction}>

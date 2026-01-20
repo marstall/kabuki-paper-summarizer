@@ -6,18 +6,32 @@ const query = postgres(process.env.POSTGRES_URL, {ssl: 'require'});
 
 export default async function ArticleView({id}) {
   const article = await prisma.articles.findUnique({where: {id}})
-  return <><h1 className="title">{article.original_title}</h1>
-    <section className="section">
-      <div>
-        <i>{article.attribution}</i>
-      </div>
-      <div>
-        <Link className="button" href={article.url}>
+  const sections = await prisma.sections.findMany(
+    {where: {article_id: id}}
+  )
+  return <div className="content">
+    <h1>{article.original_title}</h1>
+    <p>
+      <i>{article.attribution}&nbsp;
+        (<Link className="has-text-primary has-text-weight-bold" href={article.url}>
           {article.year}
-        </Link>
-      </div>
+        </Link>)
+      </i>
+    </p>
 
-    </section>
-    <Link className="button" href={`/articles/${id}/sections`}>View Sections</Link>
-  </>
+    {sections.map(async section => {
+        const paragraphs = await prisma.paragraphs.findMany(
+          {where: {section_id: id}});
+        return <>
+          <h3>{section.title}</h3>
+          {paragraphs.map(paragraph =>
+            <p>
+              {paragraph.title}
+            </p>
+            )}
+        </>
+      }
+    )}
+    <Link href={`/articles/${id}/sections`}>View Sections</Link>
+  </div>
 }

@@ -1,43 +1,45 @@
-import SectionForm from '../section-form'
+import ParagraphForm from '../paragraph-form'
 import {redirect} from 'next/navigation'
 import { prisma } from '@/app/lib/prisma'
 
 async function submit(prevState: any, formData: FormData) {
   'use server'
   const title = formData.get('title') as string || "";
+  const body = formData.get('body') as string || "";
+  const sectionId = Number(formData.get('section_id'));
   const articleId = Number(formData.get('article_id'));
-  if (!articleId) return <div>articleId not found.</div>
-
+  if (!sectionId) return <div>sectionId not found.</div>
+  console.log({body})
   const errors = []
-  if (typeof title === 'string' && title.length < 3) errors.push("title is not long enough")
-
+  if (body.length < 3) errors.push("body is not long enough")
   if (errors.length === 0) {
     const now = new Date()
     try {
-      const section = await prisma.sections.create({
+      const section = await prisma.paragraphs.create({
         data: {
           created_at: now,
           updated_at: now,
-          article_id: articleId,
+          section_id: sectionId,
           title,
+          body
         }
       })
     } catch (e) {
       errors.push((e as Error).message)
     }
     if (errors.length === 0) {
-      redirect(`/articles/${articleId}/sections`)
+      redirect(`/articles/${articleId}/sections/${sectionId}`)
     }
   }
   if (errors.length > 0) return {
     title,
+    body,
     errors
   }
 }
 
-export default async function SectionNew({params}: { params: Promise<any> }) {
-  const _params = await params;
+export default async function ParagraphNew(params) {
   return (
-    <SectionForm article_id={_params.article_id} action={submit}/>
+    <ParagraphForm section_id={params.section_id} article_id={params.article_id} action={submit}/>
   );
 }

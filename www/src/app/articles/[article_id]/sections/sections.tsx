@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/app/lib/prisma";
 
-export default async function Sections(params) {
+export default async function Sections(params: any) {
   const {article_id} = params;
   const sections = await prisma.sections.findMany({
     where: {
