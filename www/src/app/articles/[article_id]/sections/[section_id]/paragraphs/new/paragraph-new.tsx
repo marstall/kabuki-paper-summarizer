@@ -15,7 +15,7 @@ async function submit(prevState: any, formData: FormData) {
   if (errors.length === 0) {
     const now = new Date()
     try {
-      const section = await prisma.paragraphs.create({
+      await prisma.paragraphs.create({
         data: {
           created_at: now,
           updated_at: now,

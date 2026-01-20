@@ -19,15 +19,20 @@ export default async function ArticleView({id}) {
       </i>
     </p>
 
-    {sections.map(async section => {
+    {sections.map(async (section) => {
         const paragraphs = await prisma.paragraphs.findMany(
-          {where: {section_id: id}});
+          {where: {section_id:section.id}});
         return <>
-          <h3>{section.title}</h3>
+          <h3>{section.title}</h3 >
           {paragraphs.map(paragraph =>
-            <p>
+            <>
+            <h4>
               {paragraph.title}
-            </p>
+            </h4>
+              <p>
+                {paragraph.body}
+              </p>
+            </>
             )}
         </>
       }

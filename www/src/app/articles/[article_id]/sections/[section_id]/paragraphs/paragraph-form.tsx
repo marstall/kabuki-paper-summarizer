@@ -25,10 +25,14 @@ export default function ParagraphForm(params: any) {
       <div className="field">
         <label className="label">body</label>
         <div className="control">
-          <input className="input" type="text"
-                 name="body"
-                 defaultValue={formData?.body}
-                 placeholder="Text input"/>
+        <textarea
+          className="textarea"
+          name="body"
+          defaultValue={formData?.body}
+          placeholder="Text input"
+          rows={20}
+          style={{ resize: 'vertical' }}
+        ></textarea>
         </div>
       </div>
       <Submit/>

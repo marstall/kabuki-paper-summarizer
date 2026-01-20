@@ -50,7 +50,7 @@ export default function ArticleForm({ article,action }){
           name="attribution"
           defaultValue={getval("attribution")}
           placeholder="Text input"
-          rows="1"
+          rows="3"
           style={{ resize: 'vertical' }}
         ></textarea>
       </div>
