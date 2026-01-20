@@ -32,6 +32,14 @@ export default async function ArticleView({id}) {
         </>
       }
     )}
-    <Link href={`/articles/${id}/sections`}>View Sections</Link>
+    <div className={"block"}>
+    <Link className={"button"} href={`/articles/${id}/edit`}>Edit</Link>
+    </div>
+    <div className={"block"}>
+      <Link className={"button"} href={`/articles/${id}/delete`}>Delete</Link>
+    </div>
+    <div className={"block"}>
+    <Link className={"button"} href={`/articles/${id}/sections`}>View Sections</Link>
+    </div>
   </div>
 }

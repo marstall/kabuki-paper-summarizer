@@ -1,7 +1,8 @@
-import { prisma } from '@/app/lib/prisma'
+import {prisma} from '@/app/lib/prisma'
 import ArticleForm from '../article-form'
-import { redirect } from 'next/navigation'
+import {redirect} from 'next/navigation'
 import {PrismaClientValidationError} from "@prisma/client/runtime/client";
+import toast from "react-hot-toast";
 
 /*
 this form is being rendered on the server (and returned to the client as RSC).
@@ -13,55 +14,83 @@ In the old days, the POST would re-render the same page, with the same params - 
 could re-populate the fields with the right data.
  */
 
+
 async function submit(prevState, formData) {
   'use server'
-  const url = formData.get('url')||"";
-  const original_title = formData.get('original_title')||"";
-  const year = formData.get('year')||"";
-  const attribution = formData.get('attribution')||"";
-  const full_text = formData.get('full_text')||"";
+
+  const url = formData.get('url') || "";
+  const original_title = formData.get('original_title');
+  const year = Number(formData.get('year'));
+  const attribution = formData.get('attribution') || "";
+  const full_text = formData.get('full_text') || "";
+  const articleId = Number(formData.get('article_id'));
 
   const errors = []
-  if (url?.length<1) errors.push("URL is not long enough")
-  if (original_title?.length<1) errors.push("Original title is not long enough")
+  if (url?.length < 1) errors.push("URL is not long enough")
+  if (original_title?.length < 1) errors.push("Original title is not long enough")
 
-  if (year?.length<1||!isFinite(Number(year))) errors.push("Year must be in format 1929, 2024, etc.")
+  if (year?.length < 1 || !isFinite(Number(year))) errors.push("Year must be in format 1929, 2024, etc.")
   //if (full_text?.length<1) errors.push("Body is not long enough")
-  if (attribution?.length<1) errors.push("Attribution is not long enough")
+  if (attribution?.length < 1) errors.push("Attribution is not long enough")
 
-  if (errors.length===0) {
+  if (errors.length === 0) {
     const now = new Date()
     try {
-      const article = await prisma.articles.create({
-        data: {
-          created_at: now,
-          updated_at: now,
-          url,
-          original_title,
-          year:Number(year),
-          attribution
-        }
-      })
+      if (articleId) {
+        await prisma.articles.update(
+          {
+            where: {
+              id: articleId
+            },
+            data: {
+              url,
+              original_title,
+              year,
+              attribution,
+              full_text
+            }
+          }
+        )
+      } else {
+        await prisma.articles.create({
+          data: {
+            created_at: now,
+            updated_at: now,
+            url,
+            original_title,
+            year: Number(year),
+            attribution
+          }
+        })
+      }
+
     } catch (e) {
       errors.push(e.message)
     }
-    if (errors.length===0) {
-      redirect('/articles')
+    if (errors.length === 0) {
+      //toast("Success!")
+      if (articleId) {
+        redirect(`/articles/${articleId}`)
+      } else {
+        redirect(`/articles`)
+      }
+    } else return {
+      url,
+      original_title,
+      year,
+      attribution,
+      full_text,
+      errors
     }
-  }
-  if (errors.length>0) return {
-    url,
-    original_title,
-    year,
-    attribution,
-    full_text,
-    errors
-  }
 
+  }
 }
 
-export default async function ArticleNew() {
+export default async function ArticleNew({article_id}) {
+  const article = article_id && await prisma.articles.findUnique({where: {id: article_id}});
+  console.log({article_id, article})
+
   return (
-    <ArticleForm action={submit}/>
+    <ArticleForm article={article} action={submit}/>
   );
 }
