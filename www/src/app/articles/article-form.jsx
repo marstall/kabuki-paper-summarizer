@@ -1,6 +1,6 @@
 'use client'
 
-import Submit from './submit-button'
+import Submit from '../components/submit-button.tsx'
 import {useActionState} from "react";
 import Errors from '../components/errors'
 

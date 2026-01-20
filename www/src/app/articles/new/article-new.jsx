@@ -1,8 +1,7 @@
-import postgres from 'postgres';
+import { prisma } from '@/app/lib/prisma'
 import ArticleForm from '../article-form'
 import { redirect } from 'next/navigation'
-
-const query = postgres(process.env.POSTGRES_URL, {ssl: 'require'});
+import {PrismaClientValidationError} from "@prisma/client/runtime/client";
 
 /*
 this form is being rendered on the server (and returned to the client as RSC).
@@ -24,28 +23,34 @@ async function submit(prevState, formData) {
 
   const errors = []
   if (url?.length<1) errors.push("URL is not long enough")
-  if (url?.length<1) errors.push("Original title is not long enough")
-  if (year?.length<1) errors.push("Year must be in format 1929, 2024, etc.")
+  if (original_title?.length<1) errors.push("Original title is not long enough")
+
+  if (year?.length<1||!isFinite(Number(year))) errors.push("Year must be in format 1929, 2024, etc.")
   //if (full_text?.length<1) errors.push("Body is not long enough")
   if (attribution?.length<1) errors.push("Attribution is not long enough")
 
   if (errors.length===0) {
-    await query
-      `insert into articles (created_at,
-                           updated_at,
-                           url,
-                           original_title,
-                           year,
-                           attribution)
-     values (now(), now(),
-             ${url},
-             ${original_title},
-             ${year},
-             ${attribution}
-             )`;
-
-    redirect('/articles')
-  } else return {
+    const now = new Date()
+    try {
+      const article = await prisma.articles.create({
+        data: {
+          created_at: now,
+          updated_at: now,
+          url,
+          original_title,
+          year:Number(year),
+          attribution
+        }
+      })
+    } catch (e) {
+      console.log("message",e.message)
+      errors.push(e.message)
+    }
+    if (errors.length===0) {
+      redirect('/articles')
+    }
+  }
+  if (errors.length>0) return {
     url,
     original_title,
     year,

@@ -1,15 +1,11 @@
 import postgres from 'postgres';
 import Link from "next/link";
-import { prisma } from '@/app/lib/prisma'
-import Article from "../../models/article.ts";
+import {prisma} from '@/app/lib/prisma'
 
 const query = postgres(process.env.POSTGRES_URL, {ssl: 'require'});
 
 export default async function ArticleView({id}) {
-  console.log("id+",id)
-  const articles = await prisma.articles.findMany()
-  if (articles.length===0) return <div/>
-  const article = articles[0]
+  const article = await prisma.articles.findUnique({where: {id}})
   return <><h1 className="title">{article.original_title}</h1>
     <section className="section">
       <div>
@@ -17,13 +13,11 @@ export default async function ArticleView({id}) {
       </div>
       <div>
         <Link className="button" href={article.url}>
-        {article.year}
+          {article.year}
         </Link>
-      </div>
-      <div>
-        {article.full_text}
       </div>
 
     </section>
+    <Link className="button" href={`/articles/${id}/sections`}>View Sections</Link>
   </>
 }

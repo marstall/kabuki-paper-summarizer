@@ -1,5 +1,4 @@
 export default function Errors({errors}) {
-  console.log({errors})
   if (!errors?.errors || errors.length == 0) return;
   return <article className="message is-danger">
 
