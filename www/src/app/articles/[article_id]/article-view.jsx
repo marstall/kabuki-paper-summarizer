@@ -1,8 +1,6 @@
-import postgres from 'postgres';
 import Link from "next/link";
 import {prisma} from '@/app/lib/prisma'
-
-const query = postgres(process.env.POSTGRES_URL, {ssl: 'require'});
+import {translate} from '@/app/lib/translate'
 
 export default async function ArticleView({id}) {
   const article = await prisma.articles.findUnique({where: {id}})
@@ -18,6 +16,7 @@ export default async function ArticleView({id}) {
         </Link>)
       </i>
     </p>
+    <Link onClick={translate} href='#' className="button">Translate into Plain English</Link>
 
     {sections.map(async (section) => {
         const paragraphs = await prisma.paragraphs.findMany(
@@ -25,14 +24,14 @@ export default async function ArticleView({id}) {
         return <>
           <h3>{section.title}</h3 >
           {paragraphs.map(paragraph =>
-            <>
+            <div key={paragraph.id}>
             <h4>
               {paragraph.title}
             </h4>
-              <p>
+              <p style={{marginBottom:12}}>
                 {paragraph.body}
               </p>
-            </>
+            </div>
             )}
         </>
       }

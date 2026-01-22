@@ -6,7 +6,6 @@ import Errors from '../components/errors'
 
 export default function ArticleForm({ article,action }){
 
-  console.log("ArticleForm article",article)
   const [formData, submitAction] = useActionState(action, null);
   function getval(name) {
     return article ? article[name] : formData ? formData[name] : ""
