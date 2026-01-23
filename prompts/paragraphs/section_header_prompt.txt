@@ -3,7 +3,7 @@ plain language single sentence summary of the principle evinced by this section.
 For example, if the section is about the speed limit being 20, I'm looking for
 the sentence "The speed limit is 20." If the section is about a kabuki patient
 with renal failure who responded well to medication x, the headline should be
-"renal responds to medication x in 24 year old kabuki patient"
+"renal failure responds well to medication x in 24 year old kabuki patient"
 
 Your model for this is the section headlines in the textbook "The Molecular Biology of the Cell" by Alberts.
 
@@ -12,6 +12,3 @@ don't use commas, just a single simple sentence that is a maximum of 12 words.
 No dependent clauses, for example, avoid adding something like "causing positive decline"
 
 No period at the end.
-
-NEXT SECTION:
-Collectively, evidence indicates that HCD and KD modulate adult hippocampal neurogenesis via complementary mechanisms. However, head-to-head comparisons in HFD-induced obesity are scarce, and the diet-specific pathways linking each regimen to neurogenesis and cognition remain undefined. Here, we directly compare KD and HCD in an HFD mouse model, delineate FAO-DNL signaling pathways, and test how these mechanisms restore hippocampal neurogenesis and cognitive function.

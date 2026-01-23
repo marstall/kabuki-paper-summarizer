@@ -9,6 +9,3 @@ common word instead (eg use "symptoms" instead of phenotype).
 at the beginning of Scientific American: Kabuki Syndrome Edition.
 - this will appear inline with the rest of the story.
 - End each sentence with a period, including the last sentence.
-
-NEXT SECTION:
-Collectively, evidence indicates that HCD and KD modulate adult hippocampal neurogenesis via complementary mechanisms. However, head-to-head comparisons in HFD-induced obesity are scarce, and the diet-specific pathways linking each regimen to neurogenesis and cognition remain undefined. Here, we directly compare KD and HCD in an HFD mouse model, delineate FAO-DNL signaling pathways, and test how these mechanisms restore hippocampal neurogenesis and cognitive function.
