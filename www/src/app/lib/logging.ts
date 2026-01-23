@@ -24,7 +24,8 @@ export function subheader(s,label=null) {
   console.log(chalk.bgHex(bgColor).black.bold(pad(s)));
 }
 
-export function subheader2(s) {
+export function subheader2(s,label=null) {
   console.log("")
+  label && console.log(chalk.black.dim(""+label));
   console.log(chalk.black.bold(s));
 }

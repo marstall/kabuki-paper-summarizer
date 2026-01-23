@@ -3,10 +3,16 @@ import {prisma} from '../src/app/lib/prisma'
 import {header, subheader, subheader2} from '../src/app/lib/logging'
 import yargs from 'yargs'
 import {hideBin} from 'yargs/helpers'
+import {process_paragraph} from "@/app/lib/processors";
 
 const argv = await yargs(hideBin(process.argv))
   .option('article-id', {
     alias: 'a',
+    type: 'number',
+    demandOption: true,
+  })
+  .option('paragraph-num', {
+    alias: 'p',
     type: 'number',
     demandOption: true,
   })
@@ -18,7 +24,13 @@ if (!Number.isInteger(articleId) || articleId <= 0) {
   throw new Error(`Invalid --article-id: ${String(articleId)}`)
 }
 
-async function main(aricleId) {
+const paragraphNum = argv['paragraph-num']
+if (!Number.isInteger(paragraphNum) || paragraphNum <= 0) {
+  throw new Error(`Invalid --paragraph-num: ${String(paragraphNum)}`)
+}
+
+
+async function main(articleId) {
   const article = await prisma.articles.findUnique(
     {
       where: {id: articleId},
@@ -46,14 +58,26 @@ async function main(aricleId) {
     }
   )
   header(article.original_title, "title")
+  let paragraphIndex=1
   article.sections.forEach(section => {
-    subheader(section.title)
+    if (paragraphIndex<=paragraphNum) subheader(section.title)
     section.paragraphs.forEach(paragraph => {
-      subheader2(paragraph.title)
-      console.log(paragraph.body)
+      if (paragraphIndex<=paragraphNum) {
+        subheader2(paragraph.title,paragraph.id)
+        console.log(paragraph.body)
+        if (paragraph) {
+          if (paragraphNum===paragraphIndex) {
+            process_paragraph(paragraph)
+          }
+        } else {
+          process_paragraph(paragraph)
+        }
+        paragraphIndex++
+      }
     })
 
   })
+  console.log("")
 }
 
 main(articleId)
