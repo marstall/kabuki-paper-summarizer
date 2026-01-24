@@ -2,14 +2,6 @@
 
 one:
   provider: MyString
-  version: MyString
-  settings: MyString
-  api_key: MyString
-  secret_key: MyString
 
 two:
   provider: MyString
-  version: MyString
-  settings: MyString
-  api_key: MyString
-  secret_key: MyString
