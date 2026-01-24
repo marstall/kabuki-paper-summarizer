@@ -12,8 +12,13 @@ const argv = await yargs(hideBin(process.argv))
     demandOption: true,
   })
   .option('paragraph-num', {
-    alias: 'p',
+    alias: 'n',
     type: 'number',
+    demandOption: true,
+  })
+  .option('prompt', {
+    alias: 'p',
+    type: 'string',
     demandOption: true,
   })
   .strict()
@@ -29,8 +34,9 @@ if (!Number.isInteger(paragraphNum) || paragraphNum <= 0) {
   throw new Error(`Invalid --paragraph-num: ${String(paragraphNum)}`)
 }
 
+const promptName = argv['prompt']
 
-async function main(articleId) {
+async function main(articleId: number) {
   const article = await prisma.articles.findUnique(
     {
       where: {id: articleId},
@@ -57,26 +63,29 @@ async function main(articleId) {
       }
     }
   )
-  header(article.original_title, "title")
-  let paragraphIndex=1
-  article.sections.forEach(section => {
-    if (paragraphIndex<=paragraphNum) subheader(section.title)
-    section.paragraphs.forEach(paragraph => {
-      if (paragraphIndex<=paragraphNum) {
-        subheader2(paragraph.title,paragraph.id)
-        console.log(paragraph.body)
-        if (paragraph) {
-          if (paragraphNum===paragraphIndex) {
-            process_paragraph(paragraph)
-          }
-        } else {
-          process_paragraph(paragraph)
-        }
-        paragraphIndex++
-      }
-    })
 
-  })
+
+  header(article.original_title, "title")
+  const paragraphs = []
+  article.sections.forEach(section=>{
+    section.paragraphs.forEach(paragraph=>{
+      paragraphs.push(paragraph)
+      })
+    })
+  if (paragraphNum>paragraphs.length) {
+    throw new Error(`Invalid --paragraph-num: ${String(paragraphNum)}`)
+  }
+  console.log({paragraphNum,paragraphsLength:paragraphs.length,promptName})
+  const prompts = await prisma.prompts.findMany({where:{title:promptName}})
+  if (!prompts||prompts.length===0) {
+    throw new Error(`Invalid --prompt: ${String(prompt)}`)
+  }
+  const paragraph = paragraphs[paragraphNum-1]
+  subheader2(paragraph.title)
+  console.log(paragraph.body)
+  console.log("")
+  process_paragraph(paragraph,prompts[0])
+
   console.log("")
 }
 

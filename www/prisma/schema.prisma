@@ -47,7 +47,7 @@ model paragraphs {
 
 model prompts {
   id           BigInt         @id @default(autoincrement())
-  name         String?        @db.VarChar
+  title        String?        @db.VarChar
   body         String?        @db.VarChar
   created_at   DateTime       @db.Timestamp(6)
   updated_at   DateTime       @db.Timestamp(6)
@@ -77,6 +77,7 @@ model translations {
   status       String?    @db.VarChar
   created_at   DateTime   @db.Timestamp(6)
   updated_at   DateTime   @db.Timestamp(6)
+  llm_settings Json?
   paragraphs   paragraphs @relation(fields: [paragraph_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_568e087fee")
   llms         llms       @relation(fields: [llm_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_dc36eb302b")
   prompts      prompts    @relation(fields: [prompt_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_fff8b2d94e")
@@ -91,4 +92,35 @@ model users {
   name     String @db.VarChar(255)
   email    String @unique
   password String
+}
+
+model ar_internal_metadata {
+  key        String   @id @db.VarChar
+  value      String?  @db.VarChar
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+}
+
+model customers {
+  id        String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name      String @db.VarChar(255)
+  email     String @db.VarChar(255)
+  image_url String @db.VarChar(255)
+}
+
+model invoices {
+  id          String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  customer_id String   @db.Uuid
+  amount      Int
+  status      String   @db.VarChar(255)
+  date        DateTime @db.Date
+}
+
+model revenue {
+  month   String @unique @db.VarChar(4)
+  revenue Int
+}
+
+model schema_migrations {
+  version String @id @db.VarChar
 }
