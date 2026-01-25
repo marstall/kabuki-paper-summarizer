@@ -2,7 +2,7 @@
 //
 // }
 //
-// export default class BaseModel {
+export default class BaseModel {
 //   raw_model={};
 //   constructor(_raw_model: {}) {
 //     this.raw_model=_raw_model
@@ -26,4 +26,4 @@
 //   //   if (this.raw_model[prop]) return this.raw_model[prop]
 //   //   return Reflect.get(...arguments)
 //   // }
-// }
+}

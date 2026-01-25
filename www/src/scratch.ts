@@ -1,11 +1,11 @@
-// import Article from './app/models/article'
+// import ArticleContainer from './app/models/article'
 //
 // const raw = {
 //   year: 1986,
 //   original_title: "original title ..."
 // }
 //
-// const article = new Article(raw)
+// const article = new ArticleContainer(raw)
 //
 // const proxy = new Proxy(raw, article);
 //
