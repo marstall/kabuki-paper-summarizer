@@ -12,7 +12,7 @@ export default class Log {
     }
   }
   static suppress(level) {
-    return Log.log_levels.includes(level)
+    return !Log.log_levels.includes(level)
   }
 }
 
@@ -21,7 +21,8 @@ export function log(s) {
   console.log(s)
 }
 
-export function bold(s) {
+export function bold(s,level="info") {
+  if (Log.suppress(level)) return;
   console.log(chalk.bold(s))
 }
 
@@ -31,7 +32,9 @@ export function pad(s, basedOnString = null) {
   } else return " " + s + " "
 }
 
-export function block(s,level="info") {
+export function block(s,headline=null,level="info") {
+  if (Log.suppress(level)) return;
+  headline && bold(headline)
   console.log(s)
   console.log("")
 }
@@ -39,7 +42,7 @@ export function block(s,level="info") {
 export function header(s, label = null,level="info") {
   if (Log.suppress(level)) return;
   console.log("")
-  const bgColor = "#fcf"
+  const bgColor = "#cff"
   console.log(chalk.bgHex(bgColor).black.bold(pad("", s)));
   label && console.log(chalk.bgHex(bgColor).magenta.dim(pad(label.toUpperCase(), s)))
   console.log(chalk.bgHex(bgColor).black.bold(pad(s)));
