@@ -5,6 +5,7 @@ import yargs from 'yargs'
 import {hideBin} from 'yargs/helpers'
 import {process_paragraph} from "@/app/lib/processors";
 import Article from '@/app/models/article'
+import openai from "openai";
 
 const argv = await yargs(hideBin(process.argv))
   .option('article-id', {
@@ -27,12 +28,15 @@ async function main(articleId: number) {
   Log.init()
   const article = await Article.create(articleId)
   //article.translate()
-  const fn = async (article,paragraph,i)=>{
-    console.log("article: "+article.prismaArticle.id)
-    console.log("paragraph: "+paragraph.id)
-    console.log({i})
-  }
-  article.process_paragraphs(fn)
+  // const fn = async (conversation,paragraph,i)=>{
+  //
+  //   console.log("article: "+article.prismaArticle.id)
+  //   console.log("paragraph: "+paragraph.id)
+  //   console.log({i})
+  // }
+
+  //await article.process_paragraphs(article.extract_ideas_iteratively.bind(article))
+  const json = await article.extract_ideas_all_at_once();
 
 }
 
