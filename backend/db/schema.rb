@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_29_175816) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_02_202409) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "uuid-ossp"
@@ -83,18 +83,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_29_175816) do
   end
 
   create_table "translations", force: :cascade do |t|
+    t.integer "article_id"
     t.string "body"
     t.datetime "created_at", null: false
     t.string "extra_prompt"
-    t.bigint "llm_id", null: false
+    t.bigint "llm_id"
     t.jsonb "llm_settings"
-    t.bigint "paragraph_id", null: false
-    t.bigint "prompt_id", null: false
+    t.integer "paragraph_id"
+    t.bigint "prompt_id"
     t.string "status"
     t.string "title"
     t.datetime "updated_at", null: false
     t.index ["llm_id"], name: "index_translations_on_llm_id"
-    t.index ["paragraph_id"], name: "index_translations_on_paragraph_id"
     t.index ["prompt_id"], name: "index_translations_on_prompt_id"
   end
 
@@ -109,6 +109,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_29_175816) do
   add_foreign_key "paragraphs", "sections"
   add_foreign_key "sections", "articles"
   add_foreign_key "translations", "llms"
-  add_foreign_key "translations", "paragraphs"
   add_foreign_key "translations", "prompts"
 end

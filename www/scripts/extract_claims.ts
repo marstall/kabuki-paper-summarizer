@@ -1,6 +1,6 @@
 import 'dotenv/config'   // <-- must be first
 import {prisma} from '../src/app/lib/prisma'
-import Log, {log,divider, header, subheader, subheader2} from '@/app/lib/logger'
+import Log, {log, divider, header, subheader, subheader2, bold} from '@/app/lib/logger'
 import yargs from 'yargs'
 import {hideBin} from 'yargs/helpers'
 import {process_paragraph} from "@/app/lib/processors";
@@ -23,13 +23,13 @@ if (!Number.isInteger(articleId) || articleId <= 0) {
 }
 
 
-const promptName = argv['prompt']
-
 async function main(articleId: number) {
   Log.init()
   const article = await Article.create(articleId)
-  //const result = await article.produceTranslation()
-  const result = await article.streamlined()
+  bold("EXTRACT CLAIMS")
+  bold(article.prismaArticle.original_title)
+  const json = await article.extractClaims();
+  await article.update("claims", json)
 }
 
 main(articleId)

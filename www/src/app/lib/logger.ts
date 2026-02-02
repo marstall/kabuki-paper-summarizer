@@ -21,6 +21,11 @@ export function log(s) {
   console.log(s)
 }
 
+export function error(e) {
+  console.log(chalk.red.bold("FATAL EXCEPTION"))
+  console.log(e)
+}
+
 export function bold(s,level="info") {
   if (Log.suppress(level)) return;
   console.log(chalk.bold(s))

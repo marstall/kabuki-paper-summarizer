@@ -1,0 +1,2 @@
+ npx tsx scripts/translate_article_script.ts --article-id 22
+
