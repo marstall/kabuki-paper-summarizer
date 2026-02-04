@@ -29,6 +29,7 @@ model llms {
   secret_key   String?        @db.VarChar
   created_at   DateTime       @db.Timestamp(6)
   updated_at   DateTime       @db.Timestamp(6)
+  url          String?        @db.VarChar
   translations translations[]
 }
 
@@ -79,6 +80,10 @@ model translations {
   llm_settings Json?
   article_id   Int?
   paragraph_id Int?
+  prompt1      String?  @db.VarChar
+  prompt2      String?  @db.VarChar
+  prompt3      String?  @db.VarChar
+  claims       Json?
   llms         llms?    @relation(fields: [llm_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_dc36eb302b")
   prompts      prompts? @relation(fields: [prompt_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_fff8b2d94e")
 

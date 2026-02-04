@@ -15,7 +15,7 @@ function extractParagraphData(body) {
     const parens = matches[3]
 
     const claimIndexes = parens.match(/\d+/g).map(id => Number(id))
-    return [text+" ("+claimIndexes.join(", ")+")", claimIndexes]
+    return [text + " (" + claimIndexes.join(", ") + ")", claimIndexes]
   })
 
 }
@@ -25,8 +25,8 @@ export default async function TranslationView({article_id, translation_id}: any)
   const translation = await prisma.translations.findUnique({where: {id: translation_id}})
   if (!translation) return <div>Translation Not found</div>
   const annotatedParagraphs = extractParagraphData(translation.body).map((paragraphData, i) => {
-    const [text,claimIndexes] = paragraphData;
-    const claims = claimIndexes.map(i=>article.claims["claims"][i])
+    const [text, claimIndexes] = paragraphData;
+    const claims = claimIndexes.map(i => article.claims["claims"][i])
     return <AnnotatedParagraph key={i} text={text} claims={claims}/>
   })
   return <><h1 className="title">Translation: {translation.title}</h1>
@@ -35,12 +35,15 @@ export default async function TranslationView({article_id, translation_id}: any)
     </div>
     <div className="content">
       {annotatedParagraphs}
-      {article.claims["claims"].map((claim, i) =>
-        <p key={i}>
-          <b>claim {i}</b>
-          {claim["claim"]}
-        </p>
-      )}
+      {/*{article.claims["claims"].map((claim, i) =>*/}
+      {/*  <div key={i}>*/}
+      {/*    <b>claim {i}</b>*/}
+      {/*    {claim["claim"]}*/}
+      {/*    <pre>x*/}
+      {/*    {JSON.stringify(claim, null, 2)}*/}
+      {/*    </pre>*/}
+      {/*  </div>*/}
+      {/*)}*/}
     </div>
   </>
 }

@@ -4,7 +4,7 @@ import {base} from "next/dist/build/webpack/config/blocks/base";
 export default class Log {
   static log_levels = ["info","error","always"]
 
-  static init(settings = {}) {
+  static init(settings = {} as any) {
     if (settings) {
       if (settings.log_levels) {
         Log.log_levels = settings.log_levels
@@ -17,8 +17,8 @@ export default class Log {
 }
 
 
-export function log(s) {
-  console.log(s)
+export function log(s,t=null) {
+  t ? console.log(s,t) : console.log(s)
 }
 
 export function error(e) {
@@ -68,6 +68,7 @@ export function subheader2(s, label = null,level="info") {
   label && console.log(chalk.black.dim("" + label));
   console.log(chalk.black.bold(s));
 }
+
 
 export function divider(level="info") {
   if (Log.suppress(level)) return;

@@ -1,18 +1,15 @@
 import BaseModel from "@/app/models/base_model";
 import {prisma} from '@/app/lib/prisma'
-import OpenAI from "openai";
 import Prompt from "@/app/models/prompt";
-import {divider, log, bold, block, header, error} from "@/app/lib/logger"
-import _ from 'lodash'
-// No paragraphs were harmed in the creation of this version.
+import {log, bold, block, header, error} from "@/app/lib/logger"
+import Llm from '@/app/models/llm'
+import Translation from "@/app/models/translation";
 
 export default class Article extends BaseModel {
   prismaArticle = null;
-  openai = null;
 
   constructor(silent) {
     super()
-    this.openai = new OpenAI();
   }
 
   static async create(articleId, silent = true) {
@@ -50,16 +47,175 @@ export default class Article extends BaseModel {
     }
   }
 
-  async produceTranslation(force = false) {
-    if (!this.prismaArticle.claims || force) {
+  async produceTranslation({forceExtractClaims, writeDraft, reviewDraft, editDraft}) {
+    if (!this.prismaArticle.claims || forceExtractClaims) {
+      log("extracting claims ...")
       const json = await this.extractClaims();
       await this.update("claims", json)
+    } else {
+      log("skipping claim extraction ...")
     }
 
-    const draft = await this.writeDraft();
-    const draftReview = await this.reviewDraft(draft);
-    const secondDraft = await this.editDraft(draft, draftReview);
+    let draft = null;
+
+    if (writeDraft) {
+      draft = await this.writeDraft("based on ideas json");
+      // if (editDraft) {
+      //     const draftReview = reviewDraft ? await this.reviewDraft("review pass",draft) : ""
+      //     draft = await this.editDraft("editor pass 2",draft, draftReview);
+      // } else {
+      //   log("skipping review + edit")
+      // }
+    } else {
+      log("skipping all drafts ...")
+    }
+    log({draft})
+    Translation.create({
+      llm_id: Llm.configuredLlm.id,
+      title: this.prismaArticle.original_title,
+      body: draft,
+      article_id: Number(this.prismaArticle.id),
+      claims: this.prismaArticle.claims
+    })
   }
+
+  async extractClaims() {
+    const pre = new Date()
+    const model = ["gpt-5.2", "gpt-5-nano", "gpt-5.2-pro"][0]
+    const jsonExample = {
+      claims: [{
+        reference_id: "the reference number of the claim. start with 0. the next claim is 1, the next is 2, etc.",
+        claim: "the idea/proposition/claim that exists in the paper, put simply, matching the language used in the paper, without jargon.",
+        discussion: "a 2-3 sentence paragraph going a little deeper, in a newsy, punchy voice, targeted to a kabuki parent who is not an expert in bio.",
+        tags: "a list of relevant tags for this claim (ex: KMTD, metabolism, symptoms, therapy)",
+        group: "maintain a small, intelligent list of groups (ex: Background, What Was Investigated, Results, What this means for Kabuki Syndrome) and assign each idea to a group.",
+        basedOnText: "a json array of the verbatim text passages this claim is based on [exact text of passage1, exact text of passage 2, exact text of passage 3]",
+        citations: "any citations contained within the text passages this claim is based on"
+      }]
+    }
+    const instructions = `can you break down the following scientific paper
+    into a list of its individual claims/ideas/propositions? return the list to me
+    in the following json format: ${JSON.stringify(jsonExample)}. Return ONLY raw JSON.
+    Do NOT wrap the response in markdown. Do NOT include \`\`\` or any extra text.
+    The response must be directly parseable by JSON.parse().`
+
+    const input = this.paragraphsJoined()
+    bold("input")
+    const response = await Llm.client.responses.create({
+      model,
+      instructions,
+      input,
+    });
+    const elapsed = (new Date() as any - (pre as any)) / 1000.0
+    block(`Completed in ${elapsed} seconds.`)
+
+    const json = JSON.parse(response.output_text)
+    bold("output")
+    block(JSON.stringify(json, null, 2))
+    return json
+  }
+
+
+  async writeDraft(promptName) {
+    try {
+      const pre = new Date()
+      header(this.prismaArticle.original_title)
+      const input = JSON.stringify(this.prismaArticle.claims);
+      const instructions = await Prompt.get(promptName);
+      // log(`input is ${input.length} characters long.`)
+      // log(`instructions are ${instructions.length} characters long.`)
+      bold(`writing first draft, using prompt <${promptName}> ...`)
+      block(instructions)
+
+      const response = await Llm.client.responses.create({
+        model: "gpt-5.2",
+        instructions,
+        reasoning: {effort: "low"},
+        input
+      });
+
+      bold("draft")
+      block(response.output_text);
+      block(`Completed in ${(new Date() as any - (pre as any)) / 1000.0} seconds.`)
+      return response.output_text
+    } catch (e) {
+      error(e)
+    }
+  }
+
+  async reviewDraft(promptName, draft) {
+    const pre = new Date()
+    try {
+      bold(`reviewing first draft with prompt <${promptName}> ...`)
+      log(await Prompt.get(promptName))
+      const response = await Llm.client.responses.create({
+        model: "gpt-5.2",
+        reasoning: {effort: "medium"},
+
+        instructions: await Prompt.get(promptName),
+        input: draft,
+      });
+
+      bold("review json")
+      const json = JSON.parse(response.output_text)
+      block(JSON.stringify(json, null, 2));
+      block(`Completed in ${(new Date() as any - (pre as any)) / 1000.0} seconds.`)
+      return json
+    } catch (e) {
+      error(e)
+    }
+  }
+
+  async editDraft(promptName, draft, draftReview) {
+    const pre = new Date()
+    try {
+      bold("editor pass")
+      const input = `Audit:
+        ${draftReview === "string" ? draftReview : JSON.stringify(draftReview, null, 2)}
+        
+        Article:
+        ${draft}`;
+
+      const response = await Llm.client.responses.create({
+        model: "gpt-5.2",
+        instructions: await Prompt.get(promptName),
+        reasoning: {effort: "medium"},
+        input,
+      });
+      bold("editor draft")
+      block(response.output_text);
+      block(`Completed in ${(new Date() as any - (pre as any)) / 1000.0} seconds.`)
+    } catch (e) {
+      error(e)
+    }
+  }
+
+
+  async load(articleId) {
+    this.prismaArticle = await prisma.articles.findUnique(
+      {
+        where: {id: articleId},
+        include: {
+          sections: {
+            orderBy: {
+              id: 'asc'
+            },
+            include: {
+              paragraphs: {
+                orderBy: {
+                  id: 'asc'
+                }
+              }
+            }
+          }
+        }
+      }
+    )
+  }
+}
+
+/*
+
 
   async streamlined() {
     const instructions = `You are the primary assistant on chatgpt.com.
@@ -140,144 +296,6 @@ Here is the claims JSON: `
     }
   }
 
-  async extractClaims() {
-    const pre = new Date()
-    const model = ["gpt-5.2", "gpt-5-nano", "gpt-5.2-pro"][0]
-    const jsonExample = {
-      claims: [{
-        reference_id: "the reference number of the claim. start with 0. the next claim is 1, the next is 2, etc.",
-        claim: "the idea/proposition/claim that exists in the paper, put simply, matching the language used in the paper, without jargon.",
-        discussion: "a 2-3 sentence paragraph going a little deeper, in a newsy, punchy voice, targeted to a kabuki parent who is not an expert in bio.",
-        tags: "a list of relevant tags for this claim (ex: KMTD, metabolism, symptoms, therapy)",
-        group: "maintain a small, intelligent list of groups (ex: Background, What Was Investigated, Results, What this means for Kabuki Syndrome) and assign each idea to a group.",
-        basedOnText: "a json array of the verbatim text passages this claim is based on [exact text of passage1, exact text of passage 2, exact text of passage 3]",
-        citations: "any citations contained within the text passages this claim is based on"
-      }]
-    }
-    const instructions = `can you break down the following scientific paper
-    into a list of its individual claims/ideas/propositions? return the list to me
-    in the following json format: ${JSON.stringify(jsonExample)}. Return ONLY raw JSON.
-    Do NOT wrap the response in markdown. Do NOT include \`\`\` or any extra text.
-    The response must be directly parseable by JSON.parse().`
-
-    const input = this.paragraphsJoined()
-    bold("input")
-    block(input)
-    const response = await this.openai.responses.create({
-      model,
-      instructions,
-      input,
-    });
-    const elapsed = (new Date() - pre) / 1000.0
-    block(`Completed in ${elapsed} seconds.`)
-
-    const json = JSON.parse(response.output_text)
-    bold("output")
-    block(JSON.stringify(json, null, 2))
-    return json
-  }
-
-
-  async writeDraft() {
-    try {
-      const pre = new Date()
-
-      header(this.prismaArticle.original_title)
-      const input = JSON.stringify(this.prismaArticle.claims);
-      const instructions = await Prompt.get("writer pass");
-      log(`input is ${input.length} characters long.`)
-      log(`instructions are ${instructions.length} characters long.`)
-      block(instructions)
-      log("writing first draft ...")
-
-      const response = await this.openai.responses.create({
-        model: "gpt-5.2",
-        instructions,
-        reasoning: {effort: "low"},
-        input
-      });
-
-      bold("draft")
-      block(response.output_text);
-      block(`Completed in ${(new Date() - pre) / 1000.0} seconds.`)
-      return response.output_text
-    } catch (e) {
-      error(e)
-    }
-  }
-
-  async reviewDraft(draft) {
-    const pre = new Date()
-    try {
-      bold("review")
-      log(await Prompt.get("review pass"))
-      const response = await this.openai.responses.create({
-        model: "gpt-5.2",
-        reasoning: {effort: "medium"},
-
-        instructions: await Prompt.get("review pass"),
-        input: draft,
-      });
-
-      bold("review json")
-      const json = JSON.parse(response.output_text)
-      block(JSON.stringify(json, null, 2));
-      block(`Completed in ${(new Date() - pre) / 1000.0} seconds.`)
-      return json
-    } catch (e) {
-      error(e)
-    }
-  }
-
-  async editDraft(draft, draftReview) {
-    const pre = new Date()
-    try {
-      bold("editor pass")
-      const input = `Audit:
-        ${draftReview === "string" ? draftReview : JSON.stringify(draftReview, null, 2)}
-        
-        Article:
-        ${draft}`;
-
-      const response = await this.openai.responses.create({
-        model: "gpt-5.2",
-        instructions: await Prompt.get("editor pass 2"),
-        reasoning: {effort: "medium"},
-        input,
-      });
-      bold("editor draft")
-      block(response.output_text);
-      block(`Completed in ${(new Date() - pre) / 1000.0} seconds.`)
-    } catch (e) {
-      error(e)
-    }
-  }
-
-
-  async load(articleId) {
-    this.prismaArticle = await prisma.articles.findUnique(
-      {
-        where: {id: articleId},
-        include: {
-          sections: {
-            orderBy: {
-              id: 'asc'
-            },
-            include: {
-              paragraphs: {
-                orderBy: {
-                  id: 'asc'
-                }
-              }
-            }
-          }
-        }
-      }
-    )
-  }
-}
-
-/*
 
   async translate() {
     const pre = new Date()
