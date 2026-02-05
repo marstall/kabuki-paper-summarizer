@@ -81,7 +81,6 @@ export default class Article extends BaseModel {
 
   async extractClaims() {
     const pre = new Date()
-    const model = ["gpt-5.2", "gpt-5-nano", "gpt-5.2-pro"][0]
     const jsonExample = {
       claims: [{
         reference_id: "the reference number of the claim. start with 0. the next claim is 1, the next is 2, etc.",
@@ -102,7 +101,7 @@ export default class Article extends BaseModel {
     const input = this.paragraphsJoined()
     bold("input")
     const response = await Llm.client.responses.create({
-      model,
+      model:Llm.configuredLlm.model,
       instructions,
       input,
     });
@@ -124,11 +123,12 @@ export default class Article extends BaseModel {
       const instructions = await Prompt.get(promptName);
       // log(`input is ${input.length} characters long.`)
       // log(`instructions are ${instructions.length} characters long.`)
-      bold(`writing first draft, using prompt <${promptName}> ...`)
+      bold(`writing first draft, using prompt <${promptName}> with  model < ${Llm.configuredLlm.model}> ...`)
+      log("")
       block(instructions)
-
-      const response = await Llm.client.responses.create({
-        model: "gpt-5.2",
+      const response = await Llm.client.chat.completions.create({
+        model: Llm.configuredLlm.model,
+        messages:[],
         instructions,
         reasoning: {effort: "low"},
         input
@@ -149,7 +149,7 @@ export default class Article extends BaseModel {
       bold(`reviewing first draft with prompt <${promptName}> ...`)
       log(await Prompt.get(promptName))
       const response = await Llm.client.responses.create({
-        model: "gpt-5.2",
+        model: Llm.configuredLlm.model,
         reasoning: {effort: "medium"},
 
         instructions: await Prompt.get(promptName),
@@ -177,7 +177,7 @@ export default class Article extends BaseModel {
         ${draft}`;
 
       const response = await Llm.client.responses.create({
-        model: "gpt-5.2",
+        model: Llm.configuredLlm.model,
         instructions: await Prompt.get(promptName),
         reasoning: {effort: "medium"},
         input,

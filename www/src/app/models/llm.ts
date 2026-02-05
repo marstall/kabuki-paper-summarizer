@@ -9,9 +9,10 @@ export default class Llm extends BaseModel {
 
   static async loadDefault(llm_id) {
     try {
-      const llm = await prisma.llms.findUnique({where: {id: 1}})
+      const llm = await prisma.llms.findUnique({where: {id: llm_id}})
       Llm.configuredLlm = llm;
       block(`using llm <${llm.provider}> ...`)
+      log("llm url",llm.url)
       if (isOpenAICompatible(llm)) {
         Llm.client = new OpenAI({
           apiKey: llm.api_key,

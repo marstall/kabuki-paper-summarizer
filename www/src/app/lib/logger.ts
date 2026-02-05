@@ -18,7 +18,7 @@ export default class Log {
 
 
 export function log(s,t=null) {
-  t ? console.log(s,t) : console.log(s)
+  t ? console.log(chalk.bold(s),t) : console.log(s)
 }
 
 export function error(e) {

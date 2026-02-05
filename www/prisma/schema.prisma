@@ -30,6 +30,7 @@ model llms {
   created_at   DateTime       @db.Timestamp(6)
   updated_at   DateTime       @db.Timestamp(6)
   url          String?        @db.VarChar
+  model        String?        @db.VarChar
   translations translations[]
 }
 
