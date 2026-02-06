@@ -1,7 +1,7 @@
 import BaseModel from "@/app/models/base_model";
 import {prisma} from '@/app/lib/prisma'
 import Prompt from "@/app/models/prompt";
-import {log, bold, block, header, error} from "@/app/lib/logger"
+import {log, bold, block, header, error, divider} from "@/app/lib/logger"
 import Llm from '@/app/models/llm'
 import Translation from "@/app/models/translation";
 
@@ -47,7 +47,7 @@ export default class Article extends BaseModel {
     }
   }
 
-  async produceTranslation({forceExtractClaims, writeDraft, reviewDraft, editDraft}) {
+  async produceTranslation({forceExtractClaims, numDrafts, reviewDraft, editDraft}) {
     if (!this.prismaArticle.claims || forceExtractClaims) {
       log("extracting claims ...")
       const json = await this.extractClaims();
@@ -56,10 +56,10 @@ export default class Article extends BaseModel {
       log("skipping claim extraction ...")
     }
 
-    let draft = null;
+    let drafts = null;
 
-    if (writeDraft) {
-      draft = await this.writeDraft("based on ideas json");
+    if (numDrafts>0) {
+      drafts = await this.writeDrafts("based on ideas json",numDrafts);
       // if (editDraft) {
       //     const draftReview = reviewDraft ? await this.reviewDraft("review pass",draft) : ""
       //     draft = await this.editDraft("editor pass 2",draft, draftReview);
@@ -69,14 +69,15 @@ export default class Article extends BaseModel {
     } else {
       log("skipping all drafts ...")
     }
-    log({draft})
-    Translation.create({
-      llm_id: Llm.configuredLlm.id,
-      title: this.prismaArticle.original_title,
-      body: draft,
-      article_id: Number(this.prismaArticle.id),
-      claims: this.prismaArticle.claims
-    })
+    for (const draft of drafts) {
+      Translation.create({
+        llm_id: Llm.configuredLlm.id,
+        title: this.prismaArticle.original_title,
+        body: draft,
+        article_id: Number(this.prismaArticle.id),
+        claims: this.prismaArticle.claims
+      })
+    }
   }
 
   async extractClaims() {
@@ -115,7 +116,7 @@ export default class Article extends BaseModel {
   }
 
 
-  async writeDraft(promptName) {
+  async writeDrafts(promptName,num=1) {
     try {
       const pre = new Date()
       header(this.prismaArticle.original_title)
@@ -126,18 +127,16 @@ export default class Article extends BaseModel {
       bold(`writing first draft, using prompt <${promptName}> with  model < ${Llm.configuredLlm.model}> ...`)
       log("")
       block(instructions)
-      const response = await Llm.client.chat.completions.create({
-        model: Llm.configuredLlm.model,
-        messages:[],
-        instructions,
-        reasoning: {effort: "low"},
-        input
-      });
+      const responses = await Llm.chat(instructions,input,{n:num})
 
       bold("draft")
-      block(response.output_text);
+      responses.map((response,i)=>{
+        header("option "+i)
+        block(response)
+        divider()
+      })
       block(`Completed in ${(new Date() as any - (pre as any)) / 1000.0} seconds.`)
-      return response.output_text
+      return responses
     } catch (e) {
       error(e)
     }

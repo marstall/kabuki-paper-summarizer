@@ -7,7 +7,6 @@ export default async function ArticleView({id}) {
   const sections = await prisma.sections.findMany(
     {where: {article_id: id}}
   )
-  console.log({id})
   const translations = await prisma.translations.findMany(
     {where: {article_id: Number(id)}}
   )

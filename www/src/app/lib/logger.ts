@@ -17,8 +17,9 @@ export default class Log {
 }
 
 
-export function log(s,t=null) {
-  t ? console.log(chalk.bold(s),t) : console.log(s)
+export function log(s,t=null,extra_line=false) {
+  t ? console.log(chalk.bold(s+":"),t) : console.log(s)
+  if (extra_line) console.log("")
 }
 
 export function error(e) {

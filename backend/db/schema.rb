@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_04_220559) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_05_162519) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "uuid-ossp"
@@ -47,6 +47,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_04_220559) do
     t.string "provider"
     t.string "secret_key"
     t.string "settings"
+    t.string "type"
     t.datetime "updated_at", null: false
     t.string "url"
     t.string "version"

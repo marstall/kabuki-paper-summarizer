@@ -1,33 +1,32 @@
 import Link from "next/link";
 import {prisma} from '@/app/lib/prisma'
 import AnnotatedParagraph from "@/app/components/annotated-paragraph";
+import {log} from "@/app/lib/logger";
 
 function extractParagraphData(body) {
-  const paragraphs = body.split(/[\r*\n]/)
-  //console.log({paragraphs})
+  const paragraphs = body.split(/[\r\n]/)
   return paragraphs.filter(p => p.length > 0).map(paragraph => {
-    const matches = paragraph.match(/(.+)(\s)(\(.+\))$/)
+
+    const matches = paragraph.match(/(.+)(?:\s)(\((?:\d.+)\))$/)
     if (!matches) {
-      console.log(`match miss ${paragraph}`)
-      return [paragraph, []]
+      console.log("no matches")
+      return [paragraph,[]]
     }
     const text = matches[1]
-    const parens = matches[3]
+    const parens = matches[2]
 
     const claimIndexes = parens.match(/\d+/g).map(id => Number(id))
     return [text + " (" + claimIndexes.join(", ") + ")", claimIndexes]
   })
-
 }
 
 export default async function TranslationView({article_id, translation_id}: any) {
   const article = await prisma.articles.findUnique({where: {id: article_id}})
   const translation = await prisma.translations.findUnique({where: {id: translation_id}})
   if (!translation) return <div>Translation Not found</div>
-  const annotatedParagraphs = extractParagraphData(translation.body).map((paragraphData, i) => {
-    const [text, claimIndexes] = paragraphData;
-    const claims = claimIndexes.map(i => article.claims["claims"][i])
-    return <AnnotatedParagraph key={i} text={text} claims={claims}/>
+  const annotatedParagraphs = extractParagraphData(translation.body).map(([text, claimIndexes], i) => {
+    const claims = claimIndexes.map(j=> article.claims["claims"][j])
+    return <AnnotatedParagraph key={i} id={i} text={text} claims={claims}/>
   })
   return <><h1 className="title">Translation: {translation.title}</h1>
     <div className={'block'}>
@@ -35,15 +34,7 @@ export default async function TranslationView({article_id, translation_id}: any)
     </div>
     <div className="content">
       {annotatedParagraphs}
-      {/*{article.claims["claims"].map((claim, i) =>*/}
-      {/*  <div key={i}>*/}
-      {/*    <b>claim {i}</b>*/}
-      {/*    {claim["claim"]}*/}
-      {/*    <pre>x*/}
-      {/*    {JSON.stringify(claim, null, 2)}*/}
-      {/*    </pre>*/}
-      {/*  </div>*/}
-      {/*)}*/}
+
     </div>
   </>
 }

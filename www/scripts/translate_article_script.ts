@@ -12,6 +12,7 @@ async function main(articleId: number,llmId: number,params) {
   const article = await Article.create(articleId)
   const result = await article.produceTranslation(params)
   log("")
+  block("done.")
 }
 
 const argv = await yargs(hideBin(process.argv))
@@ -30,9 +31,9 @@ const argv = await yargs(hideBin(process.argv))
     type: 'boolean',
     demandOption: false,
   })
-  .option('write-draft', {
+  .option('num-drafts', {
     alias: 'w',
-    type: 'boolean',
+    type: 'number',
     demandOption: false,
   })
   .option('review-draft', {
@@ -49,12 +50,12 @@ const argv = await yargs(hideBin(process.argv))
   .parse()
 
 const articleId = argv['article-id']
-const writeDraft = argv['write-draft']||false
+const numDrafts = argv['num-drafts']||0
 const forceExtractClaims = argv['force-extract-claims']||false
 const reviewDraft = argv['review-draft']||false
 const editDraft = argv['edit-draft']||false
 const llmId = argv['llm-id']
-const params = {forceExtractClaims,writeDraft,reviewDraft,editDraft}
+const params = {forceExtractClaims,numDrafts,reviewDraft,editDraft}
 block(params);
 
 main(articleId,llmId,params as any)
