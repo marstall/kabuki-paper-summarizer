@@ -7,7 +7,7 @@ function extractParagraphData(body) {
   const paragraphs = body.split(/[\r\n]/)
   return paragraphs.filter(p => p.length > 0).map(paragraph => {
 
-    const matches = paragraph.match(/(.+)(?:\s)(\((?:\d.+)\))$/)
+    const matches = paragraph.match(/(.+)(?:\s)(\((?:\d.*)\))$/)
     if (!matches) {
       console.log("no matches")
       return [paragraph,[]]
