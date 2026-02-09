@@ -31,6 +31,12 @@ const argv = await yargs(hideBin(process.argv))
     type: 'boolean',
     demandOption: false,
   })
+  .option('generate-metadata', {
+    alias: 'm',
+    type: 'boolean',
+    demandOption: false,
+  })
+
   .option('num-drafts', {
     alias: 'w',
     type: 'number',
@@ -52,10 +58,11 @@ const argv = await yargs(hideBin(process.argv))
 const articleId = argv['article-id']
 const numDrafts = argv['num-drafts']||0
 const forceExtractClaims = argv['force-extract-claims']||false
+const generateMetadata = argv['generate-metadata']||false
 const reviewDraft = argv['review-draft']||false
 const editDraft = argv['edit-draft']||false
 const llmId = argv['llm-id']
-const params = {forceExtractClaims,numDrafts,reviewDraft,editDraft}
+const params = {forceExtractClaims,numDrafts,reviewDraft,editDraft,generateMetadata}
 block(params);
 
 main(articleId,llmId,params as any)

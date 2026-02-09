@@ -1,0 +1,382 @@
+/* ============================
+   Core variables & typography
+   ============================ */
+
+/*
+  These are design tokens for the whole page.
+
+  - reading-width: the main text column width (in characters, not pixels)
+  - margin-rail: the right-side “notes” column width
+  - space-*: a simple spacing scale used throughout the layout
+  - body-font/ui-font: serif for reading, sans for UI/meta elements
+  - text-main/text-muted/rule/accent: shared colors
+*/
+
+:root {
+  /* Measure */
+  --reading-width: 55ch;
+  --margin-rail: 22ch;
+
+  /* Spacing */
+  --space-xs: 0.5rem;
+  --space-s: 1rem;
+  --space-m: 1.75rem;
+  --space-l: 3rem;
+  --space-xl: 5rem;
+
+  /* Typography */
+  --body-font: "Source Serif 4", "Charter", Georgia, serif;
+  --ui-font: "Inter", system-ui, -apple-system, sans-serif;
+
+  --text-main: #1a1a1a;
+  --text-muted: #6b6b6b;
+  --rule: #e5e5e5;
+  --accent: #0a4cff;
+}
+
+/* ============================
+   Article container
+   ============================ */
+
+/*
+  Base typography for the article: sets the serif face, reading size, and line height.
+  Everything inside the <article> inherits these unless overridden.
+*/
+
+article {
+  font-family: var(--body-font);
+  color: var(--text-main);
+  line-height: 1.55;
+  font-size: 18px;
+}
+
+/* ============================
+   Header
+   ============================ */
+
+/*
+  Header is centered and constrained to the same width as the reading column.
+  `margin: ... auto ...` horizontally centers it.
+*/
+
+.article-header {
+  /* Match the overall width of the body grid (reading column + margin rail + gap). */
+  max-width: calc(var(--reading-width) + var(--margin-rail) + var(--space-m));
+  margin: var(--space-xl) auto var(--space-l);
+  padding: 0 var(--space-s);
+}
+
+/*
+  The title scales with viewport width while clamping to a min/max.
+  clamp(min, preferred, max) keeps large titles responsive but not extreme.
+*/
+.article-header h1 {
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  line-height: 1.1;
+  margin-bottom: var(--space-s);
+}
+
+/*
+  “Dek” = short subtitle/summary under the headline.
+  Uses muted color and slightly larger-than-body size.
+*/
+.article-header .dek {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+}
+
+/* ============================
+   Body grid
+   ============================ */
+
+/*
+  NYT-style layout using a 4-column CSS grid:
+
+  1) left gutter: flexible whitespace (min 1rem, grows)
+  2) reading column: main article content (max ~66 characters)
+  3) margin rail: side notes / pull quotes / infoboxes
+  4) right gutter: flexible whitespace (min 1rem, grows)
+
+  This makes the content centered, while still allowing margin content to sit
+  alongside the reading flow on wide screens.
+*/
+
+.article-body {
+  display: grid;
+  /*
+    Constrain the entire body grid to the same overall measure as the header.
+    Padding provides the outer “gutter” instead of putting gutters into the grid.
+  */
+  /*
+    Default: a single centered column, but use the *overall* article measure.
+    This avoids text feeling overly narrow on wide screens when no rail content
+    is present (we don't want to reserve a rail column, but we do want the
+    container to be as wide as the header).
+  */
+  max-width: calc(var(--reading-width) + var(--margin-rail) + var(--space-m));
+  margin: 0 auto;
+  padding: 0 var(--space-s);
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: var(--space-m);
+}
+
+/*
+  Enable the margin rail only when there are rail elements present.
+  This prevents “empty rail” pages from wasting width and feeling too narrow.
+*/
+.article-body:has(.pull-quote, .margin-note, .infobox) {
+  max-width: calc(var(--reading-width) + var(--margin-rail) + var(--space-m));
+  grid-template-columns:
+    minmax(0, var(--reading-width))
+    minmax(0, var(--margin-rail));
+}
+
+/* Default: content lives in reading column */
+/*
+  By default, every direct child of .article-body is placed into column 2
+  (the reading column). Specific elements override this with their own rules
+  (e.g. .pull-quote uses column 3).
+*/
+.article-body > * {
+  grid-column: 1;
+}
+
+/* ============================
+   Paragraphs
+   ============================ */
+
+/*
+  Simple vertical rhythm: paragraphs get a bottom margin based on the spacing scale.
+*/
+
+.article-body p {
+  margin-bottom: var(--space-m);
+}
+
+/*
+  Avoid extra space at the bottom of the article body.
+*/
+.article-body p:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================
+   Figures
+   ============================ */
+
+/*
+  Figures are vertically separated from text using the spacing scale.
+*/
+
+figure {
+  margin: var(--space-l) 0;
+}
+
+/*
+  Make images responsive and remove inline-image whitespace by forcing block layout.
+*/
+figure img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/*
+  Captions switch to the UI font and smaller size, so they feel “meta” not body copy.
+*/
+figcaption {
+  font-family: var(--ui-font);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: var(--space-xs);
+  line-height: 1.4;
+}
+
+/* Breakout figures (NYT-style) */
+/*
+  A breakout spans the reading column + the margin rail.
+  This is useful for wider figures that still align with the main layout.
+*/
+figure.breakout {
+  grid-column: 1;
+}
+
+/* If the rail is enabled, breakout figures can span reading + rail. */
+.article-body:has(.pull-quote, .margin-note, .infobox) figure.breakout {
+  grid-column: 1 / 3;
+}
+
+/* Full bleed (rare, special) */
+/*
+  Full-bleed spans every column (including gutters). Use sparingly.
+*/
+figure.full {
+  grid-column: 1 / -1;
+}
+
+/* ============================
+   Pull quotes
+   ============================ */
+
+/*
+  Pull quotes live in the margin rail (column 3).
+  `align-self: start` prevents tall neighboring content from vertically centering it.
+*/
+
+.pull-quote {
+  grid-column: 1;
+  align-self: start;
+  font-family: var(--ui-font);
+  font-size: 1.1rem;
+  line-height: 1.4;
+  color: var(--text-main);
+  border-left: 3px solid var(--rule);
+  padding-left: var(--space-s);
+  margin: var(--space-m) 0;
+}
+
+/* Inline pull quote fallback */
+/*
+  On narrow layouts (or if you want it in-flow), add the `.inline` modifier to
+  keep the quote inside the reading column.
+*/
+.pull-quote.inline {
+  grid-column: 1;
+  font-size: 1.3rem;
+  font-family: var(--body-font);
+  border: none;
+  padding: 0;
+}
+
+/* ============================
+   Margin notes / infoboxes
+   ============================ */
+
+/*
+  Margin notes are short explanations or citations that sit in the margin rail.
+  Styled to read like UI/meta content rather than main prose.
+*/
+
+.margin-note {
+  grid-column: 1;
+  font-family: var(--ui-font);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+  border-left: 2px solid var(--rule);
+  padding-left: var(--space-s);
+  margin: var(--space-m) 0;
+}
+
+/*
+  Infobox: a boxed margin element for definitions, sidebars, or data.
+*/
+.infobox {
+  grid-column: 1;
+  background: #fafafa;
+  border: 1px solid var(--rule);
+  padding: var(--space-s);
+  font-family: var(--ui-font);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+/* When the rail is enabled, place these elements into the rail column. */
+.article-body:has(.pull-quote, .margin-note, .infobox) .pull-quote,
+.article-body:has(.pull-quote, .margin-note, .infobox) .margin-note,
+.article-body:has(.pull-quote, .margin-note, .infobox) .infobox {
+  grid-column: 2;
+}
+
+/* ============================
+   Claims (Kabuki special sauce)
+   ============================ */
+
+/*
+  A “claim” is a paragraph that we want to visually mark as an extracted/annotated
+  statement. The dot is drawn using a ::before pseudo-element.
+*/
+
+.claim {
+  position: relative;
+  padding-left: 1rem;
+}
+
+.claim::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+/* ============================
+   Lists
+   ============================ */
+
+/*
+  Lists keep the same vertical rhythm as paragraphs.
+*/
+
+ul,
+ol {
+  margin-bottom: var(--space-m);
+  padding-left: 1.25rem;
+}
+
+li {
+  margin-bottom: var(--space-xs);
+}
+
+/* ============================
+   Links
+   ============================ */
+
+/*
+  Subtle link styling: keep underline, but tune thickness/offset for readability.
+*/
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* ============================
+   Responsive collapse
+   ============================ */
+
+/*
+  On smaller screens, the margin rail collapses into the main reading flow.
+  Everything becomes a single centered column, and margin elements lose their
+  left border so they don’t look cramped.
+*/
+
+@media (max-width: 900px) {
+  .article-body {
+    grid-template-columns: 1fr;
+  }
+
+  .article-body > * {
+    grid-column: 1;
+  }
+
+  .pull-quote,
+  .margin-note,
+  .infobox {
+    grid-column: 1;
+    border-left: none;
+    padding-left: 0;
+  }
+
+  figure.breakout {
+    grid-column: 1;
+  }
+}

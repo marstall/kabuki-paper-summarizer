@@ -19,7 +19,7 @@ body {
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Merriweather',Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -39,4 +39,24 @@ a {
   html {
     color-scheme: dark;
   }
+}
+
+.translation-container {
+  max-width: 600px;
+  margin: 0 auto;
+  margin-top: 0em;
+}
+
+.translation-container .title {
+  font-family: "Playfair Display";
+  font-size: 32px;
+}
+
+.translation-container p {
+  font-family: 'Merriweather';
+  margin-bottom:1em;
+}
+
+.translation-container p:hover {
+    background-color: #ffc;
 }

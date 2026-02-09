@@ -1,0 +1,19 @@
+.translationContainer {
+    max-width: 200px;
+    margin: 0 auto;
+    margin-top: 5em;
+}
+
+.translationContainer :global(.title) {
+    font-family: "Playfair Display";
+    font-size: 33px;
+    font-style: italic;
+}
+
+.translationContainer p {
+    font-family: "Merriweather";
+}
+
+.poop {
+    background-color: red;
+}

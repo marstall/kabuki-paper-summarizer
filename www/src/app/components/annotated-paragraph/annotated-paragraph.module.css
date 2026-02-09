@@ -1,0 +1,23 @@
+.container p {
+  font-family: 'Merriweather';
+  margin-bottom: 1em;
+}
+
+.container p:hover {
+  background-color: #ffc;
+}
+
+.expandLink {
+  text-decoration: none;
+  color:lightsalmon;
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+.expandLink:hover {
+
+}
+
+.claimsPopin {
+  background-color: #ffc;
+}
