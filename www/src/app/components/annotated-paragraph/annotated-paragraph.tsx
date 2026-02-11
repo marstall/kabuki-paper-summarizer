@@ -14,8 +14,8 @@ export default function AnnotatedParagraph({id,text, claims}) {
       {text}
       <a
         onClick={toggleExpanded}
-        className={styles.expandLink}>show basis {disclosureIcon()}
+        className={styles.expandLink}>show basis{disclosureIcon()}
       </a>
-      {/*{expanded && <Claims claims={claims}/>}*/}
+      {expanded && <Claims claims={claims}/>}
     </p>
 }

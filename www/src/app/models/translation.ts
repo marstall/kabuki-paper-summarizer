@@ -5,6 +5,7 @@ import {error} from '@/app/lib/logger'
 export default class Translation extends BaseModel {
   static async create(data) {
     const now = new Date();
+
     try {
       return await prisma.translations.create({
         data: {

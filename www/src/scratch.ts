@@ -1,85 +1,40 @@
-// import ArticleContainer from './app/models/article'
-//
-// const raw = {
-//   year: 1986,
-//   original_title: "original title ..."
-// }
-//
-// const article = new ArticleContainer(raw)
-//
-// const proxy = new Proxy(raw, article);
-//
-// console.log(proxy.year)
+import {prisma} from './app/lib/prisma'
+import Prompt from "@/app/models/prompt";
+import {log, bold, block, header, error, divider} from "@/app/lib/logger"
+import Llm from '@/app/models/llm'
+import Translation from "@/app/models/translation";
+import _ from "underscore/modules/index-all";
 
-// interface Raw {
-//
-// }
-//
-// interface RawStreet extends Raw {
-//   houses: number,
-//   mailboxes: number
-// }
-//
-// const raw_street: RawStreet = {
-//   houses: 6,
-//   mailboxes: 3
-// }
-//
-// class Base {
-//   raw: Raw;
-//   constructor(raw:any) {
-//     this.raw=raw
-//   }
-// }
-//
-// class Street extends Base {
-//   raw: RawStreet
-//   constructor(raw:RawStreet) {
-//     super(raw)
-//     this.raw=raw
-//   }
-// }
-//
-// const street = new Street(raw_street);
-//
-// console.log(street.raw.houses)
-//
-// // ----------------------------------------
-// // ----------------------------------------
-//
-const target = {
-  message1: "hello",
-  message2: "everyone",
-};
+// Translation.create({
+//   llm_id: Llm.configuredLlm.id,
+//   title: json.title || this.prismaArticle.original_title,
+//   second_title: json.second_title,
+//   category:json.category,
+//   pull_quote: _.get(json.pull_quote,0),
+//   pull_quote_index: _.get(json.pull_quote,1),
+//   definitions: json.definitions,
+//   subheaders: json.subheaders,
+//   body: draft,
+//   article_id: Number(this.prismaArticle.id),
+//   claims: this.prismaArticle.claims
+// })
+const now = new Date();
 
 
-class Handler {
-  static create() {
-    const handler = new Handler()
-    return new Proxy(target, {
-      get(target, prop, receiver) {
-        if (Object.hasOwn(target,prop)) {
-          return Reflect.get(target,prop,receiver);
-        }
-        return (handler as any)[prop]
-      }
-    });
+await prisma.translations.create({
+  data: {
+    llm_id: 2,
+    title: "title",
+    second_title: "secon_title",
+    category: "category",
+    pull_quote: "pull quote",
+    pull_quote_index: 0,
+    definitions: {},
+    subheaders: {},
+    body: "body",
+    article_id:1,
+    claims:{},
+    created_at: now,
+    updated_at: now
   }
-
-  message3() {
-    return "message3"
-  }
-};
-
-const handler = Handler.create()
-
-console.log(handler.message1)
-// console.log(handler.message2)
-console.log(handler.message3())
-// console.log(handler.message4)
-
-// console.log(proxy2.message1x)
-// console.log(proxy2.message1)
-// console.log(proxy2.message2)
-// console.log(proxy2.message3)
-// console.log(proxy2.message4)
+})

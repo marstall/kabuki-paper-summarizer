@@ -4,6 +4,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "prisma": "prisma",
+    "db:pull": "prisma db pull",
+    "db:pull:print": "prisma db pull --print",
+    "db:generate": "prisma generate",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -23,6 +27,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-hot-toast": "^2.6.0",
+    "underscore": "^1.13.7",
     "yargs": "^17.7.2"
   },
   "devDependencies": {

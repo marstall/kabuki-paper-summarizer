@@ -4,6 +4,7 @@ import Prompt from "@/app/models/prompt";
 import {log, bold, block, header, error, divider} from "@/app/lib/logger"
 import Llm from '@/app/models/llm'
 import Translation from "@/app/models/translation";
+import _ from 'underscore'
 
 export default class Article extends BaseModel {
   prismaArticle = null;
@@ -12,8 +13,8 @@ export default class Article extends BaseModel {
     super()
   }
 
-  static async create(articleId, silent = true) {
-    const a = new Article(silent)
+  static async create(articleId) {
+    const a = new Article()
     await a.load(articleId)
     return a
   }
@@ -47,7 +48,7 @@ export default class Article extends BaseModel {
     }
   }
 
-  async produceTranslation({forceExtractClaims, numDrafts, reviewDraft, editDraft,generateMetadata}) {
+  async produceTranslation({forceExtractClaims, numDrafts, reviewDraft, editDraft, generateMetadata}) {
     if (!this.prismaArticle.claims || forceExtractClaims) {
       log("extracting claims ...")
       const json = await this.extractClaims();
@@ -69,24 +70,24 @@ export default class Article extends BaseModel {
     } else {
       log("skipping all drafts ...")
     }
-    for (const draft of drafts) {
-      /* generate metadata:
-        - title
-        - second title
-        - tags
-        - paragraph-indexed pull quote
-        - paragraph-indexed definitions
-       */
-      const {category, title, second_title, tags, pull_quote, definitions} = generateMetadata ? this.generateMetadata(draft) :
-        {category: null, title:null,second_title:null,tags:[],pull_quote:null,definitions:{}}
-
-      Translation.create({
+    for (const draft of drafts||[]) {
+      let json = {} as any;
+      if (generateMetadata) {
+        json = await this.generateMetadata(draft);
+        if (!json.category || json.category.length === 0) {
+          error("Generating metadata didn't work, stopping.")
+          return;
+        }
+      }
+      await Translation.create({
         llm_id: Llm.configuredLlm.id,
-        title: title||this.prismaArticle.original_title,
-        second_title,
-        category,
-        pull_quote,
-        definitions,
+        title: json.title || this.prismaArticle.original_title,
+        second_title: json.second_title,
+        category:json.category,
+        pull_quote: _.get(json.pull_quote,0),
+        pull_quote_index: _.get(json.pull_quote,1),
+        definitions: json.definitions,
+        subheaders: json.subheaders,
         body: draft,
         article_id: Number(this.prismaArticle.id),
         claims: this.prismaArticle.claims
@@ -107,29 +108,33 @@ export default class Article extends BaseModel {
     const definitions = `a hash of short definitions that will appear inline next to a subset of paragraphs. 
       For example, if paragraph 5 introduces the term "Enhancers, there should be an entry like 
       {5:"Enhancers are regulatory DNA regions that amplify gene expression."}`
-    const subheaders = `a short list of subheaders (no more than 4) to appear sprinkled thoroughout the text. They should be in sentence form
+    const subheaders = `a short list of subheaders (no more than 4) to appear sprinkled throughout the text. They should be in sentence form
     and pull out a key fact from the next few paragraphs. In that sense, they are like a pull quote, but they should not be a direct quote.
-    Format them like definitions, with the index of the paragraph they should appear before:  {3:subheader text}. 
+    Format them like definitions, with the index of the paragraph they should appear before:  {"3":"subheader text"}. Should not have dependent
+    clauses, multiple clauses, punctuation marks (except, judiciously, perhaps 1 comma) or parentheses.
     Examples: "Kabuki mice performed poorly on the Morris Water maze", "A cancer drug improved outcomes, but was consider too toxic",
-    "Boosting CREB improved enhancer timing`
-    const jsonExample = {category, title, second_title, tags, pull_quote, definitions,subheaders}
+    "Boosting CREB improved enhancer timing"`
+    const jsonExample = {category, title, second_title, tags, pull_quote, definitions, subheaders}
     const instructions = `I need a number of strings to fill in spots in a typical magazine web layout. Can you read through the draft and generate
     them as specified in this json file? ${JSON.stringify(jsonExample)}.
-    Important: Return ONLY raw JSON. Do NOT wrap the response in markdown.Do
-    NOT include \`\`\` or any extra text. The response must be directly parseable by JSON.parse().`
+    Important: Return ONLY raw JSON. Do NOT wrap the response in markdown.
+    Do NOT include \`\`\` or any extra text. The response must be directly parseable by JSON.parse().`
+    block("generating metadata ....")
+    log('instructions', instructions,)
     const response = await Llm.client.responses.create({
       model: Llm.configuredLlm.model,
       instructions,
-      input:draft,
+      input: draft,
     });
     const elapsed = (new Date() as any - (pre as any)) / 1000.0
     block(`Completed in ${elapsed} seconds.`)
-
+    log("response", response.output_text)
     const json = JSON.parse(response.output_text)
     bold("output")
     block(JSON.stringify(json, null, 2))
     return json
   }
+
   async extractClaims() {
     const pre = new Date()
     const jsonExample = {
@@ -163,104 +168,98 @@ export default class Article extends BaseModel {
     return json
   }
 
-    async writeDrafts(promptName, num = 1)
-    {
-      try {
-        const pre = new Date()
-        header(this.prismaArticle.original_title)
-        const input = JSON.stringify(this.prismaArticle.claims);
-        const instructions = await Prompt.get(promptName);
-        // log(`input is ${input.length} characters long.`)
-        // log(`instructions are ${instructions.length} characters long.`)
-        bold(`writing first draft, using prompt <${promptName}> with  model < ${Llm.configuredLlm.model}> ...`)
-        log("")
-        block(instructions)
-        const responses = await Llm.chat(instructions, input, {n: num})
-
-        bold("draft")
-        responses.map((response, i) => {
-          header("option " + i)
-          block(response)
-          divider()
-        })
-        block(`Completed in ${(new Date() as any - (pre as any)) / 1000.0} seconds.`)
-        return responses
-      } catch (e) {
-        error(e)
-      }
-    }
-
-    async reviewDraft(promptName, draft)
-    {
+  async writeDrafts(promptName, num = 1) {
+    try {
       const pre = new Date()
-      try {
-        bold(`reviewing first draft with prompt <${promptName}> ...`)
-        log(await Prompt.get(promptName))
-        const response = await Llm.client.responses.create({
-          model: Llm.configuredLlm.model,
-          reasoning: {effort: "medium"},
+      header(this.prismaArticle.original_title)
+      const input = JSON.stringify(this.prismaArticle.claims);
+      const instructions = await Prompt.get(promptName);
+      bold(`writing first draft, using prompt <${promptName}> with  model < ${Llm.configuredLlm.model}> ...`)
+      log("")
+      block(instructions)
+      const responses = await Llm.chat(instructions, input, {n: num})
 
-          instructions: await Prompt.get(promptName),
-          input: draft,
-        });
-
-        bold("review json")
-        const json = JSON.parse(response.output_text)
-        block(JSON.stringify(json, null, 2));
-        block(`Completed in ${(new Date() as any - (pre as any)) / 1000.0} seconds.`)
-        return json
-      } catch (e) {
-        error(e)
-      }
+      bold("draft")
+      responses.map((response, i) => {
+        header("option " + i)
+        block(response)
+        divider()
+      })
+      block(`Completed in ${(new Date() as any - (pre as any)) / 1000.0} seconds.`)
+      return responses
+    } catch (e) {
+      error(e)
     }
+  }
 
-    async editDraft(promptName, draft, draftReview)
-    {
-      const pre = new Date()
-      try {
-        bold("editor pass")
-        const input = `Audit: ${draftReview === "string" ? draftReview : JSON.stringify(draftReview, null, 2)}
+  async reviewDraft(promptName, draft) {
+    const pre = new Date()
+    try {
+      bold(`reviewing first draft with prompt <${promptName}> ...`)
+      log(await Prompt.get(promptName))
+      const response = await Llm.client.responses.create({
+        model: Llm.configuredLlm.model,
+        reasoning: {effort: "medium"},
+
+        instructions: await Prompt.get(promptName),
+        input: draft,
+      });
+
+      bold("review json")
+      const json = JSON.parse(response.output_text)
+      block(JSON.stringify(json, null, 2));
+      block(`Completed in ${(new Date() as any - (pre as any)) / 1000.0} seconds.`)
+      return json
+    } catch (e) {
+      error(e)
+    }
+  }
+
+  async editDraft(promptName, draft, draftReview) {
+    const pre = new Date()
+    try {
+      bold("editor pass")
+      const input = `Audit: ${draftReview === "string" ? draftReview : JSON.stringify(draftReview, null, 2)}
         
         Article: ${draft}`;
 
-        const response = await Llm.client.responses.create({
-          model: Llm.configuredLlm.model,
-          instructions: await Prompt.get(promptName),
-          reasoning: {effort: "medium"},
-          input,
-        });
-        bold("editor draft")
-        block(response.output_text);
-        block(`Completed in ${(new Date() as any - (pre as any)) / 1000.0} seconds.`)
-      } catch (e) {
-        error(e)
-      }
+      const response = await Llm.client.responses.create({
+        model: Llm.configuredLlm.model,
+        instructions: await Prompt.get(promptName),
+        reasoning: {effort: "medium"},
+        input,
+      });
+      bold("editor draft")
+      block(response.output_text);
+      block(`Completed in ${(new Date() as any - (pre as any)) / 1000.0} seconds.`)
+    } catch (e) {
+      error(e)
     }
+  }
 
 
-    async load(articleId)
-    {
-      this.prismaArticle = await prisma.articles.findUnique(
-        {
-          where: {id: articleId},
-          include: {
-            sections: {
-              orderBy: {
-                id: 'asc'
-              },
-              include: {
-                paragraphs: {
-                  orderBy: {
-                    id: 'asc'
-                  }
+  async load(articleId) {
+    this.prismaArticle = await prisma.articles.findUnique(
+      {
+        where: {id: articleId},
+        include: {
+          sections: {
+            orderBy: {
+              id: 'asc'
+            },
+            include: {
+              paragraphs: {
+                orderBy: {
+                  id: 'asc'
                 }
               }
             }
           }
         }
-      )
-    }
+      }
+    )
   }
+}
 
 /*
 

@@ -70,24 +70,31 @@ model sections {
 }
 
 model translations {
-  id           BigInt   @id @default(autoincrement())
-  llm_id       BigInt?
-  prompt_id    BigInt?
-  title        String?  @db.VarChar
-  body         String?  @db.VarChar
-  extra_prompt String?  @db.VarChar
-  status       String?  @db.VarChar
-  created_at   DateTime @db.Timestamp(6)
-  updated_at   DateTime @db.Timestamp(6)
-  llm_settings Json?
-  article_id   Int?
-  paragraph_id Int?
-  prompt1      String?  @db.VarChar
-  prompt2      String?  @db.VarChar
-  prompt3      String?  @db.VarChar
-  claims       Json?
-  llms         llms?    @relation(fields: [llm_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_dc36eb302b")
-  prompts      prompts? @relation(fields: [prompt_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_fff8b2d94e")
+  id               BigInt   @id @default(autoincrement())
+  llm_id           BigInt?
+  prompt_id        BigInt?
+  title            String?  @db.VarChar
+  body             String?  @db.VarChar
+  extra_prompt     String?  @db.VarChar
+  status           String?  @db.VarChar
+  created_at       DateTime @db.Timestamp(6)
+  updated_at       DateTime @db.Timestamp(6)
+  llm_settings     Json?
+  article_id       Int?
+  paragraph_id     Int?
+  prompt1          String?  @db.VarChar
+  prompt2          String?  @db.VarChar
+  prompt3          String?  @db.VarChar
+  claims           Json?
+  second_title     String?  @db.VarChar
+  string           String?  @db.VarChar
+  category         String?  @db.VarChar
+  pull_quote       String?  @db.VarChar
+  pull_quote_index Int?
+  definitions      Json?
+  subheaders       Json?    @db.Json
+  llms             llms?    @relation(fields: [llm_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_dc36eb302b")
+  prompts          prompts? @relation(fields: [prompt_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_fff8b2d94e")
 
   @@index([llm_id], map: "index_translations_on_llm_id")
   @@index([prompt_id], map: "index_translations_on_prompt_id")

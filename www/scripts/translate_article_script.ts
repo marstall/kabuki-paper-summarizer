@@ -5,12 +5,13 @@ import yargs from 'yargs'
 import {hideBin} from 'yargs/helpers'
 import Article from '@/app/models/article'
 import Llm from '@/app/models/llm'
+import Translation from "@/app/models/translation";
 
 async function main(articleId: number,llmId: number,params) {
   Log.init()
-  await Llm.loadDefault(llmId)
+   await Llm.loadDefault(llmId)
   const article = await Article.create(articleId)
-  const result = await article.produceTranslation(params)
+   const result = await article.produceTranslation(params)
   log("")
   block("done.")
 }
@@ -54,6 +55,7 @@ const argv = await yargs(hideBin(process.argv))
   })
   .strict()
   .parse()
+console.log("hi")
 
 const articleId = argv['article-id']
 const numDrafts = argv['num-drafts']||0
