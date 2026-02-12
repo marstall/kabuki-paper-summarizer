@@ -1,0 +1,12 @@
+.container {
+  font-family: 'Merriweather';
+  margin-bottom: 1em;
+  background-color: #ffc;
+  font-size: 14px;
+  line-height: 25px;
+  padding: 0.5em;
+}
+
+.container h1 {
+  font-weight: bold;
+}

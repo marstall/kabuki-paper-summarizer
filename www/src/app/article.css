@@ -15,7 +15,7 @@
 :root {
   /* Measure */
   --reading-width: 55ch;
-  --margin-rail: 22ch;
+  --margin-rail: 0ch;
 
   /* Spacing */
   --space-xs: 0.5rem;
@@ -29,9 +29,12 @@
   --ui-font: "Inter", system-ui, -apple-system, sans-serif;
 
   --text-main: #1a1a1a;
-  --text-muted: #6b6b6b;
+  --text-emphasized: black;
   --rule: #e5e5e5;
   --accent: #0a4cff;
+  --accent-2: rgb(55,123,42);
+  --link: rgb(193,98,90);
+  --text-muted: #666;
 }
 
 /* ============================
@@ -63,7 +66,16 @@ article {
   /* Match the overall width of the body grid (reading column + margin rail + gap). */
   max-width: calc(var(--reading-width) + var(--margin-rail) + var(--space-m));
   margin: var(--space-xl) auto var(--space-l);
+  margin-top:0.5em;
+  margin-bottom: 1.5rem;
   padding: 0 var(--space-s);
+}
+
+.article-supertitle {
+  font-family: var(--ui-font);
+  font-size: smaller;
+  font-weight: bold;
+  color: var(--accent-2)
 }
 
 /*
@@ -73,7 +85,6 @@ article {
 .article-header h1 {
   font-size: clamp(2.2rem, 4vw, 3rem);
   line-height: 1.1;
-  margin-bottom: var(--space-s);
 }
 
 /*
@@ -81,7 +92,7 @@ article {
   Uses muted color and slightly larger-than-body size.
 */
 .article-header .dek {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: var(--text-muted);
 }
 
@@ -118,6 +129,22 @@ article {
   padding: 0 var(--space-s);
   grid-template-columns: minmax(0, 1fr);
   column-gap: var(--space-m);
+}
+
+.byline {
+  margin-top:0.5rem;
+  font-size:smaller;
+  font-style: italic;
+}
+.byline .article-link {
+  color:var(--link);
+}
+.byline p {
+  margin-bottom: 4px;
+}
+.byline .article-link a {
+  color:var(--link);
+  text-decoration: underline;
 }
 
 /*
@@ -181,6 +208,10 @@ figure img {
   display: block;
 }
 
+.article-subheader {
+  font-weight: bold;
+}
+
 /*
   Captions switch to the UI font and smaller size, so they feel “meta” not body copy.
 */
@@ -224,12 +255,13 @@ figure.full {
 */
 
 .pull-quote {
-  grid-column: 1;
+  font-family: var(--body-font);
   align-self: start;
-  font-family: var(--ui-font);
-  font-size: 1.1rem;
+  font-size: 1.5rem;
+  font-style: italic;
   line-height: 1.4;
-  color: var(--text-main);
+  font-weight: bold;
+  color: var(--text-emphasized);
   border-left: 3px solid var(--rule);
   padding-left: var(--space-s);
   margin: var(--space-m) 0;

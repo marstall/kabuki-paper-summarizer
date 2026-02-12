@@ -5,6 +5,7 @@ import TranslationViewClient from "@/app/articles/[article_id]/translations/[tra
 
 export default async function TranslationView({translation_id}: any) {
   const translation = await prisma.translations.findUnique({where: {id: translation_id}})
+  const article = await prisma.articles.findUnique({where: {id: translation.article_id}})
   if (!translation) return <div>Translation Not found</div>
-  return <TranslationViewClient translation={translation}/>
+  return <TranslationViewClient article={article} translation={translation}/>
 }

@@ -17,20 +17,32 @@ function extractParagraphData(body) {
     const parens = matches[2]
 
     const claimIndexes = parens.match(/\d+/g).map(id => Number(id))
-    return [text + " (" + claimIndexes.join(", ") + ")", claimIndexes]
+    return [text, claimIndexes]
   })
 }
 
-export default function TranslationViewClient({translation}) {
+export default function TranslationViewClient({article,translation}) {
   return <article>
     <header className="article-header">
+      <div className={'article-supertitle'}>{translation.category}</div>
       <h1>{translation.title}</h1>
-      <p className="dek">Why metabolism keeps showing up in learning and memory.</p>
+      <div className="dek">{translation.second_title}</div>
+      <div className="byline"><p>An AI-generated plain-english version of the {article.year} article <span className={"article-link"}>&ldquo;<a href={article.url}>{article.original_title}</a>&rdquo;</span> by {article.attribution.trim()}.</p>
+        <p>
+        NB: This is an interactive document. It includes features that let you assess its
+        completeness and accuracy by deeplinking to individual passages in the original paper.
+        </p>
+      </div>
     </header>
     <section className="article-body">
       {extractParagraphData(translation.body).map(([text, claimIndexes], i) => {
-      const claims = claimIndexes.map(j => translation.claims["claims"][j])
-      return <AnnotatedParagraph key={i} id={i} text={text} claims={claims}/>
+      return <AnnotatedParagraph key={`para=${i}`}
+                                 id={i}
+                                 article={article}
+                                 translation={translation}
+                                 articleParagraphText={text}
+                                 claimIndexes={claimIndexes}
+                                 />
     })}
     </section>
 
@@ -56,9 +68,9 @@ export default function TranslationViewClient({translation}) {
 
   // return <article>
   //   <h1 className="title">{translation.title}</h1>
-    {extractParagraphData(translation.body).map(([text, claimIndexes], i) => {
-      const claims = claimIndexes.map(j => translation.claims["claims"][j])
-      return <AnnotatedParagraph key={i} id={i} text={text} claims={claims}/>
-    })}
+  //   {extractParagraphData(translation.body).map(([text, claimIndexes], i) => {
+  //     const claims = claimIndexes.map(j => translation.claims["claims"][j])
+  //     return <AnnotatedParagraph key={i} id={i} articleParagraphText={text} claims={claims}/>
+  //   })}
   // </article>
 }

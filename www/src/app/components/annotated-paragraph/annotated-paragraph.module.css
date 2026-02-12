@@ -1,3 +1,4 @@
+
 .container p {
   font-family: 'Merriweather';
   margin-bottom: 1em;
@@ -9,7 +10,7 @@
 
 .expandLink {
   text-decoration: none;
-  color:lightsalmon;
+  color:var(--link);
   cursor: pointer;
   margin-left: 4px;
 }
