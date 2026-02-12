@@ -86,13 +86,13 @@ def adobe_create_asset(client_id:, token:, media_type:)
   req.body = JSON.dump({ "mediaType" => media_type })
 
   res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) { |http| http.request(req) }
-  raise "Adobe new asset failed (#{res.code}): #{res.body}" unless res.is_a?(Net::HTTPSuccess)
+  raise "Adobe create-edit asset failed (#{res.code}): #{res.body}" unless res.is_a?(Net::HTTPSuccess)
 
   json = JSON.parse(res.body)
   upload_uri = json["uploadUri"] || json["uploadURI"]
   asset_id = json["assetID"] || json["assetId"] || json["asset_id"]
-  raise "Adobe new asset response missing uploadUri" if upload_uri.nil? || upload_uri.empty?
-  raise "Adobe new asset response missing assetID" if asset_id.nil? || asset_id.empty?
+  raise "Adobe create-edit asset response missing uploadUri" if upload_uri.nil? || upload_uri.empty?
+  raise "Adobe create-edit asset response missing assetID" if asset_id.nil? || asset_id.empty?
 
   { upload_uri: upload_uri, asset_id: asset_id }
 end
@@ -122,11 +122,11 @@ def adobe_extract_job_location(client_id:, token:, asset_id:, elements_to_extrac
 
   res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) { |http| http.request(req) }
   unless res.code.to_i == 201
-    raise "Adobe extract job new failed (#{res.code}): #{res.body}"
+    raise "Adobe extract job create-edit failed (#{res.code}): #{res.body}"
   end
 
   location = res["location"] || res["Location"]
-  raise "Adobe extract job new missing Location header" if location.nil? || location.empty?
+  raise "Adobe extract job create-edit missing Location header" if location.nil? || location.empty?
   location
 end
 

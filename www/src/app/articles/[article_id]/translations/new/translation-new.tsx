@@ -75,9 +75,8 @@ async function submit(prevState, formData) {
   }
 }
 
-export default async function ArticleNew({article_id,translation_id}) {
+export default async function TranslationNew({article_id,translation_id}) {
   const translation = translation_id && await prisma.translations.findUnique({where: {id: translation_id}});
-  console.log({translation_id, translation})
 
   return (
     <TranslationForm translation={translation} action={submit}/>

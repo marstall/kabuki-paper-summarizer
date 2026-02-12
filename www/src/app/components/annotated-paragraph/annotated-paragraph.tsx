@@ -23,7 +23,7 @@ export default function AnnotatedParagraph({id, article, articleParagraphText, t
   const pullquote = translation.pull_quote_index === id && translation.pull_quote;
   return <>
 
-    <p key={`para-${translation.id}`}>
+    <div className={styles.paragraph} key={`para-${translation.id}`}>
       {pullquote && <aside className="pull-quote">
         &ldquo;{pullquote}&rdquo;
       </aside>
@@ -35,7 +35,7 @@ export default function AnnotatedParagraph({id, article, articleParagraphText, t
         className={styles.expandLink}>show basis{disclosureIcon()}
       </a>
       {expanded && <Claims claims={claims}/>}
-    </p>
+    </div>
     {/*{definition &&*/}
     {/*<aside className="margin-note">*/}
     {/*  {definition}*/}

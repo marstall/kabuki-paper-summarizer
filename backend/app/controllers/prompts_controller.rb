@@ -10,7 +10,7 @@ class PromptsController < ApplicationController
   def show
   end
 
-  # GET /prompts/new
+  # GET /prompts/create-edit
   def new
     @prompt = Prompt.new
   end

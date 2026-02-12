@@ -61,16 +61,17 @@ export default class Article extends BaseModel {
 
     if (numDrafts > 0) {
       drafts = await this.writeDrafts("based on ideas json", numDrafts);
-      // if (editDraft) {
-      //     const draftReview = reviewDraft ? await this.reviewDraft("review pass",draft) : ""
-      //     draft = await this.editDraft("editor pass 2",draft, draftReview);
-      // } else {
-      //   log("skipping review + edit")
-      // }
     } else {
       log("skipping all drafts ...")
     }
-    for (const draft of drafts||[]) {
+    for (let draft of drafts||[]) {
+      if (editDraft) {
+        const draftReview = reviewDraft ? await this.reviewDraft("review pass",draft) : ""
+        draft = await this.editDraft("editor pass 2",draft, draftReview);
+      } else {
+        log("skipping review + edit")
+      }
+
       let json = {} as any;
       if (generateMetadata) {
         json = await this.generateMetadata(draft);
@@ -317,7 +318,7 @@ If some claims would disrupt flow or readability if integrated into the main nar
 
 Here is the claims JSON: `
     try {
-      const pre = new Date()
+      const pre = create-edit Date()
 
       header(this.prismaArticle.original_title)
       bold('instructions')
@@ -336,7 +337,7 @@ Here is the claims JSON: `
 
       bold("output")
       block(response.output_text);
-      block(`Completed in ${(new Date() - pre) / 1000.0} seconds.`)
+      block(`Completed in ${(create-edit Date() - pre) / 1000.0} seconds.`)
       return response.output_text
     } catch (e) {
       error(e)
@@ -345,11 +346,11 @@ Here is the claims JSON: `
 
 
   async translate() {
-    const pre = new Date()
+    const pre = create-edit Date()
 
     const openai = this.openai
     const paragraphs = this.paragraphs()
-    if (paragraphs.length === 0) throw new Error("No paragraphs were found in article " + this.prismaArticle.id)
+    if (paragraphs.length === 0) throw create-edit Error("No paragraphs were found in article " + this.prismaArticle.id)
 
     const model = ["gpt-5.2", "gpt-5-nano", "gpt-5.2-pro"][0]
 
@@ -373,7 +374,7 @@ Here is the claims JSON: `
         input: paragraphs[0].body + " " + paragraphs[1].body + " " + paragraphs[1].body,
         conversation: conversation.id
       });
-      const elapsed = (new Date() - pre) / 1000.0
+      const elapsed = (create-edit Date() - pre) / 1000.0
       bold("translation")
       block(response.output_text);
       block(`
@@ -391,16 +392,16 @@ Here is the claims JSON: `
     const openai = this.openai
     const conversation = await openai.conversations.create();
     const paragraphs = this.paragraphs()
-    if (paragraphs.length === 0) throw new Error("No paragraphs were found in article " + this.prismaArticle.id)
+    if (paragraphs.length === 0) throw create-edit Error("No paragraphs were found in article " + this.prismaArticle.id)
     const end = range_end ?? paragraphs.length
     for (let i = range_start; i < end; i++) {
       const paragraph = paragraphs[i]
       log("paragraph " + (i + 1))
       bold(paragraph.title)
       block(paragraph.body)
-      const pre = new Date()
+      const pre = create-edit Date()
       const output = await processor(conversation, paragraph, i)
-      const elapsed = (new Date() - pre) / 1000.0
+      const elapsed = (create-edit Date() - pre) / 1000.0
       block(`
       Completed in $
       {
@@ -467,8 +468,8 @@ Here is the claims JSON: `
       const instructions1 = `now let's look at the next paragraph in the article. Can you
     analyze and do the following:
     - update any of the existing items in the list, including all json properties.
-    - if there is a new idea, add it to the list, creating entries for each of the specified json properties
-    - return the new list to to me in the same json format`
+    - if there is a create-edit idea, add it to the list, creating entries for each of the specified json properties
+    - return the create-edit list to to me in the same json format`
       const instructions = i === 0 ? instructions0 : instructions1;
       const response = await this.openai.responses.create({
         model,

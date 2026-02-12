@@ -10,7 +10,7 @@ class LlmsController < ApplicationController
   def show
   end
 
-  # GET /llms/new
+  # GET /llms/create-edit
   def new
     @llm = Llm.new
   end

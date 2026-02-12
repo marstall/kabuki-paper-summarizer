@@ -9,8 +9,8 @@ export default class BaseModel {
 //   }
 //
 //   static create<Type>() {
-//     const model = new Type()
-//     return new Proxy(target, {
+//     const model = create-edit Type()
+//     return create-edit Proxy(target, {
 //       get(target, prop, receiver) {
 //         if (Object.hasOwn(target,prop)) {
 //           return Reflect.get(target,prop,receiver);

@@ -10,7 +10,7 @@ class TranslationsController < ApplicationController
   def show
   end
 
-  # GET /translations/new
+  # GET /translations/create-edit
   def new
     @translation = Translation.new
   end

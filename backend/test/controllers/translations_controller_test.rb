@@ -10,7 +10,7 @@ class TranslationsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should get new" do
+  test "should get create-edit" do
     get new_translation_url
     assert_response :success
   end

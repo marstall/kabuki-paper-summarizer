@@ -4,8 +4,8 @@ require './multi_uploader.rb'
 RSpec.describe "multi_uploader.rb" do
   it "perform_uploads works" do
 
-    # mock Config.openai client to return a files object with a new method
-    # the new method should return the string "file_object1"
+    # mock Config.openai client to return a files object with a create-edit method
+    # the create-edit method should return the string "file_object1"
 
     # Create the mock objects
     mock_file_object = double(filename: "filename1", bytes: 1024)

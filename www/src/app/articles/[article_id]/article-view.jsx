@@ -7,8 +7,10 @@ export default async function ArticleView({id}) {
   const sections = await prisma.sections.findMany(
     {where: {article_id: id}}
   )
-  const translations = await prisma.translations.findMany(
-    {where: {article_id: Number(id)}}
+  const translations = await prisma.translations.findMany({
+      where: {article_id: Number(id)},
+      include: {llms:true}
+    }
   )
   return <div className="content">
     <h1>{article.original_title}</h1>
@@ -22,13 +24,12 @@ export default async function ArticleView({id}) {
 
     <h3>Translations</h3>
     <div className={"block"}>
-      {translations.map(translation=>
-      <p key={translation.id}>
-        <Link  href={`/articles/${id}/translations/${translation.id}`} className="button">{translation.title}</Link>
+      {translations.map(translation=>{
+        return <p key={translation.id}>
+        <Link  href={`/articles/${id}/translations/${translation.id}`} className="button">{translation.title}&nbsp;<span style={{color:'lightgray',fontSize:'smaller'}}>&nbsp;{translation.llms.model} / {translation.llms.type}</span></Link>
       </p>
-      )}
+      })}
     </div>
-    <Link onClick={translate} href='#' className="button">Translate into Plain English</Link>
 
     {sections.map(async (section) => {
         const paragraphs = await prisma.paragraphs.findMany(

@@ -60,3 +60,9 @@ a {
 .translation-container p:hover {
     background-color: #ffc;
 }
+
+.above-h1 {
+  font-size: smaller;
+  text-transform: uppercase;
+  color: #cccccc;
+}
