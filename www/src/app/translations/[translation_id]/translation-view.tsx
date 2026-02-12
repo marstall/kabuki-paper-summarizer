@@ -38,5 +38,5 @@ export default function TranslationView({article_id, translation_id}: any) {
     <div className="content">
       butt
     </div>
-  </div>
+  </article>
 }

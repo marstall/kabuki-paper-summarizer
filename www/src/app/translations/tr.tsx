@@ -24,11 +24,19 @@ export default async function TranslationView(params: any) {
   console.log({params})
   const translation_id = params.tr_id || params.id
   const translation = await prisma.translations.findUnique({where: {id: translation_id}})
-  const article = await prisma.articles.findUnique({where: {id: translation.article_id}})
   if (!translation) return <div>Translation Not found</div>
+  const article = await prisma.articles.findUnique({where: {id: translation.article_id}})
   const annotatedParagraphs = extractParagraphData(translation.body).map(([text, claimIndexes], i) => {
-    const claims = claimIndexes.map(j=> article.claims["claims"][j])
-    return <AnnotatedParagraph key={i} id={i} text={text} claims={claims}/>
+    return (
+      <AnnotatedParagraph
+        key={i}
+        id={i}
+        article={article}
+        translation={translation}
+        articleParagraphText={text}
+        claimIndexes={claimIndexes}
+      />
+    )
   })
   return <div className={"translation-container"}><h1 className="title">title</h1>
     {/*<div className={'block'}>*/}

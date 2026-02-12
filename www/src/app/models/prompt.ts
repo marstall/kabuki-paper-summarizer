@@ -6,7 +6,7 @@ export default class Prompt extends BaseModel {
     const prompts = await prisma.prompts.findMany({where:{title}})
     if (!prompts||prompts.length==0) {
       console.log("could not find prompt with title "+title)
-      throw new("could not find prompt with title "+title)
+      throw new Error("could not find prompt with title "+title)
     }
     return prompts[0].body;
   }
