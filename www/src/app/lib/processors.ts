@@ -13,7 +13,7 @@ export async function process_paragraph(paragraph,prompt) {
   const model = models[0]
   subheader(`calling ${model} with the following input`,'openai')
   console.log(input)
-  const pre = new Date()
+  const pre = Date.now()
   const conversation = await client.conversations.create()
   console.log({conversation})
   return;
@@ -26,7 +26,7 @@ export async function process_paragraph(paragraph,prompt) {
 
   subheader("response")
   console.log(response.output_text);
-  const elapsed = (new Date()-pre)/1000.0
+  const elapsed = (Date.now() - pre) / 1000.0
   console.log(`Response took ${elapsed} seconds.`)
 }
 
