@@ -3,6 +3,7 @@
 import '@/app/article.css'
 
 import AnnotatedParagraph from "@/app/components/annotated-paragraph/annotated-paragraph";
+import Attachment from "@/app/components/attachment/attachment";
 
 function extractParagraphData(body) {
   const paragraphs = body.split(/[\r\n]/)
@@ -21,7 +22,7 @@ function extractParagraphData(body) {
   })
 }
 
-export default function TranslationViewClient({article,translation}) {
+export default function TranslationViewClient({article,translation,attachments}) {
   return <article>
     <header className="article-header">
       <div className={'article-supertitle'}>{translation.category}</div>
@@ -35,6 +36,7 @@ export default function TranslationViewClient({article,translation}) {
       </div>
     </header>
     <section className="article-body">
+      {attachments.map(attachment => <Attachment key={attachment.id} attachment={attachment}/>)}
       {extractParagraphData(translation.body).map(([text, claimIndexes], i) => {
       return <AnnotatedParagraph key={`para=${i}`}
                                  id={i}

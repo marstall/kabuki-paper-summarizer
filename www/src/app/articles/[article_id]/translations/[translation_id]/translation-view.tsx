@@ -6,10 +6,17 @@ export default async function TranslationView({translation_id}: any) {
   const translation = await prisma.translations.findUnique({where: {id: translation_id}})
   const article = await prisma.articles.findUnique({where: {id: translation.article_id}})
   const attachments = await prisma.attachments.findMany({
-      where: {article_id: Number(article.id)}
+      where: {article_id: Number(article.id)},
+      select: {
+        id:true,
+        caption: true,
+        size: true,
+        width: true,
+        height: true,
+        alt_text:true
+      },
     }
   )
-
   if (!translation) return <div>Translation Not found</div>
-  return <TranslationViewClient article={article} translation={translation}/>
+  return <TranslationViewClient article={article} translation={translation} attachments={attachments}/>
 }

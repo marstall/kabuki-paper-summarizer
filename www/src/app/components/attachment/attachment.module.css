@@ -1,0 +1,15 @@
+.container {
+  margin-top: 0.25rem;
+  margin-bottom: 1rem;
+  padding:0.5rem;
+  border: 1px solid #eee;
+}
+
+.image {
+
+}
+
+.caption {
+  font-style: italic;
+  font-size: 14px;
+}
