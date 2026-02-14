@@ -24,7 +24,7 @@ export default function AttachmentCreateEditForm({article}) {
         <div className="control">
           <input className="input"
                  type="file"
-                 name="attachment"/>
+                 name="file"/>
         </div>
       </div>
       <div className="field">
