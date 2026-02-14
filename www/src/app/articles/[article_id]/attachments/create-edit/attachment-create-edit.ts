@@ -1,4 +1,6 @@
 'use server'
+import {prisma} from '@/app/lib/prisma'
+import { imageSize } from 'image-size'
 
 export default async function createEditAttachment(initialState: any, formData: FormData) {
   if (!formData) return initialState;
@@ -8,11 +10,32 @@ export default async function createEditAttachment(initialState: any, formData: 
   if (!rawFormData.attachment?.type?.startsWith("image")) {
     errors.push("only images are allowed as uploads.")
   }
-  if (errors.length===0) {
+  if (rawFormData.caption.length<10) {
+    errors.push("caption is not long enough")
+  }
+  if (errors.length === 0) {
     const file = rawFormData.attachment as File
     const bytes = new Uint8Array(await file.arrayBuffer())
-    return {bytes}
+    const dimensions = imageSize(bytes)
+    console.log(dimensions.width, dimensions.height)
+
+
+    const now = new Date();
+    const attachment = await prisma.attachments.create({
+      data: {
+        bytes,
+        caption: formData.get("caption")+"",
+        article_id: Number(initialState.article_id),
+        content_type: rawFormData.attachment.type,
+        size: bytes.length,
+        width: dimensions.width,
+        height: dimensions.height,
+        created_at: now,
+        updated_at: now
+      }
+    })
+    return {...initialState,errors,bytes,success:true,attachment_id:attachment.id}
   } else {
-    return {errors}
+    return {...initialState,errors}
   }
 }

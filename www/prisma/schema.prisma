@@ -93,6 +93,7 @@ model translations {
   pull_quote_index Int?
   definitions      Json?
   subheaders       Json?    @db.Json
+  attachment_id    Int?
   llms             llms?    @relation(fields: [llm_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_dc36eb302b")
   prompts          prompts? @relation(fields: [prompt_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_fff8b2d94e")
 
@@ -136,4 +137,17 @@ model revenue {
 
 model schema_migrations {
   version String @id @db.VarChar
+}
+
+model attachments {
+  id           BigInt   @id @default(autoincrement())
+  bytes        Bytes?
+  caption      String?  @db.VarChar
+  article_id   Int?
+  content_type String?  @db.VarChar
+  created_at   DateTime @db.Timestamp(6)
+  updated_at   DateTime @db.Timestamp(6)
+  width        Int?
+  height       Int?
+  size         Int?
 }
