@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import {prisma} from '@/app/lib/prisma'
 import {translate} from '@/app/lib/translate'
-import Attachment from "../../models/attachment.ts";
+import Attachment from "../../components/attachment/attachment";
 
 export default async function ArticleView({id}) {
   const article = await prisma.articles.findUnique({where: {id}})
@@ -18,7 +18,11 @@ export default async function ArticleView({id}) {
       where: {article_id: Number(id)},
       select: {
         id:true,
-        caption: true
+        caption: true,
+        size: true,
+        width: true,
+        height: true,
+        alt_text:true
       },
     }
   )
@@ -48,18 +52,7 @@ export default async function ArticleView({id}) {
       <p>
         <Link className={'button'} href={createAttachmentUrl}>Add attachment</Link>
       </p>
-      {attachments.map(attachment => {
-        const url = '/file/' + attachment.id
-        return <p key={attachment.id}>
-          <Link href={`/articles/${id}/attachments/${attachment.id}`} className="button">
-            <Image src={url} width={600} height={300}/>
-          </Link>
-          <br/>
-          <div style={{fontSize: 'smaller', fontStyle: 'italic'}}>
-            {attachment.caption}
-          </div>
-        </p>
-      })}
+      {attachments.map(attachment => <Attachment key={attachment.id} attachment={attachment}/>)}
     </div>
 
     {sections.map(async (section) => {

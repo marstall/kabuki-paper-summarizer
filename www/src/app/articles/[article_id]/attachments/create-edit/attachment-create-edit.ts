@@ -1,6 +1,7 @@
 'use server'
 import {prisma} from '@/app/lib/prisma'
 import { imageSize } from 'image-size'
+import {redirect} from "next/navigation";
 
 export default async function createEditAttachment(initialState: any, formData: FormData) {
   if (!formData) return initialState;
@@ -30,12 +31,14 @@ export default async function createEditAttachment(initialState: any, formData: 
         size: bytes.length,
         width: dimensions.width,
         height: dimensions.height,
+        alt_text: formData.get("alt_text"),
         created_at: now,
         updated_at: now
       }
     })
-    return {...initialState,errors,bytes,success:true,attachment_id:attachment.id}
+    redirect("/articles/"+initialState.article_id)
+    return {...initialState,caption:formData.get("caption"),errors,bytes,success:true,attachment_id:attachment.id}
   } else {
-    return {...initialState,errors}
+    return {...initialState,...rawFormData,errors}
   }
 }

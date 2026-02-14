@@ -150,4 +150,6 @@ model attachments {
   width        Int?
   height       Int?
   size         Int?
+  alt_text     String?  @db.VarChar
+  string       String?  @db.VarChar
 }
