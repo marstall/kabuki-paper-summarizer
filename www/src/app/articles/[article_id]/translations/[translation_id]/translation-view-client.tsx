@@ -29,10 +29,6 @@ export default function TranslationViewClient({article,translation,attachments})
       <h1>{translation.title}</h1>
       <div className="dek">{translation.second_title}</div>
       <div className="byline"><p>An AI-generated plain-english version of the {article.year} article <span className={"article-link"}>&ldquo;<a href={article.url}>{article.original_title}</a>&rdquo;</span> by {article.attribution.trim()}.</p>
-        <p>
-        NB: This is an interactive document. It includes features that let you assess its
-        completeness and accuracy by deeplinking to individual passages in the original paper.
-        </p>
       </div>
     </header>
     <section className="article-body">
