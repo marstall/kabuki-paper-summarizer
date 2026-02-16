@@ -30,8 +30,8 @@ export default class Llm extends BaseModel {
     });
     // console.log({completion})
     // console.log({completion:JSON.stringify(completion,null,2)})
-    //console.log(JSON.stringify(completion.choices,null,2))
-    // console.log(completion.choices[0].message.content)
+    // console.log(JSON.stringify(completion.choices,null,2))
+    console.log({"completion.choices[0].message.content":completion.choices[0].message.content})
     return completion.choices.map(choice=>choice.message.content)
   }
 
