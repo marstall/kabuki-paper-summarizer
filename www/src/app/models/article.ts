@@ -13,6 +13,12 @@ export default class Article extends BaseModel {
     super()
   }
 
+  async reload() {
+    this.prismaArticle = await prisma.articles.findUnique({
+      where: {id: this.prismaArticle.id}
+    })
+  }
+
   static async create(articleId) {
     const a = new Article()
     await a.load(articleId)
@@ -46,6 +52,7 @@ export default class Article extends BaseModel {
       bold("json results")
       block(results)
     }
+    await this.reload();
   }
 
   async produceTranslation({forceExtractClaims, numDrafts, reviewDraft, editDraft, generateMetadata}) {
@@ -122,6 +129,7 @@ export default class Article extends BaseModel {
     Do NOT include \`\`\` or any extra text. The response must be directly parseable by JSON.parse().`
     block("generating metadata ....")
     log('instructions', instructions,)
+    console.log({llm:Llm.configuredLlm})
     const response = await Llm.client.responses.create({
       model: Llm.configuredLlm.model,
       instructions,
@@ -155,11 +163,14 @@ export default class Article extends BaseModel {
     NOT include \`\`\` or any extra text. The response must be directly parseable by JSON.parse().`
     const input = this.paragraphsJoined()
     bold("input")
-    const response = await Llm.client.responses.create({
-      model: Llm.configuredLlm.model,
-      instructions,
-      input,
-    });
+    block(input)
+    const response = await Llm.chat(instructions, input)
+
+    // const response = await Llm.client.responses.create({
+    //   model: Llm.configuredLlm.model,
+    //   instructions,
+    //   input,
+    // });
     const elapsed = (new Date() as any - (pre as any)) / 1000.0
     block(`Completed in ${elapsed} seconds.`)
 

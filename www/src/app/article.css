@@ -66,16 +66,17 @@ article {
   /* Match the overall width of the body grid (reading column + margin rail + gap). */
   max-width: calc(var(--reading-width) + var(--margin-rail) + var(--space-m));
   margin: var(--space-xl) auto var(--space-l);
-  margin-top:0.5em;
-  margin-bottom: 1.5rem;
   padding: 0 var(--space-s);
+  margin-top:2rem;
+  margin-bottom: 1.5rem;
 }
 
 .article-supertitle {
   font-family: var(--ui-font);
   font-size: smaller;
   font-weight: bold;
-  color: var(--accent-2)
+  color: var(--accent-2);
+  margin-bottom:0.25rem;
 }
 
 /*
@@ -94,6 +95,7 @@ article {
 .article-header .dek {
   font-size: 1.1rem;
   color: var(--text-muted);
+  margin-top: 0.25rem;
 }
 
 /* ============================

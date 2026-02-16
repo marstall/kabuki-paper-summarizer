@@ -60,7 +60,7 @@ console.log("hi")
 const articleId = argv['article-id']
 const numDrafts = argv['num-drafts']||0
 const forceExtractClaims = argv['force-extract-claims']||false
-const generateMetadata = argv['generate-metadata']||false
+const generateMetadata = argv['generate-metadata']||true
 const reviewDraft = argv['review-draft']||false
 const editDraft = argv['edit-draft']||false
 const llmId = argv['llm-id']
