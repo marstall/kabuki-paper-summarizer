@@ -6,7 +6,6 @@ import '@/app/article.css'
 
 import AnnotatedParagraph from "@/app/components/annotated-paragraph/annotated-paragraph";
 import Attachment from "@/app/components/attachment/attachment";
-import {cons} from "effect/List";
 
 function extractParagraphs(body) {
   const paragraphs = body.split(/[\r\n]/)
