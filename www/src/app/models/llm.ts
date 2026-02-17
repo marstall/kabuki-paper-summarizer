@@ -2,6 +2,8 @@ import BaseModel from "@/app/models/base_model";
 import {prisma} from '@/app/lib/prisma'
 import {error, block, log, bold, divider, header} from '@/app/lib/logger'
 import OpenAI from "openai";
+import {GoogleGenAI, ThinkingLevel} from "@google/genai";
+import Anthropic from "@anthropic-ai/sdk";
 
 export default class Llm extends BaseModel {
   static configuredLlm = null;
@@ -23,21 +25,45 @@ export default class Llm extends BaseModel {
       {role: "system", content: instructions},
       {role: "user", content: input}
     ]
-    const completion =  await Llm.client.chat.completions.create({
+    const completion = await Llm.client.chat.completions.create({
       model: Llm.configuredLlm.model,
       n,
       messages,
     });
-    // console.log({completion})
-    // console.log({completion:JSON.stringify(completion,null,2)})
-    // console.log(JSON.stringify(completion.choices,null,2))
-    console.log({"completion.choices[0].message.content":completion.choices[0].message.content})
-    return completion.choices.map(choice=>choice.message.content)
+    return completion.choices.map(choice => choice.message.content)
+  }
+
+  static async geminiGenerateContentTypeHandler(instructions, input, options) {
+    const response = await Llm.client.models.generateContent({
+      model: Llm.configuredLlm.model,
+      contents: input,
+      config: {
+        thinkingConfig: {
+          thinkingLevel: ThinkingLevel.LOW,
+        },
+        systemInstruction: instructions
+      }
+    });
+    return [response.text]
+  }
+
+  static async claudeMessagesCreateTypeHandler(instructions, input, options) {
+    const response = await Llm.client.messages.create(({
+      model: Llm.configuredLlm.model,
+      max_tokens: options.max_tokens || 2000,
+      system: instructions,
+      messages: [
+        {role: "user", content: input}
+      ]
+    }))
+    return [response.content[0].text];
   }
 
   static chatHandlers = {
     "openai-responses": Llm.openAiResponsesTypeHandler,
-    "openai-chat-completions": Llm.openAiChatCompletionsTypeHandler
+    "openai-chat-completions": Llm.openAiChatCompletionsTypeHandler,
+    "gemini-generate-content": Llm.geminiGenerateContentTypeHandler,
+    "claude-messages-create": Llm.claudeMessagesCreateTypeHandler
   }
 
   static async chat(instructions, input, options = {}) {
@@ -55,6 +81,10 @@ export default class Llm extends BaseModel {
           apiKey: llm.api_key,
           baseURL: llm.url,
         })
+      } else if (Llm.configuredLlm.type === 'gemini-generate-content') {
+        Llm.client = new GoogleGenAI({apiKey: llm.api_key});
+      } else if (Llm.configuredLlm.type === 'claude-messages-create') {
+        Llm.client = new Anthropic({apiKey: llm.api_key})
       }
     } catch (e) {
       error(e)

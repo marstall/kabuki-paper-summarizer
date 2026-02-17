@@ -28,7 +28,7 @@ export default function TranslationParagraphByParagraph({article,translation,att
       <div className={'article-supertitle'}>{translation.category}</div>
       <h1>{translation.title}</h1>
       <div className="dek">{translation.second_title}</div>
-      <div className="byline"><p>An AI-generated plain-english version of the {article.year} article <span className={"article-link"}>&ldquo;<a href={article.url}>{article.original_title}</a>&rdquo;</span> by {article.attribution.trim()}.</p>
+      <div className="byline"><p>This is an AI-generated plain-english version of the {article.year} article <span className={"article-link"}>&ldquo;<a href={article.url}>{article.original_title}</a>&rdquo;</span> by {article.attribution.trim()}.</p>
       </div>
     </header>
     <section className="article-body">

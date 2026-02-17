@@ -69,6 +69,7 @@ article {
   padding: 0 var(--space-s);
   margin-top:2rem;
   margin-bottom: 1.5rem;
+  border:1px red;
 }
 
 .article-supertitle {

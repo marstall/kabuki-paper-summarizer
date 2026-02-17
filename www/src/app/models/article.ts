@@ -149,21 +149,22 @@ export default class Article extends BaseModel {
     const jsonExample = {category, title, second_title, tags, pull_quote, definitions, subheaders}
     const instructions = `I need a number of strings to fill in spots in a typical magazine web layout. Can you read through the draft and generate
     them as specified in this json file? ${JSON.stringify(jsonExample)}.
-    Important: Return ONLY raw JSON. Do NOT wrap the response in markdown.
-    Do NOT include \`\`\` or any extra text. The response must be directly parseable by JSON.parse().`
+    You must return valid JSON only.
+    Do not include markdown.
+    Do not wrap in \`\`\`json.
+    Do not add commentary.
+    Output must begin with { and end with }.    `
     block("generating metadata ....")
     log('instructions', instructions,)
-    console.log({llm: Llm.configuredLlm})
     // const response = await Llm.client.responses.create({
     //   model: Llm.configuredLlm.model,
     //   instructions,
     //   input: draft,
     // });
     const responses = await Llm.chat(instructions, draft)
-    const response = responses[0];
+    const response = responses[0].replace(/```json|```/g, '').trim(); // deepseek was wrapping json in backticks
     const elapsed = (new Date() as any - (pre as any)) / 1000.0
     block(`Completed in ${elapsed} seconds.`)
-    log("response", response)
     const json = JSON.parse(response)
     bold("output")
     block(JSON.stringify(json, null, 2))

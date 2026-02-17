@@ -67,30 +67,36 @@ function parseAnnotatedSentence(paragraphText) { // returns ["bare sentence",[2,
   ]
 }
  */
-function Sentence({article,translation,text,claims}) {
-  const [showOriginal,setShowOriginal] = useState(false)
-  const [finalText,setFinalText]=useState(text)
-  const originals = claims && claims.length>0 && translation.claims.claims.filter((claim)=>{
+function Sentence({article, translation, text, claims}) {
+  const [showOriginal, setShowOriginal] = useState(false)
+  const [finalText, setFinalText] = useState(text)
+  const originals = claims && claims.length > 0 && translation.claims.claims.filter((claim) => {
     return claims.includes(Number(claim.reference_id))
-  }).map(claim=>claim.basedOnText).join("...")
+  }).map(claim => claim.basedOnText).join("...")
+  const hasOriginals = originals && originals.length > 0 ? true : false;
+
   function toggleOriginal() {
-    claims && claims.length>0 && setShowOriginal(!showOriginal)
+    claims && claims.length > 0 && setShowOriginal(!showOriginal)
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     setFinalText(showOriginal ? originals : text)
-  },[showOriginal])
+  }, [showOriginal])
   const hoverText = showOriginal ? "click to return to to plain-english version" :
     "click to show the passages in the original paper this sentence is based on."
-  return <span title={hoverText} onClick={toggleOriginal} className={styles.sentence}>
+  return <span title={hoverText}
+               onClick={() => {
+                 toggleOriginal()
+               }} className={styles.sentence}>
     <span className={showOriginal ? styles.original : styles.text}>{finalText}</span>
     <span className={styles.claims}>{claims?.join(",")}</span>
   </span>
 }
 
-function Paragraph({article,translation,processedParagraph}) {
+function Paragraph({article, translation, processedParagraph}) {
+  if (processedParagraph.length == 0) return null;
   return <p>
-    {processedParagraph.map(([text,claims],i)=><Sentence
+    {processedParagraph.map(([text, claims], i) => <Sentence
       key={i}
       article={article}
       translation={translation}
@@ -120,20 +126,18 @@ export default function TranslationSentenceBySentence({article, translation, att
       <div className={'article-supertitle'}>{translation.category}</div>
       <h1>{translation.title}</h1>
       <div className="dek">{translation.second_title}</div>
-      <div className="byline"><p>An AI-generated plain-english version of the {article.year} article <span
+      <div className="byline"><p>This is an AI-generated plain-english version of the {article.year} article <span
         className={"article-link"}>&ldquo;<a
         href={article.url}>{article.original_title}</a>&rdquo;</span> by {article.attribution.trim()}.</p>
       </div>
     </header>
-    <section>
-      <div className="article-body">
-        {processedParagraphsArray.map((processedParagraph,i) =>
-          <Paragraph key={i} article={article} translation={translation} processedParagraph={processedParagraph}/>
-        )}
-      </div>
-
-    </section>
-
+    <div className="article-body">
+      {processedParagraphsArray.map((processedParagraph, i) =>
+        <Paragraph key={i} article={article} translation={translation} processedParagraph={processedParagraph}/>
+      )}
+    </div>
+    ss
+    ss
     {/*<section className="article-body">*/}
 
     {/*  <p>lorem imspum</p>*/}
