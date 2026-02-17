@@ -22,7 +22,7 @@ function extractParagraphData(body) {
   })
 }
 
-export default function TranslationViewClient({article,translation,attachments}) {
+export default function TranslationParagraphByParagraph({article,translation,attachments}) {
   return <article>
     <header className="article-header">
       <div className={'article-supertitle'}>{translation.category}</div>
@@ -38,7 +38,7 @@ export default function TranslationViewClient({article,translation,attachments})
                                  id={i}
                                  article={article}
                                  translation={translation}
-                                 articleParagraphText={text}
+                                 translationParagraphText={text}
                                  claimIndexes={claimIndexes}
                                  />
     })}
@@ -64,11 +64,4 @@ export default function TranslationViewClient({article,translation,attachments})
     {/*</section>*/}
   </article>
 
-  // return <article>
-  //   <h1 className="title">{translation.title}</h1>
-  //   {extractParagraphData(translation.body).map(([text, claimIndexes], i) => {
-  //     const claims = claimIndexes.map(j => translation.claims["claims"][j])
-  //     return <AnnotatedParagraph key={i} id={i} articleParagraphText={text} claims={claims}/>
-  //   })}
-  // </article>
 }

@@ -88,7 +88,6 @@ async function submit(prevState, formData) {
 
 export default async function ArticleNew({article_id}) {
   const article = article_id && await prisma.articles.findUnique({where: {id: article_id}});
-  console.log({article_id, article})
 
   return (
     <ArticleForm article={article} action={submit}/>

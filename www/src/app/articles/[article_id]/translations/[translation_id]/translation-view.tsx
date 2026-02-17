@@ -1,6 +1,5 @@
 import {prisma} from '@/app/lib/prisma'
-import AnnotatedParagraph from "@/app/components/annotated-paragraph/annotated-paragraph";
-import TranslationViewClient from "@/app/articles/[article_id]/translations/[translation_id]/translation-view-client";
+import TranslationSentenceBySentence from "@/app/components/translation-sentence-by-sentence/translation-sentence-by-sentence"
 
 export default async function TranslationView({translation_id}: any) {
   const translation = await prisma.translations.findUnique({where: {id: translation_id}})
@@ -18,5 +17,5 @@ export default async function TranslationView({translation_id}: any) {
     }
   )
   if (!translation) return <div>Translation Not found</div>
-  return <TranslationViewClient article={article} translation={translation} attachments={attachments}/>
+  return <TranslationSentenceBySentence article={article} translation={translation} attachments={attachments}/>
 }

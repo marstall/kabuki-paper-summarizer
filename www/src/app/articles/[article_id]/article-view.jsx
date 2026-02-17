@@ -11,18 +11,21 @@ export default async function ArticleView({id}) {
   )
   const translations = await prisma.translations.findMany({
       where: {article_id: Number(id)},
-      include: {llms: true}
+      include: {llms: true},
+      orderBy: {
+        created_at: 'desc'
+      },
     }
   )
   const attachments = await prisma.attachments.findMany({
       where: {article_id: Number(id)},
       select: {
-        id:true,
+        id: true,
         caption: true,
         size: true,
         width: true,
         height: true,
-        alt_text:true
+        alt_text: true
       },
     }
   )
@@ -45,7 +48,7 @@ export default async function ArticleView({id}) {
             <span style={{
               color: 'lightgray',
               fontSize: 'smaller'
-            }}>&nbsp;{translation.llms.model} / {translation.llms.type}</span></Link>
+            }}>&nbsp;{new Date(translation.created_at).toDateString()} / {translation.llms.model} / {translation.llms.type}</span></Link>
         </p>
       })}
       <h3>Attachments</h3>

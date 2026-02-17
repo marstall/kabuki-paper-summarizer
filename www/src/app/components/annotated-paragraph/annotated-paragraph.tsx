@@ -4,7 +4,7 @@ import Claims from "@/app/components/claims/claims";
 import _ from 'underscore'
 import '@/app/article.css'
 
-export default function AnnotatedParagraph({id, article, articleParagraphText, translation, claimIndexes}) {
+export default function AnnotatedParagraph({id, article, translationParagraphText, translation, claimIndexes}) {
   const [expanded, setExpanded] = useState(false)
 
   function toggleExpanded() {
@@ -29,7 +29,7 @@ export default function AnnotatedParagraph({id, article, articleParagraphText, t
       </aside>
       }
       <h1 className="article-subheader">{subheader}</h1>
-      {articleParagraphText}
+      {translationParagraphText}
       <a
         onClick={toggleExpanded}
         className={styles.expandLink}>show basis{disclosureIcon()}

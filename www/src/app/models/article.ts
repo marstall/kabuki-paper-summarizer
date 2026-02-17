@@ -91,7 +91,7 @@ export default class Article extends BaseModel {
     let drafts = null;
 
     if (numDrafts > 0) {
-      drafts = [sample_draft] //await this.writeDrafts("based on ideas json", numDrafts);
+      drafts = await this.writeDrafts("based on ideas json", numDrafts);
     } else {
       log("skipping all drafts ...")
     }
@@ -176,11 +176,11 @@ export default class Article extends BaseModel {
       claims: [{
         reference_id: "the reference number of the claim. start with 0. the next claim is 1, the next is 2, etc.",
         claim: "the idea/proposition/claim that exists in the paper, put simply, matching the language used in the paper, without jargon.",
-        discussion: "a 2-3 sentence paragraph going a little deeper, in a newsy, punchy voice, targeted to a kabuki parent who is not an expert in bio.",
-        tags: "a list of relevant tags for this claim (ex: KMTD, metabolism, symptoms, therapy)",
-        group: "maintain a small, intelligent list of groups (ex: Background, What Was Investigated, Results, What this means for Kabuki Syndrome) and assign each idea to a group.",
+        //discussion: "a 2-3 sentence paragraph going a little deeper, in a newsy, punchy voice, targeted to a kabuki parent who is not an expert in bio.",
+        //tags: "a list of relevant tags for this claim (ex: KMTD, metabolism, symptoms, therapy)",
+        //group: "maintain a small, intelligent list of groups (ex: Background, What Was Investigated, Results, What this means for Kabuki Syndrome) and assign each idea to a group.",
         basedOnText: "a json array of the verbatim text passages this claim is based on [exact text of passage1, exact text of passage 2, exact text of passage 3]",
-        citations: "any citations contained within the text passages this claim is based on"
+        //citations: "any citations contained within the text passages this claim is based on"
       }]
     }
     const instructions = `can you break down the following scientific paper into a list of its individual claims / ideas / propositions ?
