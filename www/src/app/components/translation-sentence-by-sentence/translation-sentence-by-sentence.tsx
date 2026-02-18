@@ -1,6 +1,6 @@
 'use client'
 import {useEffect, useState} from "react";
-
+import {shortDateTime} from "@/utils/date";
 import styles from './translation-sentence-by-sentence.module.css'
 import '@/app/article.css'
 
@@ -93,8 +93,12 @@ function Sentence({article, translation, text, claims}) {
   </span>
 }
 
-function Paragraph({article, translation, processedParagraph}) {
-  if (processedParagraph.length == 0) return null;
+function Paragraph({id,article, translation, processedParagraph}) {
+  //if (processedParagraph.length == 0) return null;
+  const subheader = translation.subheaders[id]
+  const definition = translation.definitions[id]
+  const pullquote = translation.pull_quote_index === id && translation.pull_quote;
+
   return <p>
     {processedParagraph.map(([text, claims], i) => <Sentence
       key={i}
@@ -105,7 +109,7 @@ function Paragraph({article, translation, processedParagraph}) {
   </p>
 }
 
-export default function TranslationSentenceBySentence({article, translation, attachments}) {
+export default function TranslationSentenceBySentence({article, translation, attachments,llm}) {
   const unprocessedParagraphs = extractParagraphs(translation.body)
   const processedParagraphsArray = []
   for (const unprocessedParagraph of unprocessedParagraphs) {
@@ -121,6 +125,7 @@ export default function TranslationSentenceBySentence({article, translation, att
     processedParagraphsArray.push(processedSentences)
   }
   // so we now have an array of paragraphs, each containing an array of sentences.
+
   return <article>
     <header className="article-header">
       <div className={'article-supertitle'}>{translation.category}</div>
@@ -128,12 +133,16 @@ export default function TranslationSentenceBySentence({article, translation, att
       <div className="dek">{translation.second_title}</div>
       <div className="byline"><p>This is an AI-generated plain-english version of the {article.year} article <span
         className={"article-link"}>&ldquo;<a
-        href={article.url}>{article.original_title}</a>&rdquo;</span> by {article.attribution.trim()}.</p>
+        href={article.url}>{article.original_title}</a>&rdquo;</span> by {article.attribution.trim()}.
+        llm:&nbsp;{llm.id} {llm.provider} {llm.model} {llm.type},
+        note:&nbsp;{translation.generation_note},
+      generated:&nbsp;{shortDateTime(translation.created_at)}
+      </p>
       </div>
     </header>
     <div className="article-body">
       {processedParagraphsArray.map((processedParagraph, i) =>
-        <Paragraph key={i} article={article} translation={translation} processedParagraph={processedParagraph}/>
+        <Paragraph key={i} id={i} article={article} translation={translation} processedParagraph={processedParagraph}/>
       )}
     </div>
     ss

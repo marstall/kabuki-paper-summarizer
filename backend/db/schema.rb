@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_14_185740) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_17_235057) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "uuid-ossp"
@@ -108,6 +108,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_14_185740) do
     t.datetime "created_at", null: false
     t.jsonb "definitions"
     t.string "extra_prompt"
+    t.string "generation_note"
     t.bigint "llm_id"
     t.jsonb "llm_settings"
     t.integer "paragraph_id"

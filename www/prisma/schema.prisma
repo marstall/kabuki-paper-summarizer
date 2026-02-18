@@ -94,6 +94,7 @@ model translations {
   definitions      Json?
   subheaders       Json?    @db.Json
   attachment_id    Int?
+  generation_note  String?  @db.VarChar
   llms             llms?    @relation(fields: [llm_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_dc36eb302b")
   prompts          prompts? @relation(fields: [prompt_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_fff8b2d94e")
 

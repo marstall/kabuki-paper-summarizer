@@ -42,15 +42,31 @@ export default async function ArticleView({id}) {
 
     <h3>Translations</h3>
     <div className={"block"}>
+      <table>
       {translations.map(translation => {
-        return <p key={translation.id}>
+        return <tr key={translation.id}>
+          <td>
           <Link href={`/articles/${id}/translations/${translation.id}`} className="button">{translation.title}&nbsp;
             <span style={{
               color: 'lightgray',
               fontSize: 'smaller'
-            }}>&nbsp;{new Date(translation.created_at).toDateString()} / {translation.llms.model} / {translation.llms.type}</span></Link>
-        </p>
+            }}>&nbsp; /  / </span></Link></td>
+          <td>
+            {new Date(translation.created_at).toDateString()}<br/>
+            {new Date(translation.created_at).toTimeString()}
+          </td>
+          <td>
+            {translation.llms.model}
+          </td>
+          <td>
+            {translation.llms.type}
+          </td>
+          <td>
+            {translation.generation_note}
+          </td>
+        </tr>
       })}
+      </table>
       <h3>Attachments</h3>
       <p>
         <Link className={'button'} href={createAttachmentUrl}>Add attachment</Link>

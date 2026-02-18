@@ -79,7 +79,7 @@ export default class Article extends BaseModel {
     await this.reload();
   }
 
-  async produceTranslation({forceExtractClaims, numDrafts, reviewDraft, editDraft, generateMetadata}) {
+  async produceTranslation({forceExtractClaims, numDrafts, reviewDraft, editDraft, generateMetadata,generationNote}) {
     if (!this.prismaArticle.claims || forceExtractClaims) {
       log("extracting claims ...")
       const json = await this.extractClaims();
@@ -89,9 +89,10 @@ export default class Article extends BaseModel {
     }
 
     let drafts = null;
+    const writeDraftPrompt = "based on ideas json"
 
     if (numDrafts > 0) {
-      drafts = await this.writeDrafts("based on ideas json", numDrafts);
+      drafts = await this.writeDrafts(writeDraftPrompt, numDrafts);
     } else {
       log("skipping all drafts ...")
     }
@@ -122,7 +123,9 @@ export default class Article extends BaseModel {
         subheaders: json.subheaders,
         body: draft,
         article_id: Number(this.prismaArticle.id),
-        claims: this.prismaArticle.claims
+        claims: this.prismaArticle.claims,
+        prompt1: await Prompt.get(writeDraftPrompt),
+        generation_note: generationNote
       })
     }
   }

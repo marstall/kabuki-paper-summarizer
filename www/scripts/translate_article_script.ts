@@ -53,6 +53,11 @@ const argv = await yargs(hideBin(process.argv))
     type: 'boolean',
     demandOption: false,
   })
+  .option('note', {
+    alias: 'n',
+    type: 'string',
+    demandOption: false,
+  })
   .strict()
   .parse()
 console.log("hi")
@@ -64,7 +69,8 @@ const generateMetadata = argv['generate-metadata']||true
 const reviewDraft = argv['review-draft']||false
 const editDraft = argv['edit-draft']||false
 const llmId = argv['llm-id']
-const params = {forceExtractClaims,numDrafts,reviewDraft,editDraft,generateMetadata}
+const generationNote = argv['note']
+const params = {forceExtractClaims,numDrafts,reviewDraft,editDraft,generateMetadata,generationNote}
 block(params);
 
 main(articleId,llmId,params as any)

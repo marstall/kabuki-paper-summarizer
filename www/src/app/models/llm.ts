@@ -50,7 +50,7 @@ export default class Llm extends BaseModel {
   static async claudeMessagesCreateTypeHandler(instructions, input, options) {
     const response = await Llm.client.messages.create(({
       model: Llm.configuredLlm.model,
-      max_tokens: options.max_tokens || 2000,
+      max_tokens: options.max_tokens || 5000,
       system: instructions,
       messages: [
         {role: "user", content: input}
