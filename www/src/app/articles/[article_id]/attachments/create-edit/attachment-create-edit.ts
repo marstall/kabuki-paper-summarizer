@@ -6,13 +6,13 @@ import {redirect} from "next/navigation";
 export default async function createEditAttachment(initialState: any, formData: FormData) {
   if (!formData) return initialState;
   const rawFormData = Object.fromEntries(formData)
-  const file = formData.get("attachment") as File
+  const file = formData.get("file") as File
   const caption = formData.get("caption") as string
   const alt_text = formData.get("alt_text") as string
 
   const errors = []
   if (!file?.type?.startsWith("image")) {
-    errors.push("only images are allowed as uploads.")
+    errors.push("only images are allowed as uploads. file type is "+file?.type)
   }
   if (caption.length<10) {
     errors.push("caption is not long enough")

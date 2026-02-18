@@ -130,6 +130,14 @@ export default class Article extends BaseModel {
     }
   }
 
+  async translateAttachmentCaptions() {
+    const attachments = await prisma.attachments.findMany(
+      {where: {article_id:this.prismaArticle.id}})
+    for (const attachment of attachments) {
+
+    }
+  }
+
   async generateMetadata(draft) {
     const pre = new Date()
     const category = `single word general category that this article falls into within Kabuki: examples could be

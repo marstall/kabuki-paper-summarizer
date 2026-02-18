@@ -6,6 +6,7 @@ import '@/app/article.css'
 
 import AnnotatedParagraph from "@/app/components/annotated-paragraph/annotated-paragraph";
 import Attachment from "@/app/components/attachment/attachment";
+import MungedSentence from "@/app/components/munged-sentence/munged-sentence";
 
 function extractParagraphs(body) {
   const paragraphs = body.split(/[\r\n]/)
@@ -14,6 +15,9 @@ function extractParagraphs(body) {
 
 function extractAnnotatedSentences(paragraph) {
   const matches = [...paragraph.matchAll(/(.+?\.)\s*(\(\d[^)]*\))?/g)];
+  if ((paragraph?.length>0) && matches.length==0) {
+    return [[paragraph,""]];
+  }
   return matches.map((match) => {
     return [match[1], match[2]]
   })
@@ -67,7 +71,7 @@ function parseAnnotatedSentence(paragraphText) { // returns ["bare sentence",[2,
   ]
 }
  */
-function Sentence({article, translation, text, claims}) {
+function Sentence({paragraphIndex,sentenceIndex,article, translation, text, claims}) {
   const [showOriginal, setShowOriginal] = useState(false)
   const [finalText, setFinalText] = useState(text)
   const originals = claims && claims.length > 0 && translation.claims.claims.filter((claim) => {
@@ -82,31 +86,39 @@ function Sentence({article, translation, text, claims}) {
   useEffect(() => {
     setFinalText(showOriginal ? originals : text)
   }, [showOriginal])
+
   const hoverText = showOriginal ? "click to return to to plain-english version" :
     "click to show the passages in the original paper this sentence is based on."
   return <span title={hoverText}
                onClick={() => {
                  toggleOriginal()
                }} className={styles.sentence}>
-    <span className={showOriginal ? styles.original : styles.text}>{finalText}</span>
-    <span className={styles.claims}>{claims?.join(",")}</span>
+      <MungedSentence paragraphIndex={paragraphIndex}
+                      sentenceIndex={sentenceIndex} inline={true} klass={showOriginal ? styles.original : styles.text} text={finalText}/>
+    {claims && <span className={styles.claims}>{claims?.join(",")}</span>}
   </span>
 }
 
-function Paragraph({id,article, translation, processedParagraph}) {
-  //if (processedParagraph.length == 0) return null;
-  const subheader = translation.subheaders[id]
-  const definition = translation.definitions[id]
-  const pullquote = translation.pull_quote_index === id && translation.pull_quote;
+function Paragraph({index,article, translation, processedParagraph}) {
+  if (processedParagraph.length == 0) return null;
+  const subheader = translation.subheaders[index]
+  const definition = translation.definitions[index]
+  const pullquote = translation.pull_quote_index === index && translation.pull_quote;
 
-  return <p>
+  return <div className={'content'}>
+    {pullquote && <aside className="pull-quote">
+      &ldquo;{pullquote}&rdquo;
+    </aside>
+    }
     {processedParagraph.map(([text, claims], i) => <Sentence
       key={i}
+      paragraphIndex={index}
+      sentenceIndex={i}
       article={article}
       translation={translation}
       text={text}
       claims={claims}/>)}
-  </p>
+  </div>
 }
 
 export default function TranslationSentenceBySentence({article, translation, attachments,llm}) {
@@ -118,7 +130,7 @@ export default function TranslationSentenceBySentence({article, translation, att
     for (const sentenceEntry of sentencesEntries) {
       const text = sentenceEntry[0];
       const parens = sentenceEntry[1];
-      const claimIndexes = parens?.match(/\d+/g).map(id => Number(id))
+      const claimIndexes = parens?.match(/\d+/g)?.map(id => Number(id))
 
       processedSentences.push([text, claimIndexes])
     }
@@ -141,12 +153,11 @@ export default function TranslationSentenceBySentence({article, translation, att
       </div>
     </header>
     <div className="article-body">
+      {attachments.map(attachment => <Attachment key={attachment.id} attachment={attachment}/>)}
       {processedParagraphsArray.map((processedParagraph, i) =>
-        <Paragraph key={i} id={i} article={article} translation={translation} processedParagraph={processedParagraph}/>
+        <Paragraph key={i} index={i} article={article} translation={translation} processedParagraph={processedParagraph}/>
       )}
     </div>
-    ss
-    ss
     {/*<section className="article-body">*/}
 
     {/*  <p>lorem imspum</p>*/}
