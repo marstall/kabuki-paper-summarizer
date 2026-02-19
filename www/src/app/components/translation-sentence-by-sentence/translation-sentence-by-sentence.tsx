@@ -105,7 +105,7 @@ function Paragraph({index,article, translation, processedParagraph}) {
   const definition = translation.definitions[index]
   const pullquote = translation.pull_quote_index === index && translation.pull_quote;
 
-  return <div className={'content'}>
+  return <div style={{marginBottom:"1em"}}>
     {pullquote && <aside className="pull-quote">
       &ldquo;{pullquote}&rdquo;
     </aside>
@@ -118,10 +118,11 @@ function Paragraph({index,article, translation, processedParagraph}) {
       translation={translation}
       text={text}
       claims={claims}/>)}
+
   </div>
 }
 
-export default function TranslationSentenceBySentence({article, translation, attachments,llm}) {
+export default function TranslationSentenceBySentence({article, translation, attachment,attachmentTranslation,llm}) {
   const unprocessedParagraphs = extractParagraphs(translation.body)
   const processedParagraphsArray = []
   for (const unprocessedParagraph of unprocessedParagraphs) {
@@ -153,7 +154,7 @@ export default function TranslationSentenceBySentence({article, translation, att
       </div>
     </header>
     <div className="article-body">
-      {attachments.map(attachment => <Attachment key={attachment.id} attachment={attachment}/>)}
+      <Attachment key={attachment.id} attachment={attachment} attachmentTranslation={attachmentTranslation}/>
       {processedParagraphsArray.map((processedParagraph, i) =>
         <Paragraph key={i} index={i} article={article} translation={translation} processedParagraph={processedParagraph}/>
       )}

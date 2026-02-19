@@ -32,7 +32,7 @@ export default function TranslationParagraphByParagraph({article,translation,att
       </div>
     </header>
     <section className="article-body">
-      {attachments.map(attachment => <Attachment key={attachment.id} attachment={attachment}/>)}
+      {/*{attachments.map(attachment => <Attachment key={attachment.id} attachment={attachment}/>)}*/}
       {extractParagraphData(translation.body).map(([text, claimIndexes], i) => {
       return <AnnotatedParagraph key={`para=${i}`}
                                  id={i}

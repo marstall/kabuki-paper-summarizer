@@ -79,7 +79,7 @@ export default class Article extends BaseModel {
     await this.reload();
   }
 
-  async produceTranslation({forceExtractClaims, numDrafts, reviewDraft, editDraft, generateMetadata,generationNote}) {
+  async produceTranslation({forceExtractClaims, numDrafts, reviewDraft, editDraft, generateMetadata,generationNote,translateAttachmentCaptions}) {
     if (!this.prismaArticle.claims || forceExtractClaims) {
       log("extracting claims ...")
       const json = await this.extractClaims();
@@ -112,7 +112,7 @@ export default class Article extends BaseModel {
           return;
         }
       }
-      await Translation.create({
+      const translation = await Translation.create({
         llm_id: Llm.configuredLlm.id,
         title: json.title || this.prismaArticle.original_title,
         second_title: json.second_title,
@@ -128,15 +128,9 @@ export default class Article extends BaseModel {
         generation_note: generationNote
       })
     }
+
   }
 
-  async translateAttachmentCaptions() {
-    const attachments = await prisma.attachments.findMany(
-      {where: {article_id:this.prismaArticle.id}})
-    for (const attachment of attachments) {
-
-    }
-  }
 
   async generateMetadata(draft) {
     const pre = new Date()
@@ -180,6 +174,47 @@ export default class Article extends BaseModel {
     bold("output")
     block(JSON.stringify(json, null, 2))
     return json
+  }
+
+
+  async translateAttachmentCaptions(translationId,generationNote) {
+    const instructions = await Prompt.get("translate attachment caption")
+    log('instructions', instructions,)
+    const translation = await prisma.translations.findUnique(({where:{id:translationId}}))
+    const attachments = await prisma.attachments.findMany(
+      {where: {article_id:Number(this.prismaArticle.id)}})
+    for (const attachment of attachments) {
+      const pre = new Date()
+      const url = "https://kabuki-paper-summarizer-www.vercel.app/file/"+attachment.id;
+      const caption = attachment.caption;
+      block("translating caption",caption)
+
+      const input = `
+      ARTICLE TEXT
+      ${translation.body}
+      
+      IMAGE URL
+      ${url}
+      
+      ORIGINAL CAPTION
+      ${caption}
+      `
+      block("instructions",instructions)
+      block("input",input)
+      const responses = await Llm.chat(instructions, input)
+      const response = responses[0]
+      const elapsed = (new Date() as any - (pre as any)) / 1000.0
+      block(`Completed in ${elapsed} seconds.`)
+      bold("output")
+      block(response)
+      const _translation = await Translation.create({
+        llm_id: Llm.configuredLlm.id,
+        body: response,
+        attachment_id: Number(attachment.id),
+        generation_note: generationNote
+      })
+      log("saved as new translation w/id "+_translation.id)
+    }
   }
 
   async extractClaims() {

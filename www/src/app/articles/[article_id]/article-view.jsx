@@ -43,6 +43,7 @@ export default async function ArticleView({id}) {
     <h3>Translations</h3>
     <div className={"block"}>
       <table>
+        <tbody>
       {translations.map(translation => {
         return <tr key={translation.id}>
           <td>
@@ -66,6 +67,7 @@ export default async function ArticleView({id}) {
           </td>
         </tr>
       })}
+        </tbody>
       </table>
       <h3>Attachments</h3>
       <p>

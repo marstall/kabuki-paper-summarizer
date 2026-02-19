@@ -1,19 +1,21 @@
 import 'dotenv/config'   // <-- must be first
 import {prisma} from '../src/app/lib/prisma'
-import Log, {block, log} from '@/app/lib/logger'
+import Log, {block, error, log} from '@/app/lib/logger'
 import yargs from 'yargs'
 import {hideBin} from 'yargs/helpers'
 import Article from '@/app/models/article'
 import Llm from '@/app/models/llm'
-import Translation from "@/app/models/translation";
 
-async function main(articleId: number, llmId: number, params) {
+async function main(articleId: number, translationId: number, llmId: number, params) {
   Log.init()
   await Llm.loadDefault(llmId)
   const article = await Article.create(articleId)
-  const result = await article.produceTranslation(params)
+  const translation = await article.produceTranslation(params)
   if (params.translateAttachmentCaptions) {
-    await article.translateAttachmentCaptions()
+    if (!translationId) {
+      error("You must supply a translationId.")
+    }
+    await article.translateAttachmentCaptions(translationId,params.generationNote)
   }
   log("")
   block("done.")
@@ -22,6 +24,11 @@ async function main(articleId: number, llmId: number, params) {
 const argv = await yargs(hideBin(process.argv))
   .option('article-id', {
     alias: 'a',
+    type: 'number',
+    demandOption: true,
+  })
+  .option('translation-id', {
+    alias: 't',
     type: 'number',
     demandOption: true,
   })
@@ -71,10 +78,11 @@ const argv = await yargs(hideBin(process.argv))
 console.log("hi")
 
 const articleId = argv['article-id']
+const translationId = argv['translation-id']
 const numDrafts = argv['num-drafts'] || 0
 const forceExtractClaims = argv['force-extract-claims'] || false
 const generateMetadata = argv['generate-metadata'] || true
-const translateAttachmentCaptions = argv['translate-attachment-captions'] || true
+const translateAttachmentCaptions = argv['translate-attachment-captions'] || false
 const reviewDraft = argv['review-draft'] || false
 const editDraft = argv['edit-draft'] || false
 const llmId = argv['llm-id']
@@ -82,7 +90,7 @@ const generationNote = argv['note']
 const params = {forceExtractClaims, numDrafts, reviewDraft, editDraft, generateMetadata, generationNote,translateAttachmentCaptions}
 block(params);
 
-main(articleId, llmId, params as any)
+main(articleId, translationId, llmId, params as any)
   .then(async () => {
     await prisma.$disconnect()
   })

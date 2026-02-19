@@ -21,7 +21,7 @@ export default function MungedSentence({ paragraphIndex,sentenceIndex,klass, tex
 
   if (text.startsWith("- ")) html = text.replace(/^-/,"&bull;")
   // don't start the whole article with a header since we already have a headline in the header
-  //if (paragraphIndex===0 && sentenceIndex===0 && text.startsWith("#")) return null
+  if (paragraphIndex===0 && sentenceIndex===0 && text.startsWith("#")) return null
 
 
   return (

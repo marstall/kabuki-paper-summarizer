@@ -6,10 +6,24 @@
 }
 
 .image {
-
+  width:100% !important;
+  height: auto;
 }
 
-.caption {
+.captionMinimized {
+  cursor: pointer;
+  height:90px;
+  overflow: clip;
+  font-style: italic;
+  font-size: 10px;
+}
+
+.captionMaximized {
+  cursor: pointer;
+  font-size:smaller;
+  font-style: italic;
   font-style: italic;
   font-size: 14px;
+  height: unset;
 }
+
