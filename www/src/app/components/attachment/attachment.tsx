@@ -7,7 +7,7 @@ import {prisma} from '@/app/lib/prisma'
 import Markdown from "@/app/components/markdown/markdown";
 import {useState} from "react";
 
-export default function Attachment({attachment, attachmentTranslation, allowEdit = false}) {
+export default function Attachment({attachment, attachmentTranslation=null, allowEdit = false}) {
   const captionStates = [
     "minimized",
     "maximized",
