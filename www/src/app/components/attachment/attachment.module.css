@@ -1,4 +1,14 @@
-.container {
+.containerMaximized {
+  top:0;
+  left:0;
+  position:absolute;
+  background-color: white;
+  border: 1px solid #eee;
+  cursor:pointer;
+}
+
+.containerInline {
+  cursor:pointer;
   margin-top: 0.25rem;
   margin-bottom: 1rem;
   padding:0.5rem;

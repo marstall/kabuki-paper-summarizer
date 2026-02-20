@@ -9,6 +9,7 @@ const mdParser = new MarkdownIt({
 
 
 export default function Markdown({text}) {
+  if (!text) return ""
   let html = mdParser.render(text)
 
   // make ## an H1

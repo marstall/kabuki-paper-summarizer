@@ -226,7 +226,7 @@ export default class Article extends BaseModel {
         //discussion: "a 2-3 sentence paragraph going a little deeper, in a newsy, punchy voice, targeted to a kabuki parent who is not an expert in bio.",
         //tags: "a list of relevant tags for this claim (ex: KMTD, metabolism, symptoms, therapy)",
         //group: "maintain a small, intelligent list of groups (ex: Background, What Was Investigated, Results, What this means for Kabuki Syndrome) and assign each idea to a group.",
-        basedOnText: "a json array of the verbatim text passages this claim is based on [exact text of passage1, exact text of passage 2, exact text of passage 3]",
+        basedOnText: "a json array of the verbatim text passages this claim is based on. For example: [exact text of passage1, exact text of passage 2, exact text of passage 3]",
         //citations: "any citations contained within the text passages this claim is based on"
       }]
     }

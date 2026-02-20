@@ -15,6 +15,7 @@ export default function Attachment({attachment, attachmentTranslation, allowEdit
   ]
 
   const [captionState, setCaptionState] = useState(0);
+  const [maximized, setMaximized] = useState(false);
 
   function stepCaption() {
     let newStep = captionState + 1;
@@ -24,12 +25,22 @@ export default function Attachment({attachment, attachmentTranslation, allowEdit
     setCaptionState(newStep)
   }
 
+  function toggleMaximized() {
+    const newVal = !maximized
+    setMaximized(newVal)
+    if (newVal===true) {
+      setCaptionState(1)
+    } else {
+      setCaptionState(0)
+    }
+  }
+
   const url = '/file/' + attachment.id
   const hoverTextOptions = ["click to show full plain-english caption",
     "click to show original caption", "click to return to plain-english caption."
   ]
-  return <div className={styles.container} key={attachment.id}>
-    <div className={styles.imageContainer}>
+  return <div className={maximized ? styles.containerMaximized : styles.containerInline} key={attachment.id}>
+    <div onClick={toggleMaximized} className={styles.imageContainer}>
     {allowEdit ?
       <Link href={`/articles/${attachment.article_id}/attachments/${attachment.id}`} className="button">
         <Image alt={attachment.alt_text} src={url} width={attachment.width} height={attachment.height}/>
@@ -44,7 +55,7 @@ export default function Attachment({attachment, attachmentTranslation, allowEdit
     <div title={hoverTextOptions[captionState]} onClick={stepCaption}
          className={captionStates[captionState] === "minimized" ? styles.captionMinimized : styles.captionMaximized}>
       {captionStates[captionState] === "original" && <div><b>original caption</b></div>}
-      <Markdown text={captionStates[captionState] === "original" ? attachment.caption : attachmentTranslation.body}/>
+      <Markdown text={captionStates[captionState] === "original" ? attachment.caption : attachmentTranslation?.body}/>
     </div>
   </div>
 }
