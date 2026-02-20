@@ -12,7 +12,29 @@
   opacity: 0.25;
 }
 
-.sentence .original {
+.original {
+  cursor: pointer;
+}
+
+.original .label {
   font-style:italic;
-  font-weight: bold;
+  margin-right:0.5rem;
+}
+
+.originalContainer {
+  background-color: #eee;
+  padding:8px;
+}
+
+
+.originalContainer a {
+  color: #333;
+  /*text-decoration: underline;*/
+  /*font-style:italic;*/
+  background-color: lightgoldenrodyellow;
+  font-family: Arial;
+  padding: 4px;
+  border: 1px solid lightgray;
+  font-size: 14px;
+  border-radius: 5px;
 }

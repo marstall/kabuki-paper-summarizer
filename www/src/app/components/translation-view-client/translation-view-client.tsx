@@ -4,15 +4,21 @@ import TranslationSentenceBySentence
 import {shortDateTime} from "@/utils/date";
 import Attachment from "@/app/components/attachment/attachment";
 import NavTabs from "@/app/components/nav-panel/nav-tabs";
+import {initialState,translationReducer, TranslationContext,TranslationDispatchContext} from "@/app/components/translation-view-client/translation-context";
 
 import styles from './translation-view-client.module.css'
-import {useState} from "react";
+import {useContext, useReducer, useState} from "react";
 import ClaimsTab from "@/app/components/claims-tab/claims-tab";
 import OriginalTab from "@/app/components/original-tab/original-tab";
 
+
+
 export default function TranslationViewClient({translation,article,llm,attachment,attachmentTranslation}) {
   const [tab,setTab] = useState(0)
-  return <>
+  const [state,dispatch] = useReducer(translationReducer,initialState)
+
+  return <TranslationContext value={state}>
+    <TranslationDispatchContext value={dispatch}>
     <article>
       <header className="article-header">
         <div className={'article-supertitle'}>{translation.category}</div>
@@ -29,13 +35,14 @@ export default function TranslationViewClient({translation,article,llm,attachmen
       </header>
       <div className="article-body">
         <Attachment key={attachment.id} attachment={attachment} attachmentTranslation={attachmentTranslation}/>
-        <NavTabs tab={tab} setTab={setTab}/>
-        {tab===0 &&
+        <NavTabs/>
+        {state.selectedTab===0 &&
           <TranslationSentenceBySentence article={article} translation={translation} llm={llm}
                                          attachment={attachment} attachmentTranslation={attachmentTranslation}/>}
-        {tab==1 && <ClaimsTab article={article} translation={translation}/>}
-        {tab==2 && <OriginalTab article={article} translation={translation}/>}
+        {state.selectedTab==1 && <ClaimsTab article={article} translation={translation}/>}
+        {state.selectedTab==2 && <OriginalTab article={article} translation={translation}/>}
       </div>
     </article>
-  </>
+    </TranslationDispatchContext>
+  </TranslationContext>
 }
