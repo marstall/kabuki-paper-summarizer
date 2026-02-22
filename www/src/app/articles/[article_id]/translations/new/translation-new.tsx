@@ -2,7 +2,6 @@ import {prisma} from '@/app/lib/prisma'
 import ArticleForm from '../translation-form'
 import {redirect} from 'next/navigation'
 import {PrismaClientValidationError} from "@prisma/client/runtime/client";
-import toast from "react-hot-toast";
 import TranslationForm from "../translation-form";
 
 /*

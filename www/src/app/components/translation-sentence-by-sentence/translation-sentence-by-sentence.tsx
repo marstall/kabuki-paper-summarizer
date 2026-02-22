@@ -77,14 +77,14 @@ function Paragraph({index, article, translation, processedParagraph}) {
       &ldquo;{pullquote}&rdquo;
     </aside>
     }
-    {processedParagraph.map(([text, claims], i) => <Sentence
+    {processedParagraph.map(([text, claimIndexes], i) => <Sentence
       key={i}
       paragraphIndex={index}
       sentenceIndex={i}
       article={article}
       translation={translation}
       sentenceText={text}
-      sentenceClaims={claims}/>)}
+      sentenceClaimIndexes={claimIndexes}/>)}
 
   </div>
 }

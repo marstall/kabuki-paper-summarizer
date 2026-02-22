@@ -10,13 +10,25 @@ import styles from './translation-view-client.module.css'
 import {useContext, useReducer, useState} from "react";
 import ClaimsTab from "@/app/components/claims-tab/claims-tab";
 import OriginalTab from "@/app/components/original-tab/original-tab";
-
+import Overlay from "@/app/components/overlay/overlay";
+import Ar from "zod/v4/locales/ar";
+import Article from "@/app/components/article/article";
 
 
 export default function TranslationViewClient({translation,article,llm,attachment,attachmentTranslation}) {
-  const [tab,setTab] = useState(0)
+  translation.claims.claims.map((claim,i)=>{
+    console.log(":::::: "+i+" ::::::")
+    for (const basedOnText of claim.basedOnText) {
+      console.log("- "+basedOnText)
+    }
+    console.log("")
+  })
   const [state,dispatch] = useReducer(translationReducer,initialState)
-
+  function dismissOriginalOverlay() {
+    dispatch({
+      type: 'hideOriginalOverlay'
+    })
+  }
   return <TranslationContext value={state}>
     <TranslationDispatchContext value={dispatch}>
     <article>
@@ -27,15 +39,15 @@ export default function TranslationViewClient({translation,article,llm,attachmen
         <div className="byline"><p>This is an AI-generated plain-english version of the {article.year} article <span
           className={"article-link"}>&ldquo;<a
           href={article.url}>{article.original_title}</a>&rdquo;</span> by {article.attribution.trim()}.
-          llm:&nbsp;{llm.id} {llm.provider} {llm.model} {llm.type},
-          note:&nbsp;{translation.generation_note},
-          generated:&nbsp;{shortDateTime(translation.created_at)}
+          {/*llm:&nbsp;{llm.id} {llm.provider} {llm.model} {llm.type},*/}
+          {/*note:&nbsp;{translation.generation_note},*/}
+          {/*generated:&nbsp;{shortDateTime(translation.created_at)}*/}
         </p>
         </div>
       </header>
       <div className="article-body">
         <Attachment key={attachment.id} attachment={attachment} attachmentTranslation={attachmentTranslation}/>
-        <NavTabs/>
+        {/*<NavTabs/>*/}
         {state.selectedTab===0 &&
           <TranslationSentenceBySentence article={article} translation={translation} llm={llm}
                                          attachment={attachment} attachmentTranslation={attachmentTranslation}/>}
@@ -43,6 +55,12 @@ export default function TranslationViewClient({translation,article,llm,attachmen
         {state.selectedTab==2 && <OriginalTab article={article} translation={translation}/>}
       </div>
     </article>
+      {state.originalOverlayShown &&<Overlay dismiss={dismissOriginalOverlay}>
+        <div className="content">
+        <Article highlightClaims={state.selectedClaims} key={article.id} article={article}/>
+        </div>
+      </Overlay>}
+
     </TranslationDispatchContext>
   </TranslationContext>
 }

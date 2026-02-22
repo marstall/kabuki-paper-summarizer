@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "./article.css";
-import {Toaster} from "react-hot-toast";
+import Overlay from "@/app/components/overlay/overlay";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,14 +29,16 @@ export default function RootLayout({
     <head>
       <meta charSet="utf-8"/>
       <script src="https://kit.fontawesome.com/a208fe4da2.js" crossOrigin="anonymous"></script>
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css"/>
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css"
+      />
       <link rel="stylesheet"
             href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Merriweather"/>
 
       <meta name="viewport" content="width=device-width, initial-scale=1"/>
     </head>
     <body className={`${geistSans.variable} ${geistMono.variable}`}>
-    <div><Toaster/></div>
     <section className="section">
       <div className="container">
       {children}

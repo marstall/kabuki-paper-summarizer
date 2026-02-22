@@ -2,24 +2,25 @@ import styles from './sentence.module.css'
 import {useContext, useEffect, useState} from "react";
 import MungedSentence from "@/app/components/munged-sentence/munged-sentence";
 import Link from "next/link";
+import _ from 'lodash'
+
 import {
   TranslationContext,
   TranslationDispatchContext
 } from "@/app/components/translation-view-client/translation-context";
 
 function OriginalSentence({toggleOriginal, sentenceClaims, translatedText, originalPassages}) {
-  const state = useContext(TranslationContext);
   const dispatch = useContext(TranslationDispatchContext);
+
   function selectClaims() {
     dispatch({
-      type:'selectClaims',
-      value: sentenceClaims
+      type: 'selectClaims',
+      claims: sentenceClaims,
+      originalPassages
     })
-    dispatch({
-      type: 'selectTab',
-      value:1
-    })
+    dispatch({type: 'showOriginalOverlay'})
   }
+
   return <span className={styles.originalContainer}>
     <span onClick={toggleOriginal} className={styles.original}>
       <span className={styles.label}>This sentence is based on the following original passage(s):</span>
@@ -30,12 +31,33 @@ function OriginalSentence({toggleOriginal, sentenceClaims, translatedText, origi
 
 }
 
-export default function Sentence({paragraphIndex, sentenceIndex, article, translation, sentenceText, sentenceClaims}) {
+export default function Sentence({paragraphIndex, sentenceIndex, article, translation, sentenceText, sentenceClaimIndexes}) {
   const [showOriginal, setShowOriginal] = useState(false)
   const [finalText, setFinalText] = useState(sentenceText)
-  const originalPassages = sentenceClaims && sentenceClaims.length > 0 && translation.claims.claims.filter((claim) => {
-    return sentenceClaims.includes(Number(claim.reference_id))
-  }).map(claim => claim.basedOnText).join(" ... ")
+  const sentenceClaims = sentenceClaimIndexes && sentenceClaimIndexes.length > 0 && translation.claims.claims.filter((claim) => {
+    return sentenceClaimIndexes.includes(Number(claim.reference_id))
+  })
+
+  // for each claim, join the sentences together.
+  const claimSentences = sentenceClaims?.map(claim=>{
+    const assembledSentences = claim.basedOnText.reduce((acc,sentence)=>{
+      if (acc) {
+        let s=acc.trim()
+        if (!s.endsWith(".")) s=s+"."
+        s=s+" "
+        return s+sentence
+      } else return sentence
+    },null)
+    return assembledSentences;
+  })
+
+  const originalPassages = claimSentences?.reduce((acc,sentence)=>{
+    if (acc==null) return sentence;
+    else {
+      return _.trimEnd(acc,".")+" … "+sentence;
+    }
+  },null)
+
 
   function toggleOriginal() {
     sentenceClaims && sentenceClaims.length > 0 && setShowOriginal(!showOriginal)
@@ -49,15 +71,15 @@ export default function Sentence({paragraphIndex, sentenceIndex, article, transl
     "click to show the passages in the original paper this sentence is based on."
 
   return showOriginal ?
-        <OriginalSentence sentenceClaims={sentenceClaims} toggleOriginal={toggleOriginal} translatedText={sentenceText} originalPassages={originalPassages}/>
-        :
-        <span title={hoverText} onClick={toggleOriginal} className={styles.sentence}>
+    <OriginalSentence sentenceClaims={sentenceClaims} toggleOriginal={toggleOriginal} translatedText={sentenceText}
+                      originalPassages={originalPassages}/>
+    :
+    <span title={hoverText} onClick={toggleOriginal} className={styles.sentence}>
         <MungedSentence paragraphIndex={paragraphIndex}
-                      sentenceIndex={sentenceIndex}
-                      inline={true}
-                      klass={styles.text}
-                      text={finalText}/>
+                        sentenceIndex={sentenceIndex}
+                        inline={true}
+                        klass={styles.text}
+                        text={finalText}/>
         </span>
 
-    {sentenceClaims && <span className={styles.claims}>{sentenceClaims?.join(",")}</span>}
 }
