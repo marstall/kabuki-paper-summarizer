@@ -1,7 +1,7 @@
 import {prisma} from '@/app/lib/prisma'
 
 
-  async function main(articleId: number) {
+  async function main() {
     let check;
     check = Date.now()
     console.log("loading all articles ...")

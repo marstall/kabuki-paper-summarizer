@@ -25,7 +25,7 @@ function Section({section, passagesToHighlight}) {
   )
 }
 
-export default function Article({article, highlightClaims}) {
+export default function Article({article, highlightClaims=[]}) {
   const state = useContext(TranslationContext);
   console.log(state.originalPassages)
   const passagesToHighlight = highlightClaims.reduce((acc, claim) => {

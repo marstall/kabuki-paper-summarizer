@@ -11,7 +11,6 @@ import {useContext, useReducer, useState} from "react";
 import ClaimsTab from "@/app/components/claims-tab/claims-tab";
 import OriginalTab from "@/app/components/original-tab/original-tab";
 import Overlay from "@/app/components/overlay/overlay";
-import Ar from "zod/v4/locales/ar";
 import Article from "@/app/components/article/article";
 
 
