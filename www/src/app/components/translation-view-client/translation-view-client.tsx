@@ -38,9 +38,8 @@ export default function TranslationViewClient({translation,article,llm,attachmen
         <div className="byline"><p>This is an AI-generated plain-english version of the {article.year} article <span
           className={"article-link"}>&ldquo;<a
           href={article.url}>{article.original_title}</a>&rdquo;</span> by {article.attribution.trim()}.
-          {/*llm:&nbsp;{llm.id} {llm.provider} {llm.model} {llm.type},*/}
-          {/*note:&nbsp;{translation.generation_note},*/}
-          {/*generated:&nbsp;{shortDateTime(translation.created_at)}*/}
+          generated {shortDateTime(translation.created_at)} by {llm.model} ({llm.type} api, llm id {llm.id})
+            &nbsp;{translation.generation_note}
         </p>
         </div>
       </header>
@@ -52,6 +51,9 @@ export default function TranslationViewClient({translation,article,llm,attachmen
                                          attachment={attachment} attachmentTranslation={attachmentTranslation}/>}
         {state.selectedTab==1 && <ClaimsTab article={article} translation={translation}/>}
         {state.selectedTab==2 && <OriginalTab article={article} translation={translation}/>}
+        <div style={{fontFamily:'Arial',fontSize:12,opacity:"75%"}}>generated {shortDateTime(translation.created_at)} by {llm.model} ({llm.type} api, llm id {llm.id})
+          &nbsp;{translation.generation_note}
+        </div>
       </div>
     </article>
       {state.originalOverlayShown &&<Overlay dismiss={dismissOriginalOverlay}>

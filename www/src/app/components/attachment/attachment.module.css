@@ -1,18 +1,21 @@
 .containerMaximized {
+  background-color: #f6f6f6;
   top:0;
   left:0;
   position:absolute;
-  background-color: white;
   border: 1px solid #eee;
   margin: 1rem;
+  padding:1rem;
+  padding-bottom:4rem;
   cursor:pointer;
 }
 
 .containerInline {
+  background-color: #f6f6f6;
   cursor:pointer;
   margin-top: 0.25rem;
   margin-bottom: 1rem;
-  padding:0.5rem;
+  padding:0rem;
   border: 1px solid #eee;
 }
 
@@ -26,10 +29,14 @@
   height:90px;
   overflow: clip;
   font-family: Arial;
+  padding-left:4px;
+  padding-right:4px;
   font-size: 12px;
 }
 
 .captionMaximized {
+  padding-left:4px;
+  padding-right:4px;
   cursor: pointer;
   font-family: Arial;
   font-size: 14px;

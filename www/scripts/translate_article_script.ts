@@ -12,10 +12,10 @@ async function main(articleId: number, translationId: number, llmId: number, par
   const article = await Article.create(articleId)
   const translation = await article.produceTranslation(params)
   if (params.translateAttachmentCaptions) {
-    if (!translationId) {
+    if (!translationId && !translation) {
       error("You must supply a translationId.")
     }
-    await article.translateAttachmentCaptions(translationId,params.generationNote)
+    await article.translateAttachmentCaptions(translationId||translation.id,params.generationNote)
   }
   log("")
   block("done.")
@@ -30,7 +30,7 @@ const argv = await yargs(hideBin(process.argv))
   .option('translation-id', {
     alias: 't',
     type: 'number',
-    demandOption: true,
+    demandOption: false,
   })
   .option('llm-id', {
     alias: 'l',

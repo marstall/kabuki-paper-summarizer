@@ -68,8 +68,8 @@ function parseAnnotatedSentence(paragraphText) { // returns ["bare sentence",[2,
 
 function Paragraph({index, article, translation, processedParagraph}) {
   if (processedParagraph.length == 0) return null;
-  const subheader = translation.subheaders[index]
-  const definition = translation.definitions[index]
+  const subheader = translation.subheaders[index+1];
+  const definition = translation.definitions[index];
   const pullquote = translation.pull_quote_index === index && translation.pull_quote;
 
   return <div style={{marginBottom: "1em"}}>
@@ -77,6 +77,7 @@ function Paragraph({index, article, translation, processedParagraph}) {
       &ldquo;{pullquote}&rdquo;
     </aside>
     }
+    <div className={'article-subheader'}>{subheader}</div>
     {processedParagraph.map(([text, claimIndexes], i) => <Sentence
       key={i}
       paragraphIndex={index}
@@ -99,7 +100,6 @@ export default function TranslationSentenceBySentence({article, translation, att
       const text = sentenceEntry[0];
       const parens = sentenceEntry[1];
       const claimIndexes = parens?.match(/\d+/g)?.map(id => Number(id))
-
       processedSentences.push([text, claimIndexes])
     }
     processedParagraphsArray.push(processedSentences)
