@@ -81,10 +81,14 @@ export default class Llm extends BaseModel {
           apiKey: llm.api_key,
           baseURL: llm.url,
         })
-      } else if (Llm.configuredLlm.type === 'gemini-generate-content') {
+      } else if (Llm.isAnthropicCompatible()) {
+        Llm.client = new Anthropic({
+          apiKey: llm.api_key,
+          baseURL: llm.url,
+        })
+      }
+      else if (Llm.configuredLlm.type === 'gemini-generate-content') {
         Llm.client = new GoogleGenAI({apiKey: llm.api_key});
-      } else if (Llm.configuredLlm.type === 'claude-messages-create') {
-        Llm.client = new Anthropic({apiKey: llm.api_key})
       }
     } catch (e) {
       error(e)
@@ -92,9 +96,29 @@ export default class Llm extends BaseModel {
   }
 
   static isOpenAICompatible() {
+    const compatibleProviders = ["Claude"];
+    return compatibleProviders.includes(Llm.configuredLlm.provider);
+  }
+
+  static isAnthropicCompatible() {
     const compatibleProviders = ["OpenAI", "Kimi", "DeepSeek"];
     return compatibleProviders.includes(Llm.configuredLlm.provider);
   }
+
+  static async listLlms() {
+    const llms = await prisma.llms.findMany({orderBy:{id:"asc"}});
+    console.table(llms,["id","provider","model","type","url"])
+
+
+    //   llms.map((llm) => ({
+    //     provider: llm.provider,
+    //     model: llm.model,
+    //     type: llm.type,
+    //     url: llm.url,
+    //   })),
+    // );
+  }
+
 }
 
 

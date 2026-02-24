@@ -8,6 +8,10 @@ import Llm from '@/app/models/llm'
 
 async function main(articleId: number, translationId: number, llmId: number, params) {
   Log.init()
+  if (params.listLlms) {
+    await Llm.listLlms()
+    return
+  }
   await Llm.loadDefault(llmId)
   const article = await Article.create(articleId)
   const translation = await article.produceTranslation(params)
@@ -15,7 +19,7 @@ async function main(articleId: number, translationId: number, llmId: number, par
     if (!translationId && !translation) {
       error("You must supply a translationId.")
     }
-    await article.translateAttachmentCaptions(translationId||translation.id,params.generationNote)
+    await article.translateAttachmentCaptions(translationId || translation.id, params.generationNote)
   }
   log("")
   block("done.")
@@ -25,7 +29,7 @@ const argv = await yargs(hideBin(process.argv))
   .option('article-id', {
     alias: 'a',
     type: 'number',
-    demandOption: true,
+    demandOption: false,
   })
   .option('translation-id', {
     alias: 't',
@@ -35,7 +39,7 @@ const argv = await yargs(hideBin(process.argv))
   .option('llm-id', {
     alias: 'l',
     type: 'number',
-    demandOption: true,
+    demandOption: false,
   })
   .option('force-extract-claims', {
     alias: 'f',
@@ -73,9 +77,13 @@ const argv = await yargs(hideBin(process.argv))
     type: 'string',
     demandOption: false,
   })
+  .option('list-llms', {
+    alias: 'm',
+    type: 'boolean',
+    demandOption: false,
+  })
   .strict()
   .parse()
-console.log("hi")
 
 const articleId = argv['article-id']
 const translationId = argv['translation-id']
@@ -87,10 +95,30 @@ const reviewDraft = argv['review-draft'] || false
 const editDraft = argv['edit-draft'] || false
 const llmId = argv['llm-id']
 const generationNote = argv['note']
-const params = {forceExtractClaims, numDrafts, reviewDraft, editDraft, generateMetadata, generationNote,translateAttachmentCaptions}
-block(params);
+const listLlms = argv['list-llms']
+const errors = []
+if (!listLlms) {
+  if (!articleId) errors.push("--article-id required.")
 
-main(articleId, translationId, llmId, params as any)
+  if (!llmId) errors.push("--llm-id required")
+}
+const params = {
+  forceExtractClaims,
+  numDrafts,
+  reviewDraft,
+  editDraft,
+  generateMetadata,
+  generationNote,
+  translateAttachmentCaptions,
+  listLlms
+}
+block(params,"parameters",);
+
+if (errors.length > 0) {
+  for (const e of errors) {
+    error(e)
+  }
+} else main(articleId, translationId, llmId, params as any)
   .then(async () => {
     await prisma.$disconnect()
   })
