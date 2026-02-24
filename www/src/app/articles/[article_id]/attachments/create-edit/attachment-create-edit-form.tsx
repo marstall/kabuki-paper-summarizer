@@ -39,8 +39,7 @@ export default function AttachmentCreateEditForm({article}) {
           <input name='alt_text' type='text' defaultValue={state.alt_text}/>
         </div>
       </div>
-
-      <Submit/>
+      {/*<Submit/>*/}
     </form>
   </div>
 }
