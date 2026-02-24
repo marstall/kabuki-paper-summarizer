@@ -1,28 +1,42 @@
 import 'dotenv/config'   // <-- must be first
 import {prisma} from '../src/app/lib/prisma'
-import Log, {block, error, log} from '@/app/lib/logger'
+import Log, {bold,block, error, log} from '@/app/lib/logger'
 import yargs from 'yargs'
 import {hideBin} from 'yargs/helpers'
 import Article from '@/app/models/article'
 import Llm from '@/app/models/llm'
+import {shortDateTime} from "@/utils/date";
+
 
 async function main(articleId: number, translationId: number, llmId: number, params) {
-  Log.init()
-  if (params.listLlms) {
-    await Llm.listLlms()
-    return
+  function doNothing() {
+    bold("doing nothing.","info")
   }
-  await Llm.loadDefault(llmId)
-  const article = await Article.create(articleId)
-  const translation = await article.produceTranslation(params)
-  if (params.translateAttachmentCaptions) {
-    if (!translationId && !translation) {
-      error("You must supply a translationId.")
+
+  Log.init({log_levels:params.logLevels})
+  if (params.doNothing) {
+    doNothing()
+  } else {
+    if (params.listLlms) {
+      await Llm.listLlms()
+      return
     }
-    await article.translateAttachmentCaptions(translationId || translation.id, params.generationNote)
+    await Llm.loadDefault(llmId)
+    const article = await Article.create(articleId)
+    const pre = Date.now()
+    log(`[${Llm.configuredLlm.model} (${Llm.configuredLlm.id})] begin translating article id ${articleId} ...`,null,false,"minimal")
+    const translation = await article.produceTranslation(params)
+    if (params.translateAttachmentCaptions) {
+      if (!translationId && !translation) {
+        error("You must supply a translationId.")
+      }
+      await article.translateAttachmentCaptions(translationId || translation.id, params.generationNote,params.generation)
+    }
+    const elapsed = (new Date() as any - (pre as any)) / 1000.0
+    log(`[${Llm.configuredLlm.model} (${Llm.configuredLlm.id})] completed article id ${articleId} in ${elapsed} seconds.`,null,false,"minimal")
+    log("")
+    block("done.")
   }
-  log("")
-  block("done.")
 }
 
 const argv = await yargs(hideBin(process.argv))
@@ -82,6 +96,21 @@ const argv = await yargs(hideBin(process.argv))
     type: 'boolean',
     demandOption: false,
   })
+  .option('log-levels', {
+    alias: 'v',
+    type: 'string',
+    demandOption: false,
+  })
+  .option('generation', {
+    alias: 't',
+    type: 'string',
+    demandOption: false,
+  })
+  .option('do-nothing', {
+    alias: 'x',
+    type: 'boolean',
+    demandOption: false,
+  })
   .strict()
   .parse()
 
@@ -94,10 +123,13 @@ const translateAttachmentCaptions = argv['translate-attachment-captions'] || fal
 const reviewDraft = argv['review-draft'] || false
 const editDraft = argv['edit-draft'] || false
 const llmId = argv['llm-id']
-const generationNote = argv['note']
+const generationNote = argv['note']||shortDateTime(Date.now())
 const listLlms = argv['list-llms']
+const logLevels = argv['log-levels']
+const generation = argv['generation']||(Math.floor(Date.now()/1000)+"")
+const doNothing = argv['do-nothing']
 const errors = []
-if (!listLlms) {
+if (!listLlms && !doNothing) {
   if (!articleId) errors.push("--article-id required.")
 
   if (!llmId) errors.push("--llm-id required")
@@ -110,9 +142,12 @@ const params = {
   generateMetadata,
   generationNote,
   translateAttachmentCaptions,
-  listLlms
+  listLlms,
+  doNothing,
+  logLevels,
+  generation
 }
-block(params,"parameters",);
+//block(params,"parameters",);
 
 if (errors.length > 0) {
   for (const e of errors) {

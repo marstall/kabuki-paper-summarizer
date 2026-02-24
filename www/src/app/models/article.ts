@@ -79,7 +79,7 @@ export default class Article extends BaseModel {
     await this.reload();
   }
 
-  async produceTranslation({forceExtractClaims, numDrafts, reviewDraft, editDraft, generateMetadata,generationNote,translateAttachmentCaptions}) {
+  async produceTranslation({forceExtractClaims, numDrafts, reviewDraft, editDraft, generateMetadata,generationNote,translateAttachmentCaptions,generation}) {
     if (!this.prismaArticle.claims || forceExtractClaims) {
       log("extracting claims ...")
       const json = await this.extractClaims();
@@ -125,7 +125,8 @@ export default class Article extends BaseModel {
         article_id: Number(this.prismaArticle.id),
         claims: this.prismaArticle.claims,
         prompt1: await Prompt.get(writeDraftPrompt),
-        generation_note: generationNote
+        generation_note: generationNote,
+        generation,
       })
       return translation;
     }
@@ -181,7 +182,7 @@ export default class Article extends BaseModel {
   }
 
 
-  async translateAttachmentCaptions(translationId,generationNote) {
+  async translateAttachmentCaptions(translationId,generationNote,generation) {
     const instructions = await Prompt.get("translate attachment caption")
     log('instructions', instructions,)
     const translation = await prisma.translations.findUnique(({where:{id:translationId}}))
@@ -215,7 +216,8 @@ export default class Article extends BaseModel {
         llm_id: Llm.configuredLlm.id,
         body: response,
         attachment_id: Number(attachment.id),
-        generation_note: generationNote
+        generation_note: generationNote,
+        generation
       })
       log("saved as new translation w/id "+_translation.id)
     }

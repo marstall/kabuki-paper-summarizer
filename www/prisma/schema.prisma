@@ -17,9 +17,9 @@ model articles {
   created_at      DateTime       @db.Timestamp(6)
   updated_at      DateTime       @db.Timestamp(6)
   claims          Json?
+  attachments     attachments[]
   sections        sections[]
   translations    translations[]
-  attachments     attachments[]
 }
 
 model llms {
@@ -34,18 +34,20 @@ model llms {
   url          String?        @db.VarChar
   model        String?        @db.VarChar
   type         String?        @db.VarChar
+  active       Boolean        @default(true)
   translations translations[]
 }
 
 model paragraphs {
-  id         BigInt   @id @default(autoincrement())
-  section_id BigInt
-  title      String?  @db.VarChar
-  body       String?  @db.VarChar
-  status     String?  @db.VarChar
-  created_at DateTime @db.Timestamp(6)
-  updated_at DateTime @db.Timestamp(6)
-  sections   sections @relation(fields: [section_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_9bd6b24ac1")
+  id           BigInt         @id @default(autoincrement())
+  section_id   BigInt
+  title        String?        @db.VarChar
+  body         String?        @db.VarChar
+  status       String?        @db.VarChar
+  created_at   DateTime       @db.Timestamp(6)
+  updated_at   DateTime       @db.Timestamp(6)
+  sections     sections       @relation(fields: [section_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_9bd6b24ac1")
+  translations translations[]
 
   @@index([section_id], map: "index_paragraphs_on_section_id")
 }
@@ -72,37 +74,46 @@ model sections {
 }
 
 model translations {
-  id               BigInt    @id @default(autoincrement())
+  id               BigInt       @id @default(autoincrement())
   llm_id           BigInt?
   prompt_id        BigInt?
-  title            String?   @db.VarChar
-  body             String?   @db.VarChar
-  extra_prompt     String?   @db.VarChar
-  status           String?   @db.VarChar
-  created_at       DateTime  @db.Timestamp(6)
-  updated_at       DateTime  @db.Timestamp(6)
+  title            String?      @db.VarChar
+  body             String?      @db.VarChar
+  extra_prompt     String?      @db.VarChar
+  status           String?      @db.VarChar
+  created_at       DateTime     @db.Timestamp(6)
+  updated_at       DateTime     @db.Timestamp(6)
   llm_settings     Json?
   article_id       BigInt?
-  paragraph_id     Int?
-  prompt1          String?   @db.VarChar
-  prompt2          String?   @db.VarChar
-  prompt3          String?   @db.VarChar
+  paragraph_id     BigInt?
+  prompt1          String?      @db.VarChar
+  prompt2          String?      @db.VarChar
+  prompt3          String?      @db.VarChar
   claims           Json?
-  second_title     String?   @db.VarChar
-  string           String?   @db.VarChar
-  category         String?   @db.VarChar
-  pull_quote       String?   @db.VarChar
+  second_title     String?      @db.VarChar
+  string           String?      @db.VarChar
+  category         String?      @db.VarChar
+  pull_quote       String?      @db.VarChar
   pull_quote_index Int?
   definitions      Json?
-  subheaders       Json?     @db.Json
-  attachment_id    Int?
-  generation_note  String?   @db.VarChar
-  llms             llms?     @relation(fields: [llm_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_dc36eb302b")
-  prompts          prompts?  @relation(fields: [prompt_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_fff8b2d94e")
-  articles         articles? @relation(fields: [article_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subheaders       Json?        @db.Json
+  attachment_id    BigInt?
+  generation_note  String?      @db.VarChar
+  published_at     String?      @db.VarChar
+  timestamp        String?      @db.VarChar
+  thinking         String?      @db.VarChar
+  generation       String?      @db.VarChar
+  paragraphs       paragraphs?  @relation(fields: [paragraph_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_568e087fee")
+  attachments      attachments? @relation(fields: [attachment_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_89cd3c5c7b")
+  llms             llms?        @relation(fields: [llm_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_dc36eb302b")
+  articles         articles?    @relation(fields: [article_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_fbc28fa84b")
+  prompts          prompts?     @relation(fields: [prompt_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_fff8b2d94e")
 
   @@index([llm_id], map: "index_translations_on_llm_id")
   @@index([prompt_id], map: "index_translations_on_prompt_id")
+  @@index([article_id], map: "index_translations_on_article_id")
+  @@index([attachment_id], map: "index_translations_on_attachment_id")
+  @@index([paragraph_id], map: "index_translations_on_paragraph_id")
 }
 
 model users {
@@ -144,17 +155,20 @@ model schema_migrations {
 }
 
 model attachments {
-  id           BigInt    @id @default(autoincrement())
+  id           BigInt         @id @default(autoincrement())
   bytes        Bytes?
-  caption      String?   @db.VarChar
+  caption      String?        @db.VarChar
   article_id   BigInt?
-  content_type String?   @db.VarChar
-  created_at   DateTime  @db.Timestamp(6)
-  updated_at   DateTime  @db.Timestamp(6)
+  content_type String?        @db.VarChar
+  created_at   DateTime       @db.Timestamp(6)
+  updated_at   DateTime       @db.Timestamp(6)
   width        Int?
   height       Int?
   size         Int?
-  alt_text     String?   @db.VarChar
-  string       String?   @db.VarChar
-  articles     articles? @relation(fields: [article_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  alt_text     String?        @db.VarChar
+  string       String?        @db.VarChar
+  articles     articles?      @relation(fields: [article_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_be6e675f54")
+  translations translations[]
+
+  @@index([article_id], map: "index_attachments_on_article_id")
 }

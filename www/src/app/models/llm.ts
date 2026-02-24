@@ -56,7 +56,14 @@ export default class Llm extends BaseModel {
         {role: "user", content: input}
       ]
     }))
-    return [response.content[0].text];
+    let answerText;
+    let answerThinking;
+    for (const content of response.content) {
+      if (content.type=='text') answerText = content.text
+      if (content.type=='thinking') answerThinking = content.thinking
+    }
+    log(answerThinking,"thinking")
+    return [answerText];
   }
 
   static chatHandlers = {
@@ -95,19 +102,19 @@ export default class Llm extends BaseModel {
     }
   }
 
-  static isOpenAICompatible() {
-    const compatibleProviders = ["Claude"];
+  static isAnthropicCompatible() {
+    const compatibleProviders = ["Claude","MiniMax"];
     return compatibleProviders.includes(Llm.configuredLlm.provider);
   }
 
-  static isAnthropicCompatible() {
+  static isOpenAICompatible() {
     const compatibleProviders = ["OpenAI", "Kimi", "DeepSeek"];
     return compatibleProviders.includes(Llm.configuredLlm.provider);
   }
 
   static async listLlms() {
     const llms = await prisma.llms.findMany({orderBy:{id:"asc"}});
-    console.table(llms,["id","provider","model","type","url"])
+    console.table(llms,["id","provider","model","type"])
 
 
     //   llms.map((llm) => ({

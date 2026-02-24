@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_23_225309) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_24_204133) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "uuid-ossp"
@@ -29,7 +29,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_23_225309) do
 
   create_table "attachments", force: :cascade do |t|
     t.string "alt_text"
-    t.integer "article_id"
+    t.bigint "article_id"
     t.binary "bytes"
     t.string "caption"
     t.string "content_type"
@@ -39,6 +39,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_23_225309) do
     t.string "string"
     t.datetime "updated_at", null: false
     t.integer "width"
+    t.index ["article_id"], name: "index_attachments_on_article_id"
   end
 
   create_table "customers", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
@@ -55,6 +56,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_23_225309) do
   end
 
   create_table "llms", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
     t.string "api_key"
     t.datetime "created_at", null: false
     t.string "model"
@@ -100,18 +102,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_23_225309) do
   end
 
   create_table "translations", force: :cascade do |t|
-    t.integer "article_id"
-    t.integer "attachment_id"
+    t.bigint "article_id"
+    t.bigint "attachment_id"
     t.string "body"
     t.string "category"
     t.jsonb "claims"
     t.datetime "created_at", null: false
     t.jsonb "definitions"
     t.string "extra_prompt"
+    t.string "generation"
     t.string "generation_note"
     t.bigint "llm_id"
     t.jsonb "llm_settings"
-    t.integer "paragraph_id"
+    t.bigint "paragraph_id"
     t.string "prompt1"
     t.string "prompt2"
     t.string "prompt3"
@@ -123,10 +126,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_23_225309) do
     t.string "status"
     t.string "string"
     t.json "subheaders"
+    t.string "thinking"
     t.string "timestamp"
     t.string "title"
     t.datetime "updated_at", null: false
+    t.index ["article_id"], name: "index_translations_on_article_id"
+    t.index ["attachment_id"], name: "index_translations_on_attachment_id"
     t.index ["llm_id"], name: "index_translations_on_llm_id"
+    t.index ["paragraph_id"], name: "index_translations_on_paragraph_id"
     t.index ["prompt_id"], name: "index_translations_on_prompt_id"
   end
 
@@ -138,8 +145,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_23_225309) do
     t.unique_constraint ["email"], name: "users_email_key"
   end
 
+  add_foreign_key "attachments", "articles"
   add_foreign_key "paragraphs", "sections"
   add_foreign_key "sections", "articles"
+  add_foreign_key "translations", "articles"
+  add_foreign_key "translations", "attachments"
   add_foreign_key "translations", "llms"
+  add_foreign_key "translations", "paragraphs"
   add_foreign_key "translations", "prompts"
 end

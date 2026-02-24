@@ -43,7 +43,7 @@ export default function ArticleViewClient({article}) {
                 <span style={{
                   color: 'lightgray',
                   fontSize: 'smaller'
-                }}>&nbsp; /  / </span></Link></td>
+                }}></span></Link></td>
             <td>
               {new Date(translation.created_at).toDateString()}<br/>
               {new Date(translation.created_at).toTimeString()}
@@ -55,6 +55,10 @@ export default function ArticleViewClient({article}) {
               {translation.llms.type}
             </td>
             <td>
+              {translation.generation && <Link href={`/generations/${translation.generation}`}>
+                {translation.generation}
+              </Link>}
+              <br/>
               {translation.generation_note}
             </td>
           </tr>
