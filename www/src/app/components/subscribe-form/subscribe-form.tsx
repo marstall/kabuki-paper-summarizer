@@ -6,7 +6,6 @@ export default function SubscribeForm(params) {
     action="https://buttondown.com/api/emails/embed-subscribe/marstall"
     method="post"
     className="embeddable-buttondown-form"
-    referrerpolicy="unsafe-url"
   >
     <label htmlFor="bd-email">Subscribe to our newsletter: </label>
     <input type="email" name="email" id="bd-email"/>&nbsp;
