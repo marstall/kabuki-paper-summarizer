@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "./article.css";
 import Overlay from "@/app/components/overlay/overlay";
+import SubscribeForm from "@/app/components/subscribe-form/subscribe-form";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,9 +40,10 @@ export default function RootLayout({
       <meta name="viewport" content="width=device-width, initial-scale=1"/>
     </head>
     <body className={`${geistSans.variable} ${geistMono.variable}`}>
+    <SubscribeForm/>
     <section className="section">
       <div className="container">
-      {children}
+        {children}
       </div>
     </section>
     </body>
