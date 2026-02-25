@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import styles from './attachment.module.css'
-import {prisma} from '@/app/lib/prisma'
 import Markdown from "@/app/components/markdown/markdown";
 import {useState} from "react";
 

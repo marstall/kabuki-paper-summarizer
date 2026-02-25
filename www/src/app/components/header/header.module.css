@@ -12,7 +12,7 @@
   - text-main/text-muted/rule/accent: shared colors
 */
 
-:root {
+:global(:root) {
   /* Measure */
   --reading-width: 65ch;
   --margin-rail: 0ch;
