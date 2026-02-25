@@ -141,6 +141,9 @@ export default class Article extends BaseModel {
     const title = `5 words or less. A 'hook' that pithily describes the meat of this article.`
     const second_title = `12 words or less. This will appear beneath the title and is an expansion on the title. 
     This is a magazine convention, it provides a little more detail the title may have left out because it was so short.`
+    // const title = `A 'hook' that will draw compelling interest, ideally at a glance. It should capture something surprising or counterintuitive about the core finding.`
+    // const second_title = `a 'dek' which will appear beneath the title and provide a but more depth and clarity. If possible, it should sum up the core finding.`
+
     const tags = '5 or fewer one or two-word tags that describe the content of the article within Kabuki Syndrome'
     const pull_quote = `a single sentence direct quote from the article that highlights something interesting.
      Should be an an array that also includes the index of paragraph it should precede, like :['pull quote', 5].

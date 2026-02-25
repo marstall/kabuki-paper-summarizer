@@ -99,10 +99,9 @@ model translations {
   subheaders       Json?        @db.Json
   attachment_id    BigInt?
   generation_note  String?      @db.VarChar
-  published_at     String?      @db.VarChar
-  timestamp        String?      @db.VarChar
   thinking         String?      @db.VarChar
   generation       String?      @db.VarChar
+  published_at     DateTime?    @db.Timestamp(6)
   paragraphs       paragraphs?  @relation(fields: [paragraph_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_568e087fee")
   attachments      attachments? @relation(fields: [attachment_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_89cd3c5c7b")
   llms             llms?        @relation(fields: [llm_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_dc36eb302b")

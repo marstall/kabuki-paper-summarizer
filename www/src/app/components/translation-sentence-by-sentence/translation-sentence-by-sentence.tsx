@@ -1,11 +1,7 @@
 'use client'
 import '@/app/article.css'
 import Sentence from "@/app/components/sentence/sentence";
-
-function extractParagraphs(body) {
-  const paragraphs = body.split(/[\r\n]/)
-  return paragraphs.filter(p => p.length > 0)
-}
+import {extractParagraphs} from "@/utils/text";
 
 function extractAnnotatedSentences(paragraph) {
   const matches = [...paragraph.matchAll(/(.+?\.)\s*(\(\d[^)]*\))?/g)];
@@ -77,7 +73,7 @@ function Paragraph({index, article, translation, processedParagraph}) {
       &ldquo;{pullquote}&rdquo;
     </aside>
     }
-    <div className={'article-subheader'}>{subheader}</div>
+    {/*<div className={'article-subheader'}>{subheader}</div>*/}
     {processedParagraph.map(([text, claimIndexes], i) => <Sentence
       key={i}
       paragraphIndex={index}

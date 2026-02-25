@@ -1,7 +1,5 @@
-import Image from "next/image";
-import styles from "./page.module.css";
-import Articles from "@/app/articles/articles";
+import Homepage from "@/app/homepage/homepage";
 
 export default function Home() {
-  return <Articles/>
+  return <Homepage/>
 }

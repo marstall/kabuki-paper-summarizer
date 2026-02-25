@@ -20,6 +20,7 @@ async function submit(prevState, formData) {
 
   const title = formData.get('title');
   const body = formData.get('body') || "";
+  const publishedAtValue = formData.get('published_at') ? new Date() : null;
   let translationId = Number(formData.get('translation_id'));
   const translation = translationId && await prisma.translations.findUnique({where: {id: translationId}});
   const articleId = translation.article_id;
@@ -39,7 +40,8 @@ async function submit(prevState, formData) {
             },
             data: {
               title,
-              body
+              body,
+              published_at: publishedAtValue
             }
           }
         )
@@ -49,7 +51,8 @@ async function submit(prevState, formData) {
             created_at: now,
             updated_at: now,
             title,
-            body
+            body,
+            published_at: publishedAtValue
           }
         })
         translationId = _translation.id as unknown as number;
@@ -74,7 +77,8 @@ async function submit(prevState, formData) {
   }
 }
 
-export default async function TranslationNew({article_id,translation_id}) {
+
+export default async function TranslationNew({article_id, translation_id}) {
   const translation = translation_id && await prisma.translations.findUnique({where: {id: translation_id}});
 
   return (

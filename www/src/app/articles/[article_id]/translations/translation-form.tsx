@@ -3,14 +3,18 @@
 import Submit from '@/app/components/submit-button'
 import {useActionState} from "react";
 import Errors from '@/app/components/errors'
+import {useFormStatus} from "react-dom";
 
 export default function TranslationForm({translation, action}) {
 
   const [formData, submitAction] = useActionState(action, null);
+  const {pending} = useFormStatus();
 
   function getval(name) {
     return translation ? translation[name] : formData ? formData[name] : ""
   }
+
+  const published_at_checked = getval('published_at') && 'checked'
 
   return <div className={'content'}>
     <h1>Edit Translation</h1>
@@ -40,7 +44,13 @@ export default function TranslationForm({translation, action}) {
           ></textarea>
         </div>
       </div>
+      <div className="field" style={{border:'1px dotted lightgrey',padding:'0.5rem'}}>
+          <input type={'checkbox'} name={'published_at'} value={"1"} defaultChecked={getval('published_at')? true: false}/>
+          &nbsp;published to web
+      </div>
+      <div className={'block'}>
       <Submit/>
+      </div>
     </form>
   </div>
 }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_24_204133) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_25_150427) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "uuid-ossp"
@@ -119,7 +119,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_24_204133) do
     t.string "prompt2"
     t.string "prompt3"
     t.bigint "prompt_id"
-    t.string "published_at"
+    t.datetime "published_at", precision: nil
     t.string "pull_quote"
     t.integer "pull_quote_index"
     t.string "second_title"
@@ -127,7 +127,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_24_204133) do
     t.string "string"
     t.json "subheaders"
     t.string "thinking"
-    t.string "timestamp"
     t.string "title"
     t.datetime "updated_at", null: false
     t.index ["article_id"], name: "index_translations_on_article_id"
