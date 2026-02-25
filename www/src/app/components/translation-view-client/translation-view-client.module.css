@@ -1,0 +1,19 @@
+
+.container {
+  display: grid;
+  /*
+    Constrain the entire body grid to the same overall measure as the header.
+    Padding provides the outer “gutter” instead of putting gutters into the grid.
+  */
+  /*
+    Default: a single centered column, but use the *overall* article measure.
+    This avoids text feeling overly narrow on wide screens when no rail content
+    is present (we don't want to reserve a rail column, but we do want the
+    container to be as wide as the header).
+  */
+  max-width: calc(var(--reading-width) + var(--margin-rail) + var(--space-m));
+  margin: 0 auto;
+  padding: 0 var(--space-s);
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: var(--space-m);
+}

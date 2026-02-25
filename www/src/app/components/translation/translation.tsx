@@ -1,8 +1,8 @@
-'use client'
 import styles from './translation.module.css'
 import {firstParagraph} from "@/utils/text";
 import Link from "next/link";
 import Attachment from "@/app/components/attachment/attachment";
+import {shortDate } from "@/utils/date";
 
 function extractText(body) {
   return firstParagraph(body)
@@ -15,11 +15,13 @@ export default function Translation({translation}) {
   const text = extractText(translation.body)
 
   return <div className={styles.container}>
-    <div className={styles.title}>{translation.title}</div>
-    <div className={styles.text}>{text}</div>
+    <div className={styles.supertitle}>{translation.category}</div>
+    <h1>{translation.title}</h1>
+    <div className={styles.dateline}>Posted on {shortDate(translation.published_at)}</div>
     {attachment && <div className={styles.attachment}>
-      <Attachment attachment={attachment}/>
+      <Attachment attachment={attachment} allowMaximize={false} showCaption={false}/>
     </div>}
+    <div className={styles.text}>{text}</div>
     <div className={styles.readMoreLink}>
       <Link href={`/articles/${article.id}/translations/${translation.id}`}
             className={'button'}>Read more</Link>

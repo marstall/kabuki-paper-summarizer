@@ -11,7 +11,10 @@ export default async function Translations(params: any) {
         articles: {
           include: {
             attachments: {
-              orderBy: {id: 'desc'}
+              orderBy: {id: 'desc'},
+              include: {
+                translations: true
+              }
             }
           }
         }

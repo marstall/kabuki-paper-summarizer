@@ -1,0 +1,57 @@
+:root {
+  /* Measure */
+  --reading-width: 65ch;
+  --margin-rail: 0ch;
+
+  /* Spacing */
+  --space-xs: 0.5rem;
+  --space-s: 1rem;
+  --space-m: 1.75rem;
+  --space-l: 3rem;
+  --space-xl: 5rem;
+
+  /* Typography */
+  --body-font: "Source Serif 4", "Charter", Georgia, serif;
+  --ui-font: "Inter", system-ui, -apple-system, sans-serif;
+
+  --text-main: #1a1a1a;
+  --text-emphasized: black;
+  --rule: #e5e5e5;
+  --accent: #0a4cff;
+  --accent-2: rgb(55,123,42);
+  --link: rgb(193,98,90);
+  --text-muted: #666;
+}
+
+.container {
+  font-family: var(--body-font);
+  color: var(--text-main);
+  line-height: 1.55;
+  font-size: 18px;
+  margin-bottom:2rem;
+  border-top:1px dotted lightgray;
+  padding-top:1rem;
+}
+.container h1 {
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  line-height: 1.1;
+}
+
+.supertitle {
+  font-family: var(--ui-font);
+  font-size: smaller;
+  font-weight: bold;
+  color: var(--accent-2);
+  margin-bottom:0.25rem;
+}
+
+.dateline {
+  display:none;
+  font-size: 14px;
+  margin-bottom:0.25rem;
+}
+
+.readMoreLink {
+  margin-top:1rem;
+  margin-left:0px
+}

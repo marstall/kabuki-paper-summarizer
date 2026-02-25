@@ -12,6 +12,7 @@ import ClaimsTab from "@/app/components/claims-tab/claims-tab";
 import OriginalTab from "@/app/components/original-tab/original-tab";
 import Overlay from "@/app/components/overlay/overlay";
 import Article from "@/app/components/article/article";
+import Header from "@/app/components/header/header";
 
 
 export default function TranslationViewClient({translation,article,llm,attachment,attachmentTranslation}) {
@@ -30,6 +31,8 @@ export default function TranslationViewClient({translation,article,llm,attachmen
   }
   return <TranslationContext value={state}>
     <TranslationDispatchContext value={dispatch}>
+      <div>
+        {/*<Header/>*/}
     <article>
       <header className="article-header">
         <div className={'article-supertitle'}>{translation.category}</div>
@@ -56,6 +59,7 @@ export default function TranslationViewClient({translation,article,llm,attachmen
         </div>
       </div>
     </article>
+      </div>
       {state.originalOverlayShown &&<Overlay dismiss={dismissOriginalOverlay}>
         <div className="content">
         <Article highlightClaims={state.selectedClaims} key={article.id} article={article}/>

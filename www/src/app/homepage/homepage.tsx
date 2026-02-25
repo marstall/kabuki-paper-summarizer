@@ -1,9 +1,11 @@
 import styles from './homepage.module.css'
 import Translations from '@/app/components/translations/translations'
+import Header from '@/app/components/header/header'
 
 export default async function Homepage() {
-  return <div className={'content'}>
-    <h1>Latest</h1>
+  return <div className={styles.container}>
+    <Header/>
+    <div className={styles.latestPostsHeading}>Latest posts</div>
     <Translations/>
   </div>
 }

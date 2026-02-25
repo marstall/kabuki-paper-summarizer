@@ -7,12 +7,16 @@ import {prisma} from '@/app/lib/prisma'
 import Markdown from "@/app/components/markdown/markdown";
 import {useState} from "react";
 
-export default function Attachment({attachment, attachmentTranslation=null, allowEdit = false}) {
+export default function Attachment({attachment, attachmentTranslation=null, allowMaximize=true,showCaption=true,allowEdit = false}) {
   const captionStates = [
     "minimized",
     "maximized",
     "original"
   ]
+  if (attachment.translations && attachment.translations.length>0) {
+    attachmentTranslation||=attachment.translations[0];
+
+  }
 
   const [captionState, setCaptionState] = useState(0);
   const [maximized, setMaximized] = useState(false);
@@ -26,6 +30,7 @@ export default function Attachment({attachment, attachmentTranslation=null, allo
   }
 
   function toggleMaximized() {
+    if (!allowMaximize) return;
     const newVal = !maximized
     setMaximized(newVal)
     if (newVal===true) {
@@ -39,23 +44,21 @@ export default function Attachment({attachment, attachmentTranslation=null, allo
   const hoverTextOptions = ["click to show full plain-english caption",
     "click to show original caption", "click to return to plain-english caption."
   ]
-  return <div className={maximized ? styles.containerMaximized : styles.containerInline} key={attachment.id}>
+  return <div className={maximized ? styles.containerMaximized : styles.containerInline} style={!showCaption ? {backgroundColor:'white'}: {}} key={attachment.id}>
     <div onClick={toggleMaximized} className={styles.imageContainer}>
     {allowEdit ?
       <Link href={`/articles/${attachment.article_id}/attachments/${attachment.id}`} className="button">
         <Image alt={attachment.alt_text} src={url} width={attachment.width} height={attachment.height}/>
       </Link>
       :
-      // <Link href={`/articles/${attachment.article_id}/attachments/${attachment.id}`} className="button">
         <Image className={styles.image} alt={attachment.alt_text} src={url} width={attachment.width}
                height={attachment.height}/>
-      // </Link>
     }
     </div>
-    <div title={hoverTextOptions[captionState]} onClick={stepCaption}
+    {showCaption && <div title={hoverTextOptions[captionState]} onClick={stepCaption}
          className={captionStates[captionState] === "minimized" ? styles.captionMinimized : styles.captionMaximized}>
       {captionStates[captionState] === "original" && <div><b>original caption</b></div>}
       <Markdown text={captionStates[captionState] === "original" ? attachment.caption : attachmentTranslation?.body}/>
-    </div>
+    </div>}
   </div>
 }
