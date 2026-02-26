@@ -8,7 +8,8 @@ export default function Header(params) {
     </div>
     <div className={styles.credits}>
       Written by AI.<br/>
-      Editor/AI wrangler: Chris Marstall (Kabuki parent)<br/>
+      Tap any sentence to show source text.<br/>
+      Edited by Chris Marstall, Kabuki parent.<br/>
     </div>
   </div>
 
