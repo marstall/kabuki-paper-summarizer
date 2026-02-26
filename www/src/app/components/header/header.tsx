@@ -7,8 +7,8 @@ export default function Header(params) {
       Making the science behind Kabuki Syndrome more accessible, one paper at a time
     </div>
     <div className={styles.credits}>
-      Written by AI.<br/>
-      Tap any sentence to show source text.<br/>
+      Kabuki-related academic papers translated into plain English by AI.<br/>
+      Tap any sentence to show source passages.<br/>
       Edited by Chris Marstall, Kabuki parent.<br/>
     </div>
   </div>
