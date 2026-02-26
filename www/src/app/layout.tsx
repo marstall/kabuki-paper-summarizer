@@ -41,11 +41,9 @@ export default function RootLayout({
     </head>
     <body className={`${geistSans.variable} ${geistMono.variable}`}>
     <SubscribeForm/>
-    <section className="section">
-      <div className="container">
-        {children}
-      </div>
-    </section>
+    <div className="page">
+      {children}
+    </div>
     </body>
     </html>
   );

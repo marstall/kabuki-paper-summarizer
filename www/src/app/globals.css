@@ -24,6 +24,27 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.page {
+  width: 100%;
+  max-width: 1100px;
+  /*
+    This sets the page to have a maximum width of 1100 pixels.
+    This helps to ensure that the page is not wider than the viewport,
+    which can cause the page to scroll horizontally.
+
+    The margin: 0 auto; line also centers the page horizontally on the screen.
+  */
+  margin: 0 auto;
+
+  padding: 4vw clamp(2rem,21vw,16rem);
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding: 8vw 2rem;
+  }
+}
+
 * {
   box-sizing: border-box;
   padding: 0;

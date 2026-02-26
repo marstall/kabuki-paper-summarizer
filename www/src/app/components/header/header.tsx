@@ -9,7 +9,7 @@ export default function Header(params) {
     <div className={styles.credits}>
       Kabuki-related academic papers translated into plain English by AI.<br/>
       Tap any sentence to show source passages.<br/>
-      Edited by Chris Marstall, Kabuki parent.<br/>
+      Our Editor and AI wrangler is Chris Marstall, a curious Kabuki parent.<br/>
     </div>
   </div>
 

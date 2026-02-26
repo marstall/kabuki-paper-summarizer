@@ -63,10 +63,7 @@ article {
 */
 
 .article-header {
-  /* Match the overall width of the body grid (reading column + margin rail + gap). */
-  max-width: calc(var(--reading-width) + var(--margin-rail) + var(--space-m));
-  margin: var(--space-xl) auto var(--space-l);
-  padding: 0 var(--space-s);
+  margin: var(--space-xl) 0 var(--space-l);
   margin-top:2rem;
   margin-bottom: 1.5rem;
   border:1px red;
@@ -127,9 +124,6 @@ article {
     is present (we don't want to reserve a rail column, but we do want the
     container to be as wide as the header).
   */
-  max-width: calc(var(--reading-width) + var(--margin-rail) + var(--space-m));
-  margin: 0 auto;
-  padding: 0 var(--space-s);
   grid-template-columns: minmax(0, 1fr);
   column-gap: var(--space-m);
 }
@@ -155,7 +149,6 @@ article {
   This prevents “empty rail” pages from wasting width and feeling too narrow.
 */
 .article-body:has(.pull-quote, .margin-note, .infobox) {
-  max-width: calc(var(--reading-width) + var(--margin-rail) + var(--space-m));
   grid-template-columns:
     minmax(0, var(--reading-width))
     minmax(0, var(--margin-rail));
