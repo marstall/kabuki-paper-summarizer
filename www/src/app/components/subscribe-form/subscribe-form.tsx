@@ -1,4 +1,5 @@
 import styles from './subscribe-form.module.css'
+import "@/app/globals.css"
 
 export default function SubscribeForm(params) {
   return <div className={styles.container}>

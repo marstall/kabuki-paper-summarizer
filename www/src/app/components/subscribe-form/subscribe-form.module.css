@@ -1,11 +1,37 @@
-.container {
+.containerx {
   background-color: #ffc;
   font-family: "American Typewriter";
   display: flex;
   justify-content: center;
+  background-color: #ffc;
+  font-family: "American Typewriter";
   padding: 1rem;
   width: 100%;
 }
+
+.container {
+  background-color: #ffc;
+  font-family: "American Typewriter";
+  padding: 1rem;
+  width: 100%;
+  max-width: 1100px;
+  /*
+    This sets the page to have a maximum width of 1100 pixels.
+    This helps to ensure that the page is not wider than the viewport,
+    which can cause the page to scroll horizontally.
+
+    The margin: 0 auto; line also centers the page horizontally on the screen.
+  */
+  margin: 0 auto;
+
+  padding: 0.75rem clamp(2rem, 21vw, 16rem);
+
+}
+
+
+@media (max-width: 600px) {
+}
+
 
 .container input[type="email"],
 .container input[type="text"],
