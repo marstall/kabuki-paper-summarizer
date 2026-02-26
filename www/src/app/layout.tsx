@@ -40,9 +40,15 @@ export default function RootLayout({
       <meta name="viewport" content="width=device-width, initial-scale=1"/>
     </head>
     <body className={`${geistSans.variable} ${geistMono.variable}`}>
-    <SubscribeForm/>
+    <div className="page subscribeBar">
+      <div className="pageInner">
+        <SubscribeForm/>
+      </div>
+    </div>
     <div className="page">
-      {children}
+      <div className="pageInner pageContent">
+        {children}
+      </div>
     </div>
     </body>
     </html>
