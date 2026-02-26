@@ -6,3 +6,8 @@
   padding: 1rem;
   width: 100%;
 }
+
+.container input[type="email"],
+.container input[type="text"],
+.container input[type="submit"] {
+}
