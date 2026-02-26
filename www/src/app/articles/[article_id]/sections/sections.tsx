@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/app/lib/prisma";
-
+import _ from 'lodash'
 export default async function Sections(params: any) {
   const {article_id} = params;
   const sections = await prisma.sections.findMany({
@@ -8,8 +8,12 @@ export default async function Sections(params: any) {
       article_id
     }
   })
+  const article = await prisma.articles.findUnique({where:{id:article_id}})
 
   return <div>
+    <Link className={'button'} href={`/articles/${article_id}`}>&lt; Back to article '{article.original_title.substring(0,50)} ...'</Link>
+    <br/>
+    <br/>
     <h1 className="title">Sections</h1>
     <div>
       {sections.length === 0 && <div>no sections</div>}

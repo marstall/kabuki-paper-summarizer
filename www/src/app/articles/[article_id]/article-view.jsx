@@ -1,6 +1,7 @@
 import {prisma} from '@/app/lib/prisma'
 import ArticleViewClient from "../../components/article-view-client/article-view-client.tsx";
 
+
 export default async function ArticleView({id}) {
   const article = await prisma.articles.findUnique(
     {

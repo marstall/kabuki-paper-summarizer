@@ -10,7 +10,7 @@ export default function ParagraphForm(params: any) {
   return <>
     <Errors errors={formData}/>
     <div className={"content"}>
-      <h1>New paragraph</h1>
+      <h3>New paragraph</h3>
     <form id='_form' action={submitAction}>
       <input type="hidden" name="section_id" value={section_id}/>
       <div className="field">

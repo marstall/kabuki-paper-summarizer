@@ -14,9 +14,6 @@ export default async function createEditAttachment(initialState: any, formData: 
   if (!file?.type?.startsWith("image")) {
     errors.push("only images are allowed as uploads. file type is "+file?.type)
   }
-  if (caption.length<10) {
-    errors.push("caption is not long enough")
-  }
   if (errors.length === 0) {
     const bytes = new Uint8Array(await file.arrayBuffer())
     const dimensions = imageSize(bytes)

@@ -22,7 +22,8 @@ export default async function AttachmentView({attachment_id}: any) {
     <p>
       {attachment.caption}
     </p>
-    <Link onClick={deleteAttachment} className={'button'} href={'#'}>Delete</Link>
+    <br/>
+    <Link onClick={deleteAttachment} className={'button is-danger'} href={'#'}>Delete</Link>
   </div>
 
 }

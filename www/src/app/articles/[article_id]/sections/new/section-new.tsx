@@ -4,17 +4,19 @@ import { prisma } from '@/app/lib/prisma'
 
 async function submit(prevState: any, formData: FormData) {
   'use server'
+  console.log("submit 1")
   const title = formData.get('title') as string || "";
   const articleId = Number(formData.get('article_id'));
-  if (!articleId) return <div>articleId not found.</div>
-
   const errors = []
+  if (!articleId) errors.push("articleId not found")
+
   if (typeof title === 'string' && title.length < 3) errors.push("title is not long enough")
 
   if (errors.length === 0) {
     const now = new Date()
+    let section
     try {
-      const section = await prisma.sections.create({
+      section = await prisma.sections.create({
         data: {
           created_at: now,
           updated_at: now,
@@ -26,7 +28,7 @@ async function submit(prevState: any, formData: FormData) {
       errors.push((e as Error).message)
     }
     if (errors.length === 0) {
-      redirect(`/articles/${articleId}/sections`)
+      redirect(`/articles/${articleId}/sections/${section.id}`)
     }
   }
   if (errors.length > 0) return {

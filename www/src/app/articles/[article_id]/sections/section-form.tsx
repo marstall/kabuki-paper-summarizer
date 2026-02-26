@@ -7,6 +7,10 @@ import Errors from "@/app/components/errors"
 export default function SectionForm(params: any) {
   const {article_id,action} = params;
   const [formData, submitAction] = useActionState(action, {title: ""});
+  function subm() {
+    console.log("submit clicked.")
+    submitAction()
+  }
   return <>
     <Errors errors={formData}/>
     <form id='_form' action={submitAction}>

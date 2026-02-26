@@ -44,6 +44,15 @@ body {
   padding-right: clamp(2rem,21vw,16rem);
 }
 
+a:link {
+  color: black;
+}
+
+a:visited {
+  color: black;
+}
+
+
 .pageContent {
   padding-top: 4vw;
   padding-bottom: 4vw;

@@ -4,6 +4,7 @@ import {useActionState, useState} from 'react'
 import createEditAttachment from './attachment-create-edit'
 import Errors from "@/app/components/errors";
 import Submit from "@/app/components/submit-button";
+import Link from "next/link";
 
 export default function AttachmentCreateEditForm({article}) {
   const initialState = {
@@ -14,7 +15,7 @@ export default function AttachmentCreateEditForm({article}) {
   // const [caption,setCaption] = useState(state.caption||"")
   // const [altText,setAltText] = useState(state.altText||"")
   return <div className={'content'}>
-    <div className={'above-h1'}>{article.original_title}</div>
+    <Link className={'button'} href={`/articles/${article.id}`}>&lt; Back to article '{article.original_title.substring(0,50)} ...'</Link>
     <h1 className={'title'}>New Attachment</h1>
     <Errors errors={state}/>
     {state.success &&<div>success! (id: {state.attachment_id})</div>}
@@ -39,7 +40,7 @@ export default function AttachmentCreateEditForm({article}) {
           <input name='alt_text' type='text' defaultValue={state.alt_text}/>
         </div>
       </div>
-      {/*<Submit/>*/}
+      <Submit/>
     </form>
   </div>
 }
