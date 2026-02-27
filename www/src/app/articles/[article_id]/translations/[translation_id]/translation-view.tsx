@@ -5,6 +5,8 @@ export default async function TranslationView({translation_id}: any) {
   const translation = await prisma.translations.findUnique(
     {where: {id: translation_id}})
 
+  if (!translation) return <div>Translation Not found</div>
+
   const article = await prisma.articles.findUnique(
     {
       where: {id:translation.article_id},
@@ -46,7 +48,6 @@ export default async function TranslationView({translation_id}: any) {
     orderBy: {created_at: 'desc'}
   });
   const attachmentTranslation = attachmentTranslations.length>0 ? attachmentTranslations[0] : null
-  if (!translation) return <div>Translation Not found</div>
   return <TranslationViewClient
     translation={translation}
     article={article}
