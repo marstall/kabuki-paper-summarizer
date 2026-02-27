@@ -89,7 +89,7 @@ export default function TranslationSentenceBySentence({translation,numParagraphs
   const unprocessedParagraphs = extractParagraphs(translation.body)
   const processedParagraphsArray = []
   for (const [i,unprocessedParagraph] of unprocessedParagraphs.entries()) {
-    if (numParagraphsToShow && i<=numParagraphsToShow)
+    if (numParagraphsToShow===null || numParagraphsToShow && i<=numParagraphsToShow)
     {
       const processedSentences = []
       const sentencesEntries = extractAnnotatedSentences(unprocessedParagraph) // [['s','(1,2)'],etc.]
