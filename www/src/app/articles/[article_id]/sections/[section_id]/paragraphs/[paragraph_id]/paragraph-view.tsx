@@ -38,7 +38,7 @@ export default async function ParagraphView({
       {paragraph.body}
     </p>
     <form action={deleteParagraphAction}>
-      <button className={'button is-danger'} href='#' type={'submit'}>
+      <button className={'button is-danger'} type={'submit'}>
         Delete
       </button>
     </form>
