@@ -6,6 +6,8 @@ import Image from "next/image";
 import {translate} from '@/app/lib/translate'
 import Attachment from "../../components/attachment/attachment";
 import _ from 'lodash'
+import {prisma} from "@/app/lib/prisma";
+import {redirect} from "next/navigation";
 
 function Section({section}) {
   return section.paragraphs.map(paragraph =>
@@ -22,17 +24,16 @@ function Section({section}) {
   )
 }
 
-export default function ArticleViewClient({article}) {
-
+export default function ArticleViewClient({article,deleteArticleAction}) {
   const deleteDisabled = !(_.isEmpty(article.translations) && _.isEmpty(article.sections) && _.isEmpty(article.attachments))
   const createAttachmentUrl = `/articles/${article.id}/attachments/create-edit`
   return <div className="content">
     <h1>{article.original_title}</h1>
     <p>
       <i>{article.attribution}&nbsp;
-        (<Link className="has-text-primary has-text-weight-bold" href={article.url}>
+        ({article.url && <Link className="has-text-primary has-text-weight-bold" href={article.url}>
           {article.year}
-        </Link>)
+        </Link>})
       </i>
     </p>
     <hr/>
@@ -102,8 +103,9 @@ export default function ArticleViewClient({article}) {
       <Link className={"button"} href={`/articles/${article.id}/edit`}>Edit</Link>
     </div>
     <div className={"block"}>
-
-      <Link disabled={deleteDisabled} className={"button"} href={`/articles/${article.id}/delete`}>Delete</Link>
+      <form action={deleteArticleAction}>
+        <button disabled={deleteDisabled} className={"button is-danger"} type={'submit'}>Delete</button>
+      </form>
     </div>
   </div>
 }

@@ -1,5 +1,6 @@
 import {prisma} from '@/app/lib/prisma'
 import ArticleViewClient from "../../components/article-view-client/article-view-client.tsx";
+import {redirect} from "next/navigation";
 
 
 export default async function ArticleView({id}) {
@@ -66,6 +67,18 @@ export default async function ArticleView({id}) {
   )
   article.translations = translations;
   article.attachments = attachments;
-  return <ArticleViewClient article={article}/>
+
+  async function deleteArticleAction() {
+    'use server'
+    await prisma.articles.delete({
+      where: {
+        id: article.id
+      },
+    });
+    redirect("/articles")
+  }
+
+
+  return <ArticleViewClient article={article} deleteArticleAction={deleteArticleAction}/>
 
 }

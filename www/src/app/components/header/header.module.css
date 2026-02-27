@@ -59,7 +59,7 @@
 
 .slogan {
   margin-top:-7px;
-  color: green;
+  color: darkseagreen;
   font-family: var(--body-font);
   font-size: clamp(20px, 3.2vw, 24px);
   line-height: 1.1;

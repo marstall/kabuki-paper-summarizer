@@ -4,7 +4,7 @@ import Header from '@/app/components/header/header'
 
 export default async function Homepage() {
   return <div className={styles.container}>
-    <Header/>
+    <Header minimal={true}/>
     <div className={styles.latestPostsHeading}>Latest posts</div>
     <Translations/>
   </div>
