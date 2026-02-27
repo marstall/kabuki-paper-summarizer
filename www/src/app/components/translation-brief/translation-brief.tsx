@@ -1,14 +1,16 @@
-import styles from './translation.module.css'
+import styles from './translation-brief.module.css'
 import {firstParagraph} from "@/utils/text";
 import Link from "next/link";
 import Attachment from "@/app/components/attachment/attachment";
 import {shortDate } from "@/utils/date";
+import TranslationSentenceBySentence
+  from "@/app/components/translation-sentence-by-sentence/translation-sentence-by-sentence";
 
 function extractText(body) {
   return firstParagraph(body)
 }
 
-export default function Translation({translation}) {
+export default function TranslationBrief({translation}) {
   const article = translation.articles;
   if (!article) return null;
   const attachment = article && article.attachments && article.attachments.length>0 ? article.attachments[0] : null
@@ -21,7 +23,9 @@ export default function Translation({translation}) {
     {attachment && <div className={styles.attachment}>
       <Attachment attachment={attachment} allowMaximize={false} showCaption={false}/>
     </div>}
-    <div className={styles.text}>{text}</div>
+    <div className={styles.text}>
+      <TranslationSentenceBySentence translation={translation} numParagraphsToShow={1}/>
+    </div>
     <div className={styles.readMoreLink}>
       <Link href={`/articles/${article.id}/translations/${translation.id}`}
             className={'button'}>Read more</Link>

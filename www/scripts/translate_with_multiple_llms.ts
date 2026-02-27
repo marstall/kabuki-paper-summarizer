@@ -27,6 +27,7 @@ const llms = await prisma.llms.findMany({where: {active: true}})
 const procs = llms.map(({id}) => {
   const regularParams = [
     "--translateAttachmentCaptions",
+    "--generate-metadata",
     "--num-drafts","1",
     "--log-levels","minimal",
     "--article-id", String(articleId),

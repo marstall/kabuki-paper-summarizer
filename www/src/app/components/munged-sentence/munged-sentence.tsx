@@ -15,6 +15,7 @@ export default function MungedSentence({ paragraphIndex,sentenceIndex,klass, tex
   if (text.startsWith("##")) html=`<strong>${text.replace("## ","")}</strong>`
   if (text.startsWith("# ")) html=`<strong>${text.replace("# ","")}</strong>`
 
+
   // make ** text ** into </strong>
   if (text.startsWith("**") && text.endsWith("**"))
     html=`<strong>${text.replaceAll("**","")}</strong>`
@@ -23,6 +24,7 @@ export default function MungedSentence({ paragraphIndex,sentenceIndex,klass, tex
   // don't start the whole article with a header since we already have a headline in the header
   if (paragraphIndex===0 && sentenceIndex===0 && text.startsWith("#")) return null
 
+  html = html.replace(/(?<!\*)\*([^*]+?)\*(?!\*)/g, "<b>$1</b>")
 
   return (
     <span className={klass}

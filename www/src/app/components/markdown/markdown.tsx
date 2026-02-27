@@ -2,14 +2,14 @@ import React from "react";
 import MarkdownIt from "markdown-it";
 
 const mdParser = new MarkdownIt({
-  html: true,
+  html: false,
   linkify: true,
   typographer: true
 })
 
 
 export default function Markdown({text}) {
-  if (!text) return ""
+  if (!text) return null
   let html = mdParser.render(text)
 
   // make ## an H1

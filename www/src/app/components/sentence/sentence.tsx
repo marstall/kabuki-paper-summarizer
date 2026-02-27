@@ -31,7 +31,7 @@ function OriginalSentence({toggleOriginal, sentenceClaims, translatedText, origi
 
 }
 
-export default function Sentence({paragraphIndex, sentenceIndex, article, translation, sentenceText, sentenceClaimIndexes}) {
+export default function Sentence({paragraphIndex, sentenceIndex, translation, sentenceText, sentenceClaimIndexes}) {
   const [showOriginal, setShowOriginal] = useState(false)
   const [finalText, setFinalText] = useState(sentenceText)
   const sentenceClaims = sentenceClaimIndexes && sentenceClaimIndexes.length > 0 && translation.claims.claims.filter((claim) => {

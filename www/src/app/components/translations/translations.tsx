@@ -1,6 +1,6 @@
 import styles from './translations.module.css'
 import {prisma} from '@/app/lib/prisma'
-import Translation from '@/app/components/translation/translation'
+import TranslationBrief from '@/app/components/translation-brief/translation-brief'
 
 export default async function Translations(params: any) {
   const translations = await prisma.translations.findMany(
@@ -20,5 +20,5 @@ export default async function Translations(params: any) {
         }
       }
     })
-  return translations.map(translation => <Translation key={translation.id} translation={translation}/>)
+  return translations.map(translation => <TranslationBrief key={translation.id} translation={translation}/>)
 }

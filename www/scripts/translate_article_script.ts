@@ -61,7 +61,7 @@ const argv = await yargs(hideBin(process.argv))
     demandOption: false,
   })
   .option('generate-metadata', {
-    alias: 'm',
+    alias: 'gm',
     type: 'boolean',
     demandOption: false,
   })
@@ -124,7 +124,7 @@ const reviewDraft = argv['review-draft'] || false
 const editDraft = argv['edit-draft'] || false
 const llmId = argv['llm-id']
 const generationNote = argv['note']||shortDateTime(Date.now())
-const listLlms = argv['list-llms']
+const listLlms = argv['list-llms']||false
 const logLevels = argv['log-levels']
 const generation = argv['generation']||(Math.floor(Date.now()/1000)+"")
 const doNothing = argv['do-nothing']
@@ -147,7 +147,7 @@ const params = {
   logLevels,
   generation
 }
-//block(params,"parameters",);
+//block(params,"parameters");
 
 if (errors.length > 0) {
   for (const e of errors) {

@@ -48,9 +48,10 @@ export default async function ArticleView({id}) {
   const translations = await prisma.translations.findMany({
       where: {article_id: Number(id)},
       include: {llms: true},
-      orderBy: {
-        created_at: 'desc'
-      },
+      orderBy: [
+        {published_at: 'asc'},
+        {created_at: 'desc'}
+      ],
     }
   )
   const attachments = await prisma.attachments.findMany({
@@ -78,7 +79,22 @@ export default async function ArticleView({id}) {
     redirect("/articles")
   }
 
+  async function deleteAllUnpublishedTranslationsAction() {
+    'use server'
+    await prisma.translations.deleteMany({
+      where: {
+        article_id: article.id,
+        published_at: null
+      }
+    })
+    redirect(`/articles/${article.id}`)
+  }
 
-  return <ArticleViewClient article={article} deleteArticleAction={deleteArticleAction}/>
+
+  return <ArticleViewClient
+    article={article}
+    deleteArticleAction={deleteArticleAction}
+    deleteAllUnpublishedTranslationsAction={deleteAllUnpublishedTranslationsAction}
+  />
 
 }

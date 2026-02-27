@@ -195,6 +195,10 @@ export default class Article extends BaseModel {
       const pre = new Date()
       const url = "https://kabuki-paper-summarizer-www.vercel.app/file/"+attachment.id;
       const caption = attachment.caption;
+      if (!caption || caption.length<10) {
+        log("skipping this attachment because it has no caption.")
+        continue;
+      }
       block("translating caption",caption)
 
       const input = `

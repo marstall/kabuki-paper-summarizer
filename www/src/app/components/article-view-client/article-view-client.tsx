@@ -8,6 +8,7 @@ import Attachment from "../../components/attachment/attachment";
 import _ from 'lodash'
 import {prisma} from "@/app/lib/prisma";
 import {redirect} from "next/navigation";
+import {shortDateTime} from "@/utils/date";
 
 function Section({section}) {
   return section.paragraphs.map(paragraph =>
@@ -24,7 +25,7 @@ function Section({section}) {
   )
 }
 
-export default function ArticleViewClient({article,deleteArticleAction}) {
+export default function ArticleViewClient({article, deleteArticleAction, deleteAllUnpublishedTranslationsAction}) {
   const deleteDisabled = !(_.isEmpty(article.translations) && _.isEmpty(article.sections) && _.isEmpty(article.attachments))
   const createAttachmentUrl = `/articles/${article.id}/attachments/create-edit`
   return <div className="content">
@@ -42,26 +43,35 @@ export default function ArticleViewClient({article,deleteArticleAction}) {
     <div className={"block"}>
       {!article.translations || article.translations.length == 0 && <div>no translations.</div>}
 
-      <table>
+      <table className={styles.noWrapTable}>
         <tbody>
+        {!_.isEmpty(article.translations) &&
+          <tr>
+            <th>title</th>
+            <th>created</th>
+            <th>published</th>
+            <th>model</th>
+            <th>generation</th>
+          </tr>}
         {article.translations.map(translation => {
           return <tr key={translation.id}>
             <td>
+              {translation.title}<br/>
               <Link href={`/articles/${article.id}/translations/${translation.id}`}
-                    className="button">{translation.title}&nbsp;
-                <span style={{
-                  color: 'lightgray',
-                  fontSize: 'smaller'
-                }}></span></Link></td>
+              >View
+              </Link>
+              &nbsp;<Link href={`/articles/${article.id}/translations/${translation.id}/edit`}
+            >Edit
+            </Link>
+            </td>
             <td>
-              {new Date(translation.created_at).toDateString()}<br/>
-              {new Date(translation.created_at).toTimeString()}
+              {shortDateTime(new Date(translation.created_at))}
+            </td>
+            <td>
+              {translation.published_at && shortDateTime(new Date(translation.published_at))}
             </td>
             <td>
               {translation.llms.model}
-            </td>
-            <td>
-              {translation.llms.type}
             </td>
             <td>
               {translation.generation && <Link href={`/generations/${translation.generation}`}>
@@ -75,11 +85,22 @@ export default function ArticleViewClient({article,deleteArticleAction}) {
         </tbody>
       </table>
       <hr/>
+      {!_.isEmpty(article.translations) &&
+        <>
+          <form action={deleteAllUnpublishedTranslationsAction}>
+            <button className={"button is-danger"} type={'submit'}>Delete All unpublished translations for this
+              Article
+            </button>
+          </form>
+          <hr/>
+        </>
+      }
       <h3>Attachments</h3>
       {!article.attachments || article.attachments.length == 0 && <div className={'block'}>no attachments.</div>}
       {article.attachments.map(attachment =>
         <Link key={attachment.id} href={`/articles/${article.id}/attachments/${attachment.id}`}>
-          <Image alt={attachment.alt_text} src={`/file/${attachment.id}`} width={attachment.width} height={attachment.height}/>
+          <Image alt={attachment.alt_text} src={`/file/${attachment.id}`} width={attachment.width}
+                 height={attachment.height}/>
         </Link>
       )}
       <br/>

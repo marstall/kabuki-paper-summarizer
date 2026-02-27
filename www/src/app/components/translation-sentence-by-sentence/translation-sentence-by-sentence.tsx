@@ -62,7 +62,7 @@ function parseAnnotatedSentence(paragraphText) { // returns ["bare sentence",[2,
 }
  */
 
-function Paragraph({index, article, translation, processedParagraph}) {
+function Paragraph({index, translation, processedParagraph}) {
   if (processedParagraph.length == 0) return null;
   const subheader = translation.subheaders[index+1];
   const definition = translation.definitions[index];
@@ -78,7 +78,6 @@ function Paragraph({index, article, translation, processedParagraph}) {
       key={i}
       paragraphIndex={index}
       sentenceIndex={i}
-      article={article}
       translation={translation}
       sentenceText={text}
       sentenceClaimIndexes={claimIndexes}/>)}
@@ -86,25 +85,28 @@ function Paragraph({index, article, translation, processedParagraph}) {
   </div>
 }
 
-export default function TranslationSentenceBySentence({article, translation, attachment, attachmentTranslation, llm}) {
+export default function TranslationSentenceBySentence({translation,numParagraphsToShow=null}) {
   const unprocessedParagraphs = extractParagraphs(translation.body)
   const processedParagraphsArray = []
-  for (const unprocessedParagraph of unprocessedParagraphs) {
-    const processedSentences = []
-    const sentencesEntries = extractAnnotatedSentences(unprocessedParagraph) // [['s','(1,2)'],etc.]
-    for (const sentenceEntry of sentencesEntries) {
-      const text = sentenceEntry[0];
-      const parens = sentenceEntry[1];
-      const claimIndexes = parens?.match(/\d+/g)?.map(id => Number(id))
-      processedSentences.push([text, claimIndexes])
+  for (const [i,unprocessedParagraph] of unprocessedParagraphs.entries()) {
+    if (numParagraphsToShow && i<=numParagraphsToShow)
+    {
+      const processedSentences = []
+      const sentencesEntries = extractAnnotatedSentences(unprocessedParagraph) // [['s','(1,2)'],etc.]
+      for (const sentenceEntry of sentencesEntries) {
+        const text = sentenceEntry[0];
+        const parens = sentenceEntry[1];
+        const claimIndexes = parens?.match(/\d+/g)?.map(id => Number(id))
+        processedSentences.push([text, claimIndexes])
+      }
+      processedParagraphsArray.push(processedSentences)
     }
-    processedParagraphsArray.push(processedSentences)
   }
   // so we now have an array of paragraphs, each containing an array of sentences.
 
   return <>
   {processedParagraphsArray.map((processedParagraph, i) =>
-        <Paragraph key={i} index={i} article={article} translation={translation}
+        <Paragraph key={i} index={i} translation={translation}
                    processedParagraph={processedParagraph}/>
       )}
   </>
