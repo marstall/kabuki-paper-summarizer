@@ -19,6 +19,7 @@ export default function TranslationBrief({translation}) {
   return <div className={styles.container}>
     <div className={styles.supertitle}>{translation.category}</div>
     <h1>{translation.title}</h1>
+    <h2>{translation.second_title}</h2>
     <div className={styles.dateline}>Posted on {shortDate(translation.published_at)}</div>
     {attachment && <div className={styles.attachment}>
       <Attachment attachment={attachment} allowMaximize={false} showCaption={false}/>

@@ -35,6 +35,10 @@
 .container h1 {
   font-size: clamp(2.2rem, 4vw, 3rem);
   line-height: 1.1;
+  font-weight: bold;
+}
+.container h2 {
+  color: #666666;
 }
 
 .supertitle {
