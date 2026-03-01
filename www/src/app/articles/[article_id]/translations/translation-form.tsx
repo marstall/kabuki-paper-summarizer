@@ -23,14 +23,36 @@ export default function TranslationForm({translation, action}) {
     <form id='_form' action={submitAction}>
       <input type="hidden" name="translation_id" value={translation?.id}/>
       <div className="field">
+        <label className="label">Category</label>
+        <div className="control">
+          <input className="input" type="text"
+                 name="category"
+                 defaultValue={getval("category")}
+                 placeholder="category"/>
+        </div>
+      </div>
+      <div className="field">
         <label className="label">Title</label>
         <div className="control">
           <input className="input" type="text"
                  name="title"
                  defaultValue={getval("title")}
-                 placeholder="Text input"/>
+                 placeholder="title"/>
         </div>
       </div>
+      <div className="field">
+        <label className="label">Second Title</label>
+        <div className="control">
+          <textarea className="textarea"
+                    name="second_title"
+                    defaultValue={getval("second_title")}
+                    placeholder="second title"
+                    rows={2}
+                    style={{resize: 'vertical'}}
+          />
+        </div>
+      </div>
+
       <div className="field">
         <label className="label">body</label>
         <div className="control">
@@ -44,12 +66,13 @@ export default function TranslationForm({translation, action}) {
           ></textarea>
         </div>
       </div>
-      <div className="field" style={{border:'1px dotted lightgrey',padding:'0.5rem'}}>
-          <input type={'checkbox'} name={'published_at'} value={"1"} defaultChecked={getval('published_at')? true: false}/>
-          &nbsp;published to web
+      <div className="field" style={{border: '1px dotted lightgrey', padding: '0.5rem'}}>
+        <input type={'checkbox'} name={'published_at'} value={"1"}
+               defaultChecked={getval('published_at') ? true : false}/>
+        &nbsp;published to web
       </div>
       <div className={'block'}>
-      <Submit/>
+        <Submit/>
       </div>
     </form>
   </div>

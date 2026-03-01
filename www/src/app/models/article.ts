@@ -128,6 +128,7 @@ export default class Article extends BaseModel {
         generation_note: generationNote,
         generation,
       })
+      // returns after the first iteration
       return translation;
     }
 
@@ -148,18 +149,18 @@ export default class Article extends BaseModel {
     const pull_quote = `a single sentence direct quote from the article that highlights something interesting.
      Should be an an array that also includes the index of paragraph it should precede, like :['pull quote', 5].
      The first paragraph is number 1, the second paragraph is number 2, etc.`
-    const definitions = `a hash of short definitions that will appear inline next to a subset of paragraphs. 
-      For example, if paragraph 5 introduces the term "Enhancers, there should be an entry like 
-      {5:"Enhancers are regulatory DNA regions that amplify gene expression."}.
-      The first paragraph is number 1, the second paragraph is number 2, etc.`
-    const subheaders = `a short list of subheaders (no more than 4) to appear sprinkled throughout the text. They should be in sentence form
-    and pull out a key fact from the next few paragraphs. In that sense, they are like a pull quote, but they should not be a direct quote.
-    Format them like definitions, with the number of the paragraph they should appear before:  {"3":"subheader text"}. Should not have dependent
-    clauses, multiple clauses, punctuation marks (except, judiciously, perhaps 1 comma) or parentheses. 
-    The first paragraph is number 1, the second paragraph is number 2, etc.
-    Examples: "Kabuki mice performed poorly on the Morris Water maze", "A cancer drug improved outcomes, but was considered too toxic",
-    "Boosting CREB improved enhancer timing"`
-    const jsonExample = {category, title, second_title, tags, pull_quote, definitions, subheaders}
+    // const definitions = `a hash of short definitions that will appear inline next to a subset of paragraphs.
+    //   For example, if paragraph 5 introduces the term "Enhancers, there should be an entry like
+    //   {5:"Enhancers are regulatory DNA regions that amplify gene expression."}.
+    //   The first paragraph is number 1, the second paragraph is number 2, etc.`
+    // const subheaders = `a short list of subheaders (no more than 4) to appear sprinkled throughout the text. They should be in sentence form
+    // and pull out a key fact from the next few paragraphs. In that sense, they are like a pull quote, but they should not be a direct quote.
+    // Format them like definitions, with the number of the paragraph they should appear before:  {"3":"subheader text"}. Should not have dependent
+    // clauses, multiple clauses, punctuation marks (except, judiciously, perhaps 1 comma) or parentheses.
+    // The first paragraph is number 1, the second paragraph is number 2, etc.
+    // Examples: "Kabuki mice performed poorly on the Morris Water maze", "A cancer drug improved outcomes, but was considered too toxic",
+    // "Boosting CREB improved enhancer timing"`
+    const jsonExample = {category, title, second_title, tags, pull_quote}
     const instructions = `I need a number of strings to fill in spots in a typical magazine web layout. Can you read through the draft and generate
     them as specified in this json file? ${JSON.stringify(jsonExample)}.
     You must return valid JSON only.

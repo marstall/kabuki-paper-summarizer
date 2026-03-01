@@ -95,6 +95,7 @@
 }
 
 .creditText {
+  color: darkseagreen;
   transform: translateY(-3px);
   line-height: 1.35;
 }

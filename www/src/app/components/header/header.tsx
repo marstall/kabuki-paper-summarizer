@@ -8,22 +8,23 @@ export default function Header({minimal=false}) {
 
     </div>
     <div className={styles.slogan}>
-      Making the science behind Kabuki Syndrome more accessible, one paper at a time
+      {/*Making the science behind Kabuki Syndrome more accessible, one paper at a time*/}
+    Using AI to make the science of Kabuki Syndrome more accessible, one paper at a time.
     </div>
     {!minimal && <div className={styles.credits}>
       <ul className={styles.creditsList}>
-        <li className={styles.creditItem}>
-          <span className={styles.creditIcon}>🧬</span>
-          <span className={styles.creditText}>Kabuki-related academic papers translated into plain English by AI.</span>
-        </li>
-        <li className={styles.creditItem}>
-          <span className={styles.creditIcon}>🔍</span>
-          <span className={styles.creditText}>Tap any sentence to show source passages.</span>
-        </li>
-        <li className={styles.creditItem}>
-          <span className={styles.creditIcon}>👨</span>
-          <span className={styles.creditText}>Our Editor and AI wrangler is Chris Marstall, a curious Kabuki parent.</span>
-        </li>
+        {/*<li className={styles.creditItem}>*/}
+        {/*  <span className={styles.creditIcon}>🧬</span>*/}
+        {/*  <span className={styles.creditText}>Kabuki-related academic papers translated into plain English by AI.</span>*/}
+        {/*</li>*/}
+        {/*<li className={styles.creditItem}>*/}
+        {/*  <span className={styles.creditIcon}>🔍</span>*/}
+        {/*  <span className={styles.creditText}>Tap any sentence to show source passages.</span>*/}
+        {/*</li>*/}
+        {/*<li className={styles.creditItem}>*/}
+        {/*  <span className={styles.creditIcon}>👨</span>*/}
+        {/*  <span className={styles.creditText}>Edited by a curious Kabuki parent.</span>*/}
+        {/*</li>*/}
       </ul>
     </div>}
   </div>

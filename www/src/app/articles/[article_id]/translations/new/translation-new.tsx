@@ -19,6 +19,8 @@ async function submit(prevState, formData) {
   'use server'
 
   const title = formData.get('title');
+  const second_title = formData.get('second_title') || "";
+  const category = formData.get('category') || "";
   const body = formData.get('body') || "";
   const publishedAtValue = formData.get('published_at') ? new Date() : null;
   let translationId = Number(formData.get('translation_id'));
@@ -41,6 +43,8 @@ async function submit(prevState, formData) {
             data: {
               title,
               body,
+              category,
+              second_title,
               published_at: publishedAtValue
             }
           }
