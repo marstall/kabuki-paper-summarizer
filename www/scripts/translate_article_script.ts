@@ -91,6 +91,11 @@ const argv = await yargs(hideBin(process.argv))
     type: 'string',
     demandOption: false,
   })
+  .option('prompt', {
+    alias: 'pt',
+    type: 'string',
+    demandOption: false,
+  })
   .option('list-llms', {
     alias: 'm',
     type: 'boolean',
@@ -128,6 +133,7 @@ const listLlms = argv['list-llms']||false
 const logLevels = argv['log-levels']
 const generation = argv['generation']||(Math.floor(Date.now()/1000)+"")
 const doNothing = argv['do-nothing']
+const prompt = argv['prompt']
 const errors = []
 if (!listLlms && !doNothing) {
   if (!articleId) errors.push("--article-id required.")
@@ -145,7 +151,8 @@ const params = {
   listLlms,
   doNothing,
   logLevels,
-  generation
+  generation,
+  prompt
 }
 //block(params,"parameters");
 

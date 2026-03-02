@@ -56,7 +56,7 @@ export default function ArticleViewClient({article, deleteArticleAction, deleteA
         {article.translations.map(translation => {
           return <tr key={translation.id}>
             <td>
-              {translation.title}<br/>
+              {translation.title||article.title}<br/>
               <Link href={`/articles/${article.id}/translations/${translation.id}`}
               >View
               </Link>

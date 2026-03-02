@@ -17,6 +17,9 @@ model articles {
   created_at      DateTime       @db.Timestamp(6)
   updated_at      DateTime       @db.Timestamp(6)
   claims          Json?
+  title           String?        @db.VarChar
+  second_title    String?        @db.VarChar
+  category        String?        @db.VarChar
   attachments     attachments[]
   sections        sections[]
   translations    translations[]

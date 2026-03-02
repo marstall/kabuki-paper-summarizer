@@ -26,12 +26,43 @@ export default function ArticleForm({article, action}) {
         </div>
       </div>
       <div className="field">
-        <label className="label">Title</label>
+        <label className="label">Category</label>
+        <div className="control">
+          <input className="input" type="text"
+                 name="category"
+                 defaultValue={getval("category")}
+                 placeholder="Text input"/>
+        </div>
+      </div>
+      <div className="field">
+        <label className="label">Original Title</label>
         <div className="control">
           <input className="input" type="text"
                  name="original_title"
                  defaultValue={getval("original_title")}
                  placeholder="Text input"/>
+        </div>
+      </div>
+      <div className="field">
+        <label className="label">Title</label>
+        <div className="control">
+          <input className="input" type="text"
+                 name="title"
+                 defaultValue={getval("title")}
+                 placeholder="Text input"/>
+        </div>
+      </div>
+      <div className="field">
+        <label className="label">Second Title</label>
+        <div className="control">
+        <textarea
+          className="textarea"
+          name="second_title"
+          defaultValue={getval("second_title")}
+          placeholder="Text input"
+          rows="3"
+          style={{resize: 'vertical'}}
+        ></textarea>
         </div>
       </div>
       <div className="field">

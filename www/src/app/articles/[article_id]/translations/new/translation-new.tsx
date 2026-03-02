@@ -27,9 +27,9 @@ async function submit(prevState, formData) {
   const translation = translationId && await prisma.translations.findUnique({where: {id: translationId}});
   const articleId = translation.article_id;
   const errors = []
-  if (title?.length < 1) errors.push("Original title is not long enough")
+  // if (title?.length < 1) errors.push("Original title is not long enough")
 
-  if (body?.length < 1) errors.push("bodyis not long enough")
+  if (body?.length < 1) errors.push("body is not long enough")
 
   if (errors.length === 0) {
     const now = new Date()

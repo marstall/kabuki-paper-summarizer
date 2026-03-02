@@ -15,7 +15,10 @@ export default async function GenerationView(params) {
     }
     }
   )
-  const article = translations[0].articles
+  const article = translations[0]?.articles
+  if (!article) {
+    return <div>article not found</div>
+  }
   return <div className={'content'}>
     <h1 className={'title'}> generation: {generation} {article.original_title} ({article.id})</h1>
     {translations.map((translation) => {

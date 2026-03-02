@@ -14,10 +14,22 @@ const argv = await yargs(hideBin(process.argv))
     type: 'boolean',
     demandOption: false,
   })
+  .option('generate-metadata', {
+    alias: 'gm',
+    type: 'boolean',
+    demandOption: false,
+  })
+  .option('prompt', {
+    alias: 'pt',
+    type: 'string',
+    demandOption: false,
+  })
   .strict()
   .parse()
 
 const articleId = argv['article-id']
+const generateMetadata = argv['generate-metadata']
+const prompt = argv['prompt']
 const doNothing = argv['do-nothing']
 if (!doNothing && !articleId) {
   console.log("--articleId is required.")
@@ -27,12 +39,13 @@ const llms = await prisma.llms.findMany({where: {active: true}})
 const procs = llms.map(({id}) => {
   const regularParams = [
     "--translateAttachmentCaptions",
-    "--generate-metadata",
     "--num-drafts","1",
     "--log-levels","minimal",
+    "--prompt",prompt,
     "--article-id", String(articleId),
     "--llm-id",  String(id)
   ]
+  if (generateMetadata) regularParams.push("--generate-metadata")
   const doNothingParams = ["--do-nothing"]
   const params = doNothing ? doNothingParams : regularParams;
 

@@ -20,6 +20,9 @@ async function submit(prevState, formData) {
   const original_title = formData.get('original_title');
   const year = Number(formData.get('year'));
   const attribution = formData.get('attribution') || "";
+  const title = formData.get('title') || "";
+  const second_title = formData.get('second_title') || "";
+  const category = formData.get('category') || "";
   const full_text = formData.get('full_text') || "";
   const articleId = Number(formData.get('article_id'));
 
@@ -43,6 +46,9 @@ async function submit(prevState, formData) {
             data: {
               url,
               original_title,
+              title,
+              second_title,
+              category,
               year,
               attribution,
               full_text
@@ -56,6 +62,9 @@ async function submit(prevState, formData) {
             updated_at: now,
             url,
             original_title,
+            title,
+            second_title,
+            category,
             year: Number(year),
             attribution
           }
@@ -78,6 +87,9 @@ async function submit(prevState, formData) {
       year,
       attribution,
       full_text,
+      title,
+      second_title,
+      category,
       errors
     }
 

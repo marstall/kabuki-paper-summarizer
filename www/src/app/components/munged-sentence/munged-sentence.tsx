@@ -24,7 +24,8 @@ export default function MungedSentence({ paragraphIndex,sentenceIndex,klass, tex
   // don't start the whole article with a header since we already have a headline in the header
   if (paragraphIndex===0 && sentenceIndex===0 && text.startsWith("#")) return null
 
-  html = html.replace(/(?<!\*)\*([^*]+?)\*(?!\*)/g, "<b>$1</b>")
+  html = html.replace(/(?<!\*)\*([^*]+?)\*(?!\*)/g, "<em>$1</em>")
+  html = html.replace(/(?<!\*)\*\*([^*]+?)\*\*(?!\*)/g, "<strong>$1</strong>")
 
   return (
     <span className={klass}

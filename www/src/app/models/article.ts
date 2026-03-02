@@ -79,7 +79,7 @@ export default class Article extends BaseModel {
     await this.reload();
   }
 
-  async produceTranslation({forceExtractClaims, numDrafts, reviewDraft, editDraft, generateMetadata,generationNote,translateAttachmentCaptions,generation}) {
+  async produceTranslation({forceExtractClaims, numDrafts, reviewDraft, editDraft, generateMetadata,generationNote,translateAttachmentCaptions,generation,prompt}) {
     if (!this.prismaArticle.claims || forceExtractClaims) {
       log("extracting claims ...")
       const json = await this.extractClaims();
@@ -89,7 +89,7 @@ export default class Article extends BaseModel {
     }
 
     let drafts = null;
-    const writeDraftPrompt = "based on ideas json"
+    const writeDraftPrompt = prompt ||"based on ideas json"
 
     if (numDrafts > 0) {
       drafts = await this.writeDrafts(writeDraftPrompt, numDrafts);
@@ -137,11 +137,11 @@ export default class Article extends BaseModel {
 
   async generateMetadata(draft) {
     const pre = new Date()
-    const category = `single word general category that this article falls into within Kabuki: examples could be
-  'GENETICS', 'KMT2D', 'KMT6A', 'BRAIN','HEART','DIET','THERAPY', etc. This will appear above the title.`
-    const title = `5 words or less. A 'hook' that pithily describes the meat of this article.`
-    const second_title = `12 words or less. This will appear beneath the title and is an expansion on the title. 
-    This is a magazine convention, it provides a little more detail the title may have left out because it was so short.`
+    //   const category = `single word general category that this article falls into within Kabuki: examples could be
+    // 'GENETICS', 'KMT2D', 'KMT6A', 'BRAIN','HEART','DIET','THERAPY', etc. This will appear above the title.`
+    //   const title = `5 words or less. A 'hook' that pithily describes the meat of this article.`
+    //   const second_title = `12 words or less. This will appear beneath the title and is an expansion on the title.
+    //   This is a magazine convention, it provides a little more detail the title may have left out because it was so short.`
     // const title = `A 'hook' that will draw compelling interest, ideally at a glance. It should capture something surprising or counterintuitive about the core finding.`
     // const second_title = `a 'dek' which will appear beneath the title and provide a but more depth and clarity. If possible, it should sum up the core finding.`
 
@@ -186,10 +186,8 @@ export default class Article extends BaseModel {
   }
 
 
-  async translateAttachmentCaptions(translationId,generationNote,generation) {
+  async translateAttachmentCaptions(generationNote,generation) {
     const instructions = await Prompt.get("translate attachment caption")
-    log('instructions', instructions,)
-    const translation = await prisma.translations.findUnique(({where:{id:translationId}}))
     const attachments = await prisma.attachments.findMany(
       {where: {article_id:Number(this.prismaArticle.id)}})
     for (const attachment of attachments) {
@@ -200,20 +198,19 @@ export default class Article extends BaseModel {
         log("skipping this attachment because it has no caption.")
         continue;
       }
-      block("translating caption",caption)
+      log("caption",caption)
 
-      const input = `
-      ARTICLE TEXT
-      ${translation.body}
+      const input = `ARTICLE TEXT
+      ${this.paragraphsJoined()}
       
       IMAGE URL
       ${url}
       
       ORIGINAL CAPTION
-      ${caption}
+      ${caption}  
       `
-      block("instructions",instructions)
-      block("input",input)
+      log("instructions",instructions)
+      log("input",input)
       const responses = await Llm.chat(instructions, input)
       const response = responses[0]
       const elapsed = (new Date() as any - (pre as any)) / 1000.0
@@ -246,13 +243,15 @@ export default class Article extends BaseModel {
     }
     const instructions = `can you break down the following scientific paper into a list of its individual claims / ideas / propositions ?
     return the list to me in the following json format: ${JSON.stringify(jsonExample)}. 
-    Important: Return ONLY raw JSON. Do NOT wrap the response in markdown.Do
-    NOT include \`\`\` or any extra text. The response must be directly parseable by JSON.parse().`
+    Important: Return ONLY raw JSON. Do NOT wrap the response in markdown.
+    Do NOT include \`\`\`json at the beginning/end or any extra text. The response must be directly parseable by JSON.parse().`
     const input = this.paragraphsJoined()
-    bold("input")
-    block(input)
+    // bold("input")
+    // block(input)
     const responses = await Llm.chat(instructions, input)
-    const response = responses[0];
+    let response = responses[0];
+    response = response.replace("```json","")
+    response = response.replace("```","")
     // const response = await Llm.client.responses.create({
     //   model: Llm.configuredLlm.model,
     //   instructions,
@@ -260,9 +259,10 @@ export default class Article extends BaseModel {
     // });
     const elapsed = (new Date() as any - (pre as any)) / 1000.0
     block(`Completed in ${elapsed} seconds.`)
-
+    bold("response")
+    block(response)
     const json = JSON.parse(response)
-    bold("output")
+    bold("json")
     block(JSON.stringify(json, null, 2))
     return json
   }
@@ -273,7 +273,7 @@ export default class Article extends BaseModel {
       header(this.prismaArticle.original_title)
       const input = JSON.stringify(this.prismaArticle.claims);
       const instructions = await Prompt.get(promptName);
-      bold(`writing first draft, using prompt <${promptName}> with  model < ${Llm.configuredLlm.model}> ...`)
+      bold(`writing first draft, using prompt <${promptName}> with  model <${Llm.configuredLlm.model}> ...`)
       log("")
       block(instructions)
       const responses = await Llm.chat(instructions, input, {n: num})
