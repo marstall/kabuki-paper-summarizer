@@ -160,7 +160,7 @@ export default class Article extends BaseModel {
     // The first paragraph is number 1, the second paragraph is number 2, etc.
     // Examples: "Kabuki mice performed poorly on the Morris Water maze", "A cancer drug improved outcomes, but was considered too toxic",
     // "Boosting CREB improved enhancer timing"`
-    const jsonExample = {category, title, second_title, tags, pull_quote}
+    const jsonExample = {tags, pull_quote}
     const instructions = `I need a number of strings to fill in spots in a typical magazine web layout. Can you read through the draft and generate
     them as specified in this json file? ${JSON.stringify(jsonExample)}.
     You must return valid JSON only.

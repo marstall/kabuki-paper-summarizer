@@ -30,7 +30,7 @@ async function main(articleId: number, translationId: number, llmId: number, par
       if (!translationId && !translation) {
         error("You must supply a translationId.")
       }
-      await article.translateAttachmentCaptions(translationId || translation.id, params.generationNote,params.generation)
+      await article.translateAttachmentCaptions(params.generationNote,params.generation)
     }
     const elapsed = (new Date() as any - (pre as any)) / 1000.0
     log(`[${Llm.configuredLlm.model} (${Llm.configuredLlm.id})] completed article id ${articleId} in ${elapsed} seconds.`,null,false,"minimal")
