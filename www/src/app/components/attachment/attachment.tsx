@@ -4,18 +4,25 @@ import Link from 'next/link'
 import Image from 'next/image'
 import styles from './attachment.module.css'
 import Markdown from "@/app/components/markdown/markdown";
-import {useState} from "react";
+import {useState,useEffect} from "react";
 
-export default function Attachment({attachment, attachmentTranslation=null, allowMaximize=true,showCaption=true,allowEdit = false}) {
+export default function Attachment({attachment, allowMaximize=true,showCaption=true,allowEdit = false}) {
+
+  const [translation,setTranslation] = useState("")
+
+  useEffect(()=>{
+    fetch(`/api/attachment-translation/${attachment.id}`).then((response)=>{
+      response.json().then((json)=>{
+        setTranslation(json[0].body)
+      })
+    })
+  },[])
+
   const captionStates = [
     "minimized",
     "maximized",
     "original"
   ]
-  if (attachment.translations && attachment.translations.length>0) {
-    attachmentTranslation||=attachment.translations[0];
-
-  }
 
   const [captionState, setCaptionState] = useState(0);
   const [maximized, setMaximized] = useState(false);
@@ -46,7 +53,7 @@ export default function Attachment({attachment, attachmentTranslation=null, allo
   return <div className={maximized ? styles.containerMaximized : styles.containerInline} style={!showCaption ? {backgroundColor:'white'}: {}} key={attachment.id}>
     <div onClick={toggleMaximized} className={styles.imageContainer}>
     {allowEdit ?
-      <Link href={`/articles/${attachment.article_id}/attachments/${attachment.id}`} className="button">
+      <Link href={`/attachments/${attachment.id}`} className="button">
         <Image alt={attachment.alt_text} src={url} width={attachment.width} height={attachment.height}/>
       </Link>
       :
@@ -57,7 +64,7 @@ export default function Attachment({attachment, attachmentTranslation=null, allo
     {showCaption && <div title={hoverTextOptions[captionState]} onClick={stepCaption}
          className={captionStates[captionState] === "minimized" ? styles.captionMinimized : styles.captionMaximized}>
       {captionStates[captionState] === "original" && <div><b>original caption</b></div>}
-      <Markdown text={captionStates[captionState] === "original" ? attachment.caption : attachmentTranslation?.body}/>
+      <Markdown text={captionStates[captionState] === "original" ? attachment.caption : translation}/>
     </div>}
   </div>
 }

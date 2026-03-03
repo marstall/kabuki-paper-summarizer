@@ -8,9 +8,8 @@ export default async function Attachments() {
   return <div className={'content'}>
     <h1 className={'title'}>Attachments</h1>
     {attachments.map(async (attachment, i) => {
-      const article = await prisma.articles.findUnique(({where: {id: attachment.article_id}}))
       const src = `/file/${attachment.id}`
-      const url = `/articles/${article.id}/attachments/${attachment.id}`
+      const url = `/attachments/${attachment.id}`
       return <p key={"attachment-" + i}>
         <Link href={url}>
           <img src={src} style={{width: 200}}/><br/>

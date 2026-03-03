@@ -28,7 +28,7 @@ export default function TranslationBrief({translation}) {
       <TranslationSentenceBySentence translation={translation} numParagraphsToShow={1}/>
     </div>
     <div className={styles.readMoreLink}>
-      <Link href={`/articles/${article.id}/translations/${translation.id}`}
+      <Link href={`/translations/${translation.id}`}
             className={'button'}>Read more</Link>
     </div>
   </div>

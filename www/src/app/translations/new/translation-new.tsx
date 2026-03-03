@@ -68,9 +68,9 @@ async function submit(prevState, formData) {
     if (errors.length === 0) {
       //toast("Success!")
       if (translationId) {
-        redirect(`/articles/${articleId}/translations/${translationId}`)
+        redirect(`/translations/${translationId}`)
       } else {
-        redirect(`/articles/${articleId}/translations`)
+        redirect(`/translations`)
       }
     } else return {
       title,

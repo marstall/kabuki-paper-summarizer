@@ -1,13 +1,14 @@
 import {prisma} from '@/app/lib/prisma'
 import TranslationViewClient from "@/app/components/translation-view-client/translation-view-client";
 
-export default async function TranslationView({translation_id}: any) {
+export default async function TranslationView(params: any) {
+  const {translation_id} = params
   const translation = await prisma.translations.findUnique(
     {where: {id: translation_id}})
 
   if (!translation) return <div>Translation Not found</div>
 
-  const article = await prisma.articles.findUnique(
+  const article = translation.article_id && await prisma.articles.findUnique(
     {
       where: {id:translation.article_id},
       include: {
@@ -43,17 +44,11 @@ export default async function TranslationView({translation_id}: any) {
   )
 
   const attachment = attachments.length > 0 ? attachments[0] : null;
-  const attachmentTranslations = attachment && await prisma.translations.findMany({
-    where: {attachment_id: Number(attachment.id)},
-    orderBy: {created_at: 'desc'}
-  });
-  const attachmentTranslation = attachmentTranslations.length>0 ? attachmentTranslations[0] : null
   return <TranslationViewClient
     translation={translation}
     article={article}
     llm={llm}
     attachment={attachment}
-    attachmentTranslation={attachmentTranslation}
   />
 
 }

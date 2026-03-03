@@ -1,7 +1,7 @@
 import {prisma} from "@/app/lib/prisma";
 import {shortDateTime} from "@/utils/date";
 import TranslationViewClient from "@/app/components/translation-view-client/translation-view-client";
-import TranslationView from "@/app/articles/[article_id]/translations/[translation_id]/translation-view";
+import TranslationView from "@/app/translations/[translation_id]/translation-view";
 import Link from "next/link";
 
 export default async function GenerationView(params) {
@@ -24,7 +24,7 @@ export default async function GenerationView(params) {
     {translations.map((translation) => {
       return <div style={{padding:'1rem',marginBottom:'1rem',border:"4px dashed lightblue"}}>
         <div className={'title'}>
-          <Link href={`/articles/${article.id}/translations/${translation.id}/edit`}>translation id {translation.id}</Link>
+          <Link href={`/translations/${translation.id}/edit`}>translation id {translation.id}</Link>
         </div>
         <TranslationView translation_id={translation.id}/>
       </div>

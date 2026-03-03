@@ -16,7 +16,8 @@ function absoluteUrl(pathOrUrl) {
   return `${siteUrl.replace(/\/$/, "")}${pathOrUrl.startsWith("/") ? "" : "/"}${pathOrUrl}`;
 }
 
-export async function generateMetadata({params}) {
+export async function generateMetadata(_params) {
+  const params = await _params;
   let translationId;
   try {
     translationId = BigInt(params.translation_id);
@@ -47,7 +48,7 @@ export async function generateMetadata({params}) {
   const description = shorten(
     translation.second_title || translation.body || "AI-generated plain-English summary of a Kabuki syndrome research paper."
   )
-  const urlPath = `/articles/${params.article_id}/translations/${params.translation_id}`
+  const urlPath = `/translations/${params.translation_id}`
   const imagePath = attachment ? `/file/${attachment.id}` : "/favicon.ico"
 
   const ret = {
@@ -67,7 +68,6 @@ export async function generateMetadata({params}) {
       images: [absoluteUrl(imagePath)],
     },
   }
-  console.log({ret})
   return ret;
 }
 
