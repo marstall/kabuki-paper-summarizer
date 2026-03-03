@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { isLocal } from "./src/app/lib/misc";
 
 const publicPathRegexes: RegExp[] = [
   /^\/$/,
@@ -12,16 +11,20 @@ function isPublicPath(pathname: string): boolean {
   return publicPathRegexes.some((re) => re.test(pathname))
 }
 
-export function middleware(request: NextRequest) {
-  console.log("middleware")
+export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
-  if (!isLocal() && !isPublicPath(pathname)) {
+  const isLocal =
+    process.env.APP_ENV === "development" || process.env.NODE_ENV === "development"
+  console.log("proxy")
+
+  if (!isLocal && !isPublicPath(pathname)) {
     return NextResponse.redirect(new URL("/", request.url))
   }
-
   return NextResponse.next()
 }
+
+export default proxy
 
 export const config = {
   matcher: [
