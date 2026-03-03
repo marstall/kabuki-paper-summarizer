@@ -64,8 +64,8 @@ function parseAnnotatedSentence(paragraphText) { // returns ["bare sentence",[2,
 
 function Paragraph({index, translation, processedParagraph}) {
   if (processedParagraph.length == 0) return null;
-  const subheader = translation.subheaders[index+1];
-  const definition = translation.definitions[index];
+  // const subheader = translation.subheaders[index+1];
+  // const definition = translation.definitions[index];
   const pullquote = translation.pull_quote_index === index && translation.pull_quote;
 
   return <div style={{marginBottom: "1em"}}>

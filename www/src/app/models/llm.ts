@@ -48,6 +48,9 @@ export default class Llm extends BaseModel {
   }
 
   static async claudeMessagesCreateTypeHandler(instructions, input, options) {
+    const finalInstructions = `${instructions}
+    Write the prose sections of your response in <smoothly_flowing_prose_paragraphs> tags.
+    `
     const response = await Llm.client.messages.create(({
       model: Llm.configuredLlm.model,
       max_tokens: options.max_tokens || 5000,
@@ -63,6 +66,8 @@ export default class Llm extends BaseModel {
       if (content.type=='thinking') answerThinking = content.thinking
     }
     log(answerThinking,"thinking")
+    answerText= answerText.replaceAll("<smoothly_flowing_prose_paragraphs>","")
+    answerText= answerText.replaceAll("</smoothly_flowing_prose_paragraphs>","")
     return [answerText];
   }
 
