@@ -47,7 +47,7 @@ export default function TranslationViewClient({translation,article,llm,attachmen
         </div>
       </header>
       <div className="article-body">
-        <Attachment key={attachment.id} attachment={attachment}/>
+        <Attachment key={attachment.id} article={article} attachment={attachment}/>
         {/*<NavTabs/>*/}
         {state.selectedTab===0 &&
           <TranslationSentenceBySentence translation={translation}/>}

@@ -5,15 +5,19 @@ import Image from 'next/image'
 import styles from './attachment.module.css'
 import Markdown from "@/app/components/markdown/markdown";
 import {useState,useEffect} from "react";
+import _ from 'lodash'
+import AdminSection from "@/app/components/admin-section/admin-section";
 
-export default function Attachment({attachment, allowMaximize=true,showCaption=true,allowEdit = false}) {
+export default function Attachment({article,attachment, allowMaximize=true,showCaption=true,allowEdit = false}) {
 
   const [translation,setTranslation] = useState("")
-
   useEffect(()=>{
     fetch(`/api/attachment-translation/${attachment.id}`).then((response)=>{
       response.json().then((json)=>{
-        setTranslation(json[0].body)
+        const trans = _.get(json,'[0].body')
+        if (!trans) return;
+        console.log({trans})
+        setTranslation(trans)
       })
     })
   },[])
@@ -26,7 +30,16 @@ export default function Attachment({attachment, allowMaximize=true,showCaption=t
 
   const [captionState, setCaptionState] = useState(0);
   const [maximized, setMaximized] = useState(false);
+  const [activeCaption,setActiveCaption] = useState(attachment.caption)
+  console.log({activeCaption})
+  useEffect(()=>{
+    if (_.isEmpty(attachment.caption)) {
+      setActiveCaption(translation)
+    } else {
+      setActiveCaption(captionStates[captionState] === "original"&&!_.isEmpty(attachment.caption) ? attachment.caption : translation)
+    }
 
+  },[translation,captionState])
   function stepCaption() {
     let newStep = captionState + 1;
     if (newStep >= captionStates.length) {
@@ -64,7 +77,10 @@ export default function Attachment({attachment, allowMaximize=true,showCaption=t
     {showCaption && <div title={hoverTextOptions[captionState]} onClick={stepCaption}
          className={captionStates[captionState] === "minimized" ? styles.captionMinimized : styles.captionMaximized}>
       {captionStates[captionState] === "original" && <div><b>original caption</b></div>}
-      <Markdown text={captionStates[captionState] === "original" ? attachment.caption : translation}/>
+      <Markdown text={activeCaption}/>
+      <AdminSection>
+        <Link className={'button'} href={`/articles/${article.id}/attachments/${attachment.id}`}>manage translation</Link>
+      </AdminSection>
     </div>}
   </div>
 }

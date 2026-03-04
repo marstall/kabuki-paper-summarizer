@@ -27,9 +27,10 @@ export default function MungedSentence({ paragraphIndex,sentenceIndex,klass, tex
   html = html.replace(/(?<!\*)\*([^*]+?)\*(?!\*)/g, "<em>$1</em>")
   html = html.replace(/(?<!\*)\*\*([^*]+?)\*\*(?!\*)/g, "<strong>$1</strong>")
 
+
   return (
-    <span className={klass}
-         dangerouslySetInnerHTML={{__html: html}}
-    />
+    [<span className={klass}
+         dangerouslySetInnerHTML={{__html: " "+html}}
+    />]
   )
 }

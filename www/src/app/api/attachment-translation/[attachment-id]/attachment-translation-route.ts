@@ -11,7 +11,6 @@ export async function handleAttachmentTranslationGet(request: NextRequest, param
         body: true
       }
     })
-  console.log({translation})
   const jsonSafeTranslation = JSON.parse(
     JSON.stringify(translation, (_key, value) => (typeof value === 'bigint' ? value.toString() : value))
   )

@@ -25,7 +25,15 @@ async function submit(prevState, formData) {
   const publishedAtValue = formData.get('published_at') ? new Date() : null;
   let translationId = Number(formData.get('translation_id'));
   const translation = translationId && await prisma.translations.findUnique({where: {id: translationId}});
-  const articleId = translation.article_id;
+  let article;
+  let attachment;
+  if (translation.article_id) {
+    article = await prisma.articles.findUnique({where:{id:translation.article_id}})
+  } else {
+    attachment =  await prisma.attachments.findUnique({where:{id:translation.attachment_id}})
+    article = await prisma.articles.findUnique({where:{id:attachment.article_id}})
+  }
+
   const errors = []
   // if (title?.length < 1) errors.push("Original title is not long enough")
 
@@ -68,9 +76,10 @@ async function submit(prevState, formData) {
     if (errors.length === 0) {
       //toast("Success!")
       if (translationId) {
-        redirect(`/translations/${translationId}`)
+        if (attachment) redirect(`/articles/${article.id}/attachments/${attachment.id}`)
+        else redirect(`/translations/${translationId}`)
       } else {
-        redirect(`/translations`)
+        redirect(`/articles`)
       }
     } else return {
       title,

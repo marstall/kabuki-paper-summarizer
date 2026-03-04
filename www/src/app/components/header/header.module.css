@@ -57,6 +57,20 @@
   color: green;
 }
 
+
+.admin_logo {
+  color: green;
+  font-family: var(--body-font);
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: lowercase;
+  line-height: 1.3; /* try 0.85–0.95 */
+}
+
+.admin_logo a {
+  color: green;
+}
+
 .slogan {
   margin-top:-7px;
   color: darkseagreen;

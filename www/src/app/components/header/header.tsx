@@ -1,7 +1,14 @@
 import styles from './header.module.css'
 import Link from "next/link";
 
-export default function Header({minimal=false}) {
+export default function Header({admin=false,minimal=false}) {
+  if (admin) {
+    return     <div className={styles.admin_logo}>
+      <Link href='/'>🏠 Home</Link>
+      <br/>
+      <br/>
+    </div>
+  }
   return <div className={styles.container}>
     <div className={styles.logo}>
       <Link href='/'>The Kabuki Papers</Link>

@@ -4,6 +4,7 @@ import Attachment from "@/app/models/attachment";
 import {redirect} from "next/navigation";
 import {shortDate, shortDateTime} from "@/utils/date";
 import Markdown from "@/app/components/markdown/markdown";
+import Header from "@/app/components/header/header";
 
 export default async function AttachmentView({attachment_id}: any) {
 
@@ -20,8 +21,8 @@ export default async function AttachmentView({attachment_id}: any) {
       }
     })
   const article = await prisma.articles.findUnique({where: {id: attachment.article_id}})
-  const numTranslations = await prisma.translations.count({where:{attachment_id: attachmentId}})
-  const allowDeleteAttachment = numTranslations==0
+  const numTranslations = await prisma.translations.count({where: {attachment_id: attachmentId}})
+  const allowDeleteAttachment = numTranslations == 0
 
   async function deleteAllUnpublishedTranslations() {
     'use server'
@@ -38,6 +39,8 @@ export default async function AttachmentView({attachment_id}: any) {
 
   const imgUrl = `/file/${attachment.id}`
   return <div className={'content'}>
+    <Header admin={true}/>
+
     <div className={'above-h1'}>{article.original_title}</div>
     <div className={'block'}>
       <h1 className={'title'}>Attachment</h1>
@@ -50,17 +53,18 @@ export default async function AttachmentView({attachment_id}: any) {
     </div>
     <div className={'block'}>
       <h4 className={'title'}>Generated captions</h4>
-      {attachment.translations.map((translation,i) => {
+      {attachment.translations.map((translation, i) => {
         return <div key={i} className={'content'}>
-          <div style={{borderBottom:'1px dotted #ccc',marginBottom: 8}}><strong>
+          <div style={{borderBottom: '1px dotted #ccc', marginBottom: 8}}><strong>
             <Link href={`/translations/${translation.id}/edit`}>
-              translation {translation.id}
+              {`translation ${translation.id}`}
             </Link>
             &nbsp;</strong>
             <span style={{color: '#999'}}>{translation.llms.model},&nbsp;
               {shortDateTime(translation.created_at)}</span>
-            {translation.published_at && <span style={{borderRadius:4,padding:4,margin:4,backgroundColor:"#eee"}}>
-              ✅ published</span>}
+            {translation.published_at &&
+              <span style={{borderRadius: 4, padding: 4, margin: 4, backgroundColor: "#eee"}}>
+              ✅&nbsp;published</span>}
           </div>
           <Markdown text={translation.body}/>
         </div>
