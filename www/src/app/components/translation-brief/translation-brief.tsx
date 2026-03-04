@@ -22,7 +22,7 @@ export default function TranslationBrief({translation}) {
     <h2>{translation.second_title||article.second_title}</h2>
     <div className={styles.dateline}>Posted on {shortDate(translation.published_at)}</div>
     {attachment && <div className={styles.attachment}>
-      <Attachment attachment={attachment} allowMaximize={false} showCaption={false}/>
+      <Attachment article={article} attachment={attachment} allowMaximize={false} showCaption={false}/>
     </div>}
     <div className={styles.text}>
       <TranslationSentenceBySentence translation={translation} numParagraphsToShow={1}/>
