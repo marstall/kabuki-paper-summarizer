@@ -5,6 +5,7 @@ const publicPathRegexes: RegExp[] = [
   /^\/$/,
   /^\/translations\/\d+\/?$/,
   /^\/file\/\d+\/?$/,
+  /^\/api\/attachment-translation\/\d+\/?$/
 ]
 
 function isPublicPath(pathname: string): boolean {
