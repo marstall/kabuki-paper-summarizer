@@ -29,8 +29,8 @@ export default function MungedSentence({ paragraphIndex,sentenceIndex,klass, tex
 
 
   return (
-    [<span className={klass}
+    <span className={klass}
          dangerouslySetInnerHTML={{__html: " "+html}}
-    />]
+    />
   )
 }
