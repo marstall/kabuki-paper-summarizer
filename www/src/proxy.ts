@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 
 const publicPathRegexes: RegExp[] = [
   /^\/$/,
-  /^\/articles\/\d+\/translations\/\d+\/?$/,
+  /^\/translations\/\d+\/?$/,
   /^\/file\/\d+\/?$/,
 ]
 
