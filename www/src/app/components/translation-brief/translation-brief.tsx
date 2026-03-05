@@ -5,7 +5,7 @@ import Attachment from "@/app/components/attachment/attachment";
 import {shortDate } from "@/utils/date";
 import TranslationSentenceBySentence
   from "@/app/components/translation-sentence-by-sentence/translation-sentence-by-sentence";
-
+import EditableText from "@/app/components/editable-text/editable-text";
 function extractText(body) {
   return firstParagraph(body)
 }
@@ -17,9 +17,21 @@ export default function TranslationBrief({translation}) {
   const text = extractText(translation.body)
 
   return <div className={styles.container}>
-    <div className={styles.supertitle}>{translation.category||article.category}</div>
-    <h1>{translation.title||article.title}</h1>
-    <h2>{translation.second_title||article.second_title}</h2>
+    <div className={styles.supertitle}>
+      <EditableText id={article.id} model='article' field="category">
+        {article.category||translation.category}
+      </EditableText>
+    </div>
+    <h1>
+      <EditableText id={article.id} model='article' field="title">
+      {article.title||translation.title}
+      </EditableText>
+    </h1>
+    <h2>
+      <EditableText id={article.id} model='article' field="second_title">
+      {article.second_title||translation.second_title}
+      </EditableText>
+    </h2>
     <div className={styles.dateline}>Posted on {shortDate(translation.published_at)}</div>
     {attachment && <div className={styles.attachment}>
       <Attachment article={article} attachment={attachment} allowMaximize={false} showCaption={false}/>

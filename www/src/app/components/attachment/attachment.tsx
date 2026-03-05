@@ -16,7 +16,6 @@ export default function Attachment({article,attachment, allowMaximize=true,showC
       response.json().then((json)=>{
         const trans = _.get(json,'[0].body')
         if (!trans) return;
-        console.log({trans})
         setTranslation(trans)
       })
     })
@@ -31,7 +30,6 @@ export default function Attachment({article,attachment, allowMaximize=true,showC
   const [captionState, setCaptionState] = useState(0);
   const [maximized, setMaximized] = useState(false);
   const [activeCaption,setActiveCaption] = useState(attachment.caption)
-  console.log({activeCaption})
   useEffect(()=>{
     if (_.isEmpty(attachment.caption)) {
       setActiveCaption(translation)

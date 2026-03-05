@@ -16,7 +16,8 @@ export default function Header({admin=false,minimal=false}) {
     </div>
     <div className={styles.slogan}>
       {/*Making the science behind Kabuki Syndrome more accessible, one paper at a time*/}
-    Using AI to make the science of Kabuki Syndrome more accessible, one paper at a time.
+    {/*Using AI to make the science of Kabuki Syndrome more accessible, one paper at a time.*/}
+      Kabuki Syndrome science, illuminated by AI
     </div>
     {!minimal && <div className={styles.credits}>
       <ul className={styles.creditsList}>
