@@ -3,6 +3,7 @@ import styles from './editable-text.module.css'
 import {useState} from "react";
 import Link from "next/link";
 import save from './save-change'
+import {isLocal} from "@/app/lib/misc";
 
 function InlineEditor({save,children,setEditing}) {
   return <div className={styles.editorContainer}>
@@ -17,6 +18,7 @@ function InlineEditor({save,children,setEditing}) {
 }
 
 export default function EditableText({model,id,field,children}) {
+  if (!isLocal()) return <span>{children}</span>
   const [content,setContent] = useState(children)
   const [editing,setEditing] = useState(false)
 
