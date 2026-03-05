@@ -19,6 +19,7 @@ function InlineEditor({save,children,setEditing}) {
 
 export default function EditableText({model,id,field,children}) {
   if (!isLocal()) return <span>{children}</span>
+
   const [content,setContent] = useState(children)
   const [editing,setEditing] = useState(false)
 

@@ -39,7 +39,7 @@ async function main(llmId: number, articleId: number) {
   const article = await Article.create(articleId)
   bold("EXTRACT CLAIMS")
   bold(article.prismaArticle.original_title)
-  const json = await article.extractClaims();
+  const json = await article.extractClaims({max_tokens:10000});
   await article.update("claims", json)
 }
 

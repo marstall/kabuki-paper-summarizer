@@ -12,9 +12,9 @@ export default function MungedSentence({ paragraphIndex,sentenceIndex,klass, tex
   let html = text
 
   // make ## an H1
-  if (text.startsWith("##")) html=`<strong>${text.replace("## ","")}</strong>`
-  if (text.startsWith("# ")) html=`<strong>${text.replace("# ","")}</strong>`
+  if (text.startsWith("#")) html=`<strong>${text.replace(/\#+/,"")}</strong>`
 
+  if (text.startsWith("---")) html="<hr/>"
 
   // make ** text ** into </strong>
   if (text.startsWith("**") && text.endsWith("**"))

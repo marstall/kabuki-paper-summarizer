@@ -228,7 +228,7 @@ export default class Article extends BaseModel {
     }
   }
 
-  async extractClaims() {
+  async extractClaims(options={}) {
     const pre = new Date()
     const jsonExample = {
       claims: [{
@@ -248,7 +248,7 @@ export default class Article extends BaseModel {
     const input = this.paragraphsJoined()
     // bold("input")
     // block(input)
-    const responses = await Llm.chat(instructions, input)
+    const responses = await Llm.chat(instructions, input,options)
     let response = responses[0];
     response = response.replace("```json","")
     response = response.replace("```","")

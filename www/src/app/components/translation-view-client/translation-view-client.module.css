@@ -14,3 +14,32 @@
   grid-template-columns: minmax(0, 1fr);
   column-gap: var(--space-m);
 }
+
+.articleHeader h1 {
+  font-size: 1rem;
+  line-height: 1.1;
+  font-weight: bold;
+}
+
+.container h2 {
+  color: #666666;
+}
+
+.highlight {
+  color: #444;
+  border: 1px dashed #e0e0e0;
+  background-color: #ffd;
+  padding: 2px;
+  padding-left: 7px;
+  margin-top: 6px;
+  border-radius: 8px;
+}
+
+.highlight .icon {
+  margin-right: 7px;
+}
+
+.articleLink a {
+  text-decoration: underline;
+}
+

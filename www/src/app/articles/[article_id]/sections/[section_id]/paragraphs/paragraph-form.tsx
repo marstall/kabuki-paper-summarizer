@@ -5,7 +5,7 @@ import {useActionState} from "react";
 import Errors from "@/app/components/errors"
 
 export default function ParagraphForm(params: any) {
-  const {section_id,action} = params;
+  const {section_id,article_id,action} = params;
   const [formData, submitAction] = useActionState(action, null);
   return <>
     <Errors errors={formData}/>
@@ -13,6 +13,7 @@ export default function ParagraphForm(params: any) {
       <h3>New paragraph</h3>
     <form id='_form' action={submitAction}>
       <input type="hidden" name="section_id" value={section_id}/>
+      <input type="hidden" name="article_id" value={article_id}/>
       <div className="field">
         <label className="label">title</label>
         <div className="control">

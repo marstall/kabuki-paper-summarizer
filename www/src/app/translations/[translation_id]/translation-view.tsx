@@ -1,10 +1,14 @@
 import {prisma} from '@/app/lib/prisma'
 import TranslationViewClient from "@/app/components/translation-view-client/translation-view-client";
+import _ from 'lodash'
 
 export default async function TranslationView(params: any) {
   const {translation_id} = params
   const translation = await prisma.translations.findUnique(
-    {where: {id: translation_id}})
+    {
+      where: {id: translation_id},
+      include: {prompts:true}
+    })
 
   if (!translation) return <div>Translation Not found</div>
 
@@ -43,11 +47,14 @@ export default async function TranslationView(params: any) {
     }
   )
 
+  let promptTitle = _.get(translation,"prompts.title")
+
   const attachment = attachments.length > 0 ? attachments[0] : null;
   return <TranslationViewClient
     translation={translation}
     article={article}
     llm={llm}
+    promptTitle={promptTitle}
     attachment={attachment}
   />
 

@@ -8,6 +8,7 @@ export default async function Translations(params: any) {
       where: {NOT: {published_at:null}},
       orderBy: {published_at: "desc"},
       include: {
+        llms: true,
         articles: {
           include: {
             attachments: {

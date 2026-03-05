@@ -1,6 +1,6 @@
 import 'dotenv/config'   // <-- must be first
 import {prisma} from '@/app/lib/prisma'
-import Log, {log, divider, header, subheader, subheader2, bold, block} from '@/app/lib/logger'
+import Log, {error,log, divider, header, subheader, subheader2, bold, block} from '@/app/lib/logger'
 import yargs from 'yargs'
 import {hideBin} from 'yargs/helpers'
 import {process_paragraph} from "@/app/lib/processors";
@@ -21,23 +21,31 @@ async function main(llmId: number, articleId: number, promptName: string, genera
   const article = await Article.create(articleId)
   const pre = new Date()
   const input = JSON.stringify(article.prismaArticle.claims);
-  let instructions = await Prompt.get(promptName);
-  if (article.prismaArticle.title) {
-    instructions =  `${instructions}
-    The HED for this article is "${article.prismaArticle.title}"      
-    `
-    if (article.prismaArticle.second_title) {
-      instructions =  `${instructions}
-    The DEK for this article is "${article.prismaArticle.second_title}"    
-    `
-    }
-    instructions = `${instructions}
-      Your job is to write the article that goes well in tone with this HEAD and DEK, and meets all the other things I said above.
-      Do not include the HED and DEK in your response.     
-    `
+  const prompts = await prisma.prompts.findMany({where:{title:promptName}})
+  if (!prompts||prompts.length==0) {
+    error("could not find prompt with title "+promptName)
+    return;
   }
-  bold("instructions")
-  block(instructions)
+  const prompt = prompts[0]
+  // if (article.prismaArticle.title) {
+  //   instructions =  `${instructions}
+  //   The HED for this article is "${article.prismaArticle.title}"
+  //   `
+  //   if (article.prismaArticle.second_title) {
+  //     instructions =  `${instructions}
+  //   The DEK for this article is "${article.prismaArticle.second_title}"
+  //   `
+  //   }
+  //   instructions = `${instructions}
+  //     Your job is to write the article that goes well in tone with this HEAD and DEK, and meets all the other things I said above.
+  //     Do not include the HED and DEK in your response.
+  //   `
+  // }
+  log("prompt",prompt.title)
+  log("")
+  const instructions = prompt.body
+  // bold("instructions")
+  // block(instructions)
   const responses = await Llm.chat(instructions, input)
 
   const response = responses[0]
@@ -46,7 +54,8 @@ async function main(llmId: number, articleId: number, promptName: string, genera
     body: response,
     article_id: Number(articleId),
     claims: article.prismaArticle.claims,
-    prompt1: instructions,
+    prompt1: prompt.body,
+    prompt_id: prompt.id,
     generation_note: generationNote,
     generation,
   })
@@ -92,7 +101,7 @@ const argv = await yargs(hideBin(process.argv))
 
 const articleId = argv['article-id']
 const llmId = argv['llm-id']
-const promptName = argv['prompt-name']||DEFAULT_PROMPT_NAME
+const promptName = argv['prompt-name']
 const generation = argv['generation']||(Math.floor(Date.now()/1000)+"")
 const generationNote = argv['note']||shortDateTime(Date.now())
 
