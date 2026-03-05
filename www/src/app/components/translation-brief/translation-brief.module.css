@@ -62,6 +62,10 @@
   margin-bottom:0.25rem;
 }
 
+.dateline a {
+  color:#999;
+}
+
 .readMoreLink {
   margin-top:1rem;
   margin-left:0px
