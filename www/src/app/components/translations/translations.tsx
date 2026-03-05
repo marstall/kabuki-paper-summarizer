@@ -21,5 +21,6 @@ export default async function Translations(params: any) {
         }
       }
     })
-  return translations.map(translation => <TranslationBrief key={translation.id} translation={translation}/>)
+  return translations.map((translation,i) =>
+    <TranslationBrief expanded={i==0} key={translation.id} translation={translation}/>)
 }

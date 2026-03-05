@@ -11,13 +11,13 @@ function extractText(body) {
   return firstParagraph(body)
 }
 
-export default async function TranslationBrief({translation}) {
+export default async function TranslationBrief({translation,expanded=false}) {
   const article = translation.articles;
   if (!article) return null;
   const attachment = article && article.attachments && article.attachments.length>0 ? article.attachments[0] : null
   const text = extractText(translation.body)
 
-  return <div className={styles.container}>
+  return <div className={`${styles.container} ${expanded ? styles.expandedContainer : ''}`}>
     <div className={styles.supertitle}>
       <EditableText id={article.id} model='article' field="category">
         {article.category||translation.category}
@@ -41,12 +41,13 @@ export default async function TranslationBrief({translation}) {
       </EditableText>
     </h2>
     <div className={styles.dateline}>Written by {translation.llms.provider} AI. Edited by KabukiDadChris. Posted on {shortDate(translation.published_at)}.</div>
-    {/*{attachment && <div className={styles.attachment}>*/}
-    {/*  <Attachment article={article} attachment={attachment} allowMaximize={false} showCaption={false}/>*/}
-    {/*</div>}*/}
-    {/*<div className={styles.text}>*/}
-    {/*  <TranslationSentenceBySentence translation={translation} numParagraphsToShow={1}/>*/}
-    {/*</div>*/}
+
+    {expanded && attachment && <div className={styles.attachment}>
+      <Attachment article={article} attachment={attachment} allowMaximize={false} showCaption={false}/>
+    </div>}
+    {expanded && <div className={styles.text}>
+      <TranslationSentenceBySentence translation={translation} numParagraphsToShow={4}/>
+    </div>}
     <div className={styles.readMoreLink}>
       <Link href={`/translations/${translation.id}`}
             className={'button'}>Read more</Link>

@@ -29,16 +29,22 @@
   line-height: 1.55;
   font-size: 18px;
   margin-bottom:2rem;
-  border-top:1px dotted lightgray;
-  padding-top:1rem;
+  border-bottom:1px dotted lightgray;
+  padding-bottom:1rem;
 }
+.expandedContainer {
+  padding-bottom: 1rem;
+  border-bottom: 4px solid lightgray;
+}
+
 .container h1 {
   font-size: 2rem;
   line-height: 1.1;
   font-weight: bold;
 }
 .container h2 {
-  color: #666666;
+  font-family: var(--ui-font);
+  color: #333;
 }
 
 .supertitle {
@@ -51,7 +57,7 @@
 
 .dateline {
   font-family: var(--ui-font);
-  color:#666;
+  color:#999;
   font-size: 12px;
   margin-bottom:0.25rem;
 }
