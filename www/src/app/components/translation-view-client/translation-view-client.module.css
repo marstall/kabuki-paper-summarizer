@@ -26,13 +26,14 @@
 }
 
 .highlight {
+  font-size:smaller;
+  font-style: italic;
   color: #444;
-  border: 1px dashed #e0e0e0;
+  border: 0px dashed #e0e0e0;
   background-color: #ffd;
   padding: 2px;
   padding-left: 7px;
-  margin-top: 6px;
-  border-radius: 8px;
+  border-radius: 0px;
 }
 
 .highlight .icon {

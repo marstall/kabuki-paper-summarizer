@@ -64,11 +64,12 @@ export default function TranslationViewClient({translation, promptTitle,article,
               href={article.url}>{article.original_title}</a>&rdquo;</span> by {article.attribution.trim()}.
               <br/>Written by {llm.provider} AI. Edited by <span
                 className={styles.meLink}><a href={'https://www.linkedin.com/in/chrismarstall/'}>KabukiDadChris</a></span>. <span style={{display:'none'}}> w/ prompt '{promptTitle}'.</span>
-              <div className={styles.highlight}><span className={styles.icon}>👉</span>Click on an individual sentence to see its basis in the {article.year} study.</div>
             </div>
           </header>
           <div className="article-body">
+
             {attachment && <Attachment key={attachment.id} article={article} attachment={attachment}/>}
+            <div className={styles.highlight}><span className={styles.icon}>👉</span>Click on an individual sentence to see its basis in the {article.year} study.</div>
             {/*<NavTabs/>*/}
             {state.selectedTab === 0 &&
               <TranslationSentenceBySentence translation={translation}/>}
