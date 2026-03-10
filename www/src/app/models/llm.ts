@@ -145,5 +145,8 @@ export default class Llm {
     }
     return chatHandlers[this.prismaLlm.type].bind(this)(instructions, input, options)
   }
-
+  static async listLlms() {
+    const llms = await prisma.llms.findMany({orderBy:{id:"asc"}});
+    console.table(llms,["id","provider","model","type"])
+  }
 }
