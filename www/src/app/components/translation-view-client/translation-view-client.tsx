@@ -21,7 +21,7 @@ import Header from "@/app/components/header/header";
 import AdminSection from '@/app/components/admin-section/admin-section'
 import Link from "next/link";
 import EditableText from "@/app/components/editable-text/editable-text";
-
+import regenerateHeadlines from "@/app/components/translation-view-client/regenerate-headlines";
 export default function TranslationViewClient({translation, promptTitle,article, llm, attachment}) {
   // translation.claims.claims.map((claim,i)=>{
   //   console.log(":::::: "+i+" ::::::")
@@ -38,13 +38,17 @@ export default function TranslationViewClient({translation, promptTitle,article,
     })
   }
 
+  async function regenHeadlines() {
+    await regenerateHeadlines(translation.id)
+    window.location.reload();
+  }
+
   return <TranslationContext value={state}>
     <TranslationDispatchContext value={dispatch}>
       <div>
         <Header minimal={true}/>
         <article>
           <header className="article-header">
-
             <div className={'article-supertitle'}>
               <EditableText id={article.id} model='article' field="category">
                 {article.category}
@@ -63,14 +67,16 @@ export default function TranslationViewClient({translation, promptTitle,article,
               This is an AI-written plain-English version of the {article.year} paper <span className={styles.articleLink}>&ldquo;<a
               href={article.url}>{article.original_title}</a>&rdquo;</span> by {article.attribution.trim()}.
               <br/>Written by {llm.provider} AI. Edited by <span
-                className={styles.meLink}><a href={'https://www.linkedin.com/in/chrismarstall/'}>KabukiDadChris</a></span>. <span style={{display:'none'}}> w/ prompt '{promptTitle}'.</span>
+                className={styles.meLink}><a href={'https://www.linkedin.com/in/chrismarstall/'}>KabukiDadChris</a></span>.
+              <span style={{display:'none'}}> w/ prompt '{promptTitle}'.</span>
+              <AdminSection span={true}> <Link href={'#'} onClick={regenHeadlines}>regenerate headlines</Link></AdminSection>
             </div>
           </header>
           <div className="article-body">
 
             {attachment && <Attachment key={attachment.id} article={article} attachment={attachment}/>}
             <div className={styles.highlight}><span className={styles.icon}>👉</span>Click on an individual sentence to see its basis in the {article.year} study.</div>
-            {/*<NavTabs/>*/}
+            <NavTabs/>
             {state.selectedTab === 0 &&
               <TranslationSentenceBySentence translation={translation}/>}
             {state.selectedTab == 1 && <ClaimsTab article={article} translation={translation}/>}

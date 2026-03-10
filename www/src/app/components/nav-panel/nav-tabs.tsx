@@ -17,7 +17,7 @@ export default function NavTabs() {
 
   return <p className="panel-tabs">
       <a onClick={()=>selectTab(dispatch,0)} className={state.selectedTab===0 ? "is-active": ""}>plain english</a>
-      <a onClick={()=>selectTab(dispatch,1)} className={state.selectedTab===1 ? "is-active": ""}>claims</a>
+      {/*<a onClick={()=>selectTab(dispatch,1)} className={state.selectedTab===1 ? "is-active": ""}>claims</a>*/}
       <a onClick={()=>selectTab(dispatch,2)} className={state.selectedTab===2 ? "is-active": ""}>original</a>
     </p>
 }

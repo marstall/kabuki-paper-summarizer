@@ -18,6 +18,7 @@ async function main(llmId: number, translationId: number, promptName: string, ge
   Log.init()
   await Llm.loadDefault(llmId)
   const pre = new Date()
+
   const translation = await prisma.translations.findUnique({where: {id: translationId}})
   const article = await prisma.articles.findUnique({where: {id:translation.article_id}})
   const input = JSON.stringify(translation.body);

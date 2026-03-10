@@ -38,6 +38,7 @@ model llms {
   model        String?        @db.VarChar
   type         String?        @db.VarChar
   active       Boolean        @default(true)
+  name         String?        @db.VarChar
   translations translations[]
 }
 
