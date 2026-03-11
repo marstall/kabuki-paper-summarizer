@@ -27,7 +27,7 @@ function Section({section}) {
 
 export default function ArticleViewClient({article, deleteArticleAction, deleteAllUnpublishedTranslationsAction}) {
   const deleteDisabled = !(_.isEmpty(article.translations) && _.isEmpty(article.sections) && _.isEmpty(article.attachments))
-  const createAttachmentUrl = `/attachments/create-edit`
+  const createAttachmentUrl = `/articles/${article.id}/attachments/create-edit`
   return <div className="content">
     <h1>{article.original_title}</h1>
     <p>
@@ -98,7 +98,7 @@ export default function ArticleViewClient({article, deleteArticleAction, deleteA
       <h3>Attachments</h3>
       {!article.attachments || article.attachments.length == 0 && <div className={'block'}>no attachments.</div>}
       {article.attachments.map(attachment =>
-        <Link key={attachment.id} href={`/attachments/${attachment.id}`}>
+        <Link key={attachment.id} href={`/articles/${article.id}/attachments/${attachment.id}`}>
           <Image alt={attachment.alt_text} src={`/file/${attachment.id}`} width={attachment.width}
                  height={attachment.height}/>
         </Link>

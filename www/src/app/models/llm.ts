@@ -12,6 +12,11 @@ import type { llms } from "@prisma/client";
   const response = llm.chat("translate into french", "what is your name?")
   // response = "comment t'appelles-tu?"
  */
+export interface ChatResponse {
+  answer: string;
+  [key: string]: any;
+}
+
 export default class Llm {
   prismaLlm: llms | null = null;
   static clients = {}
@@ -136,7 +141,7 @@ export default class Llm {
     return {answer:response.text,promptTokenCount,candidatesTokenCount,totalTokenCount,thoughtsTokenCount}
   }
 
-  async chat(instructions, input, options = {}) {
+  async chat(instructions, input, options = {}): Promise<ChatResponse> {
     const chatHandlers = {
       "openai-responses": this.openAiResponsesTypeHandler,
       "openai-chat-completions": this.openAiChatCompletionsTypeHandler,

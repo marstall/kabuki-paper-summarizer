@@ -24,7 +24,7 @@ async function main(elementName,llmName: string, params) {
       return
     }
     const pre = Date.now()
-    await generateElement(elementName,llmName,params,params.save)
+    await generateElement(elementName,llmName,params)
     const elapsed = (new Date() as any - (pre as any)) / 1000.0
     log("elapsed",elapsed)
     block("done.")

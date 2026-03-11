@@ -6,30 +6,25 @@ import Llm from '@/app/models/llm'
 import Translation from "@/app/models/translation";
 import _ from 'underscore'
 
-const sample_draft = `Kabuki syndrome stems from trouble with KMT2D, a gene that orchestrates development by tuning other genes on and off. Most research has relied on mice carrying severe disruptions that disable the protein entirely. But the genetics are more varied in the clinic than in the lab. (1)
+export async function extractFullTextFromArticle(article) {
+  let s = article.original_title+" "
+  s+=`${article.attribution}\r\n\r\nPublished ${article.year} \r\n\r\n`
+  const sections = await prisma.sections.findMany({where: {article_id:article.id}})
+  for (const section of sections) {
+    s+=section.title+"\r\n"
+    const paragraphs = await prisma.paragraphs.findMany({where: {section_id:section.id}})
+    let title=undefined;
+    for (const paragraph of paragraphs) {
+      if (paragraph.title!=title) {
+        title=paragraph.title;
+        s+=title+"\r\n"
+      }
+      s+=paragraph.body+"\r\n"
+    }
+  }
+  return s;
+}
 
-Previous work suggested that neurological symptoms might be reversible after birth, at least in the classic mouse model. However, that model uses an artificial insertion that might create extra problems. It also fails to represent a significant minority of families whose children have different types of mutations. (2, 11)
-
-To bridge this gap, researchers created a new animal model carrying a specific patient mutation. They used precise editing techniques to insert the change into standard lab mice. Rigorous checks confirmed the resulting traits tracked with this single alteration across five generations of breeding. (4, 16, 18, 35)
-
-Roughly 15 to 30 percent of patients carry missense variants—single-letter changes that swap one amino acid for another—rather than truncating mutations. The team selected R5230H, a change within the FYRN domain where such variants cluster in patients. Unlike a prior missense model that required two mutated copies to show disease, this one reflects typical human inheritance. (3, 12, 15, 17, 27)
-
-Surprisingly, lab tests showed the R5230H protein remains stable. Levels of KMT2D messenger RNA and protein looked normal, and global methylation marks on histones—the spools around which DNA winds—showed no decrease. The enzyme appears to keep its catalytic capacity, unlike some missense changes that do reduce activity, or the distinct disorder caused by variants in exons 38-39 that leaves cognition intact. (4, 5, 22, 31, 32)
-
-Yet the mice developed classic Kabuki traits. They grew slowly, showed craniofacial differences, and suffered IgA deficiency, a type of immune problem characterized by low antibody levels. These physical and immunological signatures matched those seen in the older loss-of-function mice, suggesting such core features may arise through mechanisms other than reduced enzyme activity. (5, 21)
-
-However, the neurological story diverged. Where the older model showed visuospatial defects and disrupted adult neurogenesis—the birth of new neurons in the hippocampus—these missense mice navigated normally and showed no shrinkage in brain regions tied to memory. Their hippocampal methylation looked typical, implying that some brain-specific symptoms might require actual loss of catalytic function. (6, 22, 29)
-
-The model also revealed a striking new finding: high perinatal lethality and missing kidneys. About 43 percent of mice lacked one kidney from birth, a phenotype not reported in prior models though up to 40 percent of people with Kabuki syndrome have renal malformations. Intriguingly, kidney severity in patients does not correlate with variant type, and one previous patient with a truncating mutation showed the same unilateral agenesis. (7, 9, 24, 25, 26)
-
-The survival drop happens around birth rather than during embryonic development, suggesting KMT2D plays an essential perinatal role possibly independent of its methyltransferase function. Surviving animals with single kidneys showed compensatory enlargement of their glomeruli, the tiny filtration units. (8, 10, 34)
-
-Structural modeling offers a mechanistic clue. AlphaFold predictions suggest R5230H does not warp the protein's shape but reduces positive electrical charge in the FYRN domain. Drawing parallels to the chromatin-binding FYR domain in the related protein JMJ14, this region may normally anchor binding partners like NCOA6 or PAXI1-PGR1A, components of the COMPASS complex that helps regulate genes. The mutation appears to break these specific protein handshakes without destroying the enzyme's ability to methylate histones—a mechanism distinct from Wiedemann-Steiner syndrome, where related enzyme KMT2A shows different domain hotspots. (13, 19, 20, 28, 33)
-
-This aligns with the patient source. The individual carrying this variant had mild intellectual disability with an IQ of 77 and no reported visuospatial problems—mirroring the mouse profile. The finding supports the idea that different KMT2D disruptions produce different cognitive footprints. (30)
-
-For therapy development, the split is crucial. Previous treatments that boosted methylation rescued neurological deficits in loss-of-function mice, but they might miss the mark for patients whose variants preserve catalytic activity while disrupting protein interactions. The new model provides a platform to test interventions targeting binding rather than chemistry, serving the 15-30 percent of families whose genetics have until now lacked a representative animal system. (14, 23, 35)
-`
 export default class Article extends BaseModel {
   prismaArticle = null;
 
