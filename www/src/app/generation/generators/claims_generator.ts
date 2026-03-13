@@ -1,4 +1,4 @@
-import LlmGenerator from "./llm_generator";
+import LlmGenerator from "../llm_generator";
 import Llm from "@/app/models/llm";
 import {prisma} from "@/app/lib/prisma";
 import {extractFullTextFromArticle} from "@/app/models/article";
@@ -26,7 +26,7 @@ export default class ClaimsGenerator extends LlmGenerator {
     if (!articleId) throw ("articleId required.")
     const article = await prisma.articles.findUnique(({where:{id:articleId}}))
     const fullText = await extractFullTextFromArticle(article)
-    return await this.llm.chat(prompt, fullText,{max_tokens:10000})
+    return await this.llm.chat(prompt, fullText,{max_tokens:20000})
   }
 
   async save(response,params) {

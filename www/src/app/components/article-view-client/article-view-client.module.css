@@ -1,5 +1,4 @@
 
  .noWrapTable :global(th),
  .noWrapTable :global(td) {
-   white-space: nowrap;
  }

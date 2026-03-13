@@ -5,7 +5,8 @@ export async function handleAttachmentTranslationGet(request: NextRequest, param
   const attachment_id = Number(params['attachment-id']);
   const translation = await prisma.translations.findMany(
     {
-      where: {attachment_id, AND: {NOT: {published_at: null}}},
+//      where: {attachment_id, AND: {NOT: {published_at: null}}},
+      where: {attachment_id},
       select: {
         id: true,
         body: true

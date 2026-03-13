@@ -1,12 +1,13 @@
 <div id="<%= dom_id prompt %>">
   <div>
-    <strong>Title:</strong>
-    <%= prompt.title %>
   </div>
 
-  <div>
-    <strong>Body:</strong>
-    <pre><%= prompt.body %></pre>
+  <div style="background-color: lightgoldenrodyellow;padding:0.5rem;margin-top:1rem;">
+    <h2>
+        <%= link_to prompt.title, edit_prompt_path(prompt) %>
+
+      </h2>
+    <%= prompt.body[0..500] %>
   </div>
 
 </div>

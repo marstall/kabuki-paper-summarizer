@@ -26,7 +26,7 @@ function OriginalSentence({toggleOriginal, sentenceClaims, translatedText, origi
       <span className={styles.label}>This sentence is based on the following original passage(s):</span>
       &ldquo;{originalPassages}&rdquo;
     </span>
-    &nbsp;<Link href={'#'} onClick={selectClaims}>view&nbsp;within&nbsp;original&nbsp;paper</Link>
+    &nbsp;<span className={styles.popupButton}><Link href={'#'} onClick={selectClaims}><span className={styles.icon}>⩹</span><span className={styles.linkText}>view&nbsp;within&nbsp;original&nbsp;paper</span></Link></span>
   </span>
 
 }
@@ -58,6 +58,8 @@ export default function Sentence({paragraphIndex, sentenceIndex, translation, se
     }
   },null)
 
+  const hasOriginalPassages = originalPassages && originalPassages.length>0
+
 
   function toggleOriginal() {
     sentenceClaims && sentenceClaims.length > 0 && setShowOriginal(!showOriginal)
@@ -74,12 +76,17 @@ export default function Sentence({paragraphIndex, sentenceIndex, translation, se
     <OriginalSentence sentenceClaims={sentenceClaims} toggleOriginal={toggleOriginal} translatedText={sentenceText}
                       originalPassages={originalPassages}/>
     :
-    <span title={hoverText} onClick={toggleOriginal} className={styles.sentence}>
+    hasOriginalPassages ? <span title={hoverText} onClick={toggleOriginal} className={styles.sentence}>
         <MungedSentence paragraphIndex={paragraphIndex}
                         sentenceIndex={sentenceIndex}
                         inline={true}
                         klass={styles.text}
                         text={finalText}/>
-        </span>
+        </span> :
+      <MungedSentence paragraphIndex={paragraphIndex}
+                      sentenceIndex={sentenceIndex}
+                      inline={true}
+                      klass={styles.text}
+                      text={finalText}/>
 
 }

@@ -6,7 +6,7 @@ import {hideBin} from 'yargs/helpers'
 import Article from '@/app/models/article'
 import Llm from '@/app/models/llm'
 import {shortDateTime} from "@/utils/date";
-import {generateElement} from "@/app/lib/llm_generators/everything_generator";
+import {generateElement} from "@/app/generation/generate_element";
 
 const DEFAULT_LLM="deepseek"
 
@@ -43,6 +43,11 @@ const argv = await yargs(hideBin(process.argv))
     demandOption: false,
   })
   .option('article-id', {
+    alias: 'a',
+    type: 'number',
+    demandOption: false,
+  })
+  .option('attachment-id', {
     alias: 'a',
     type: 'number',
     demandOption: false,
@@ -93,6 +98,7 @@ const argv = await yargs(hideBin(process.argv))
 const elementName = argv['element']
 const save = argv['save']||false
 const articleId = argv['article-id']
+const attachmentId = argv['attachment-id']
 const translationId = argv['translation-id']
 const llmName = argv['llm']||DEFAULT_LLM
 const generationNote = argv['note']||shortDateTime(Date.now())
@@ -116,7 +122,8 @@ const params = {
   doNothing,
   logLevels,
   generation,
-  prompt
+  prompt,
+  attachmentId
 }
 
 if (errors.length > 0) {

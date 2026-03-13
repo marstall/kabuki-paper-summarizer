@@ -1,4 +1,4 @@
-import LlmGenerator from "./llm_generator";
+import LlmGenerator from "../llm_generator";
 import Llm from "@/app/models/llm";
 import {prisma} from "@/app/lib/prisma";
 const headlinesPromptInstructions = `
@@ -6,7 +6,9 @@ const headlinesPromptInstructions = `
     a subheadline (DEK). These should be punchy and grabby, but fulsome to a degree in 
     what they reveal about the content. Informative. If there is a striking, counter-intuitive
     finding in the article, they should focus on that. 
-    
+
+    Important! The DEK should focus on or at least reference the paper's implications for Kabuki Syndrome.
+
     Also create a one or two word CATEGORY to appear above the HED
     Here are three good examples that can guide 
     you:

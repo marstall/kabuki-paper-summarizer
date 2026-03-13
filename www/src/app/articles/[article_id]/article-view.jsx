@@ -22,7 +22,10 @@ export default async function ArticleView({id}) {
           },
         },
         translations: {
-          include: {llms: true},
+          include: {
+            llms: true,
+            prompts:true
+          },
           orderBy: {
             created_at: 'desc'
           },
@@ -47,7 +50,7 @@ export default async function ArticleView({id}) {
   // )
   const translations = await prisma.translations.findMany({
       where: {article_id: Number(id)},
-      include: {llms: true},
+      include: {llms: true, prompts: true},
       orderBy: [
         {published_at: 'asc'},
         {created_at: 'desc'}

@@ -3,7 +3,7 @@ class PromptsController < ApplicationController
 
   # GET /prompts or /prompts.json
   def index
-    @prompts = Prompt.all
+    @prompts = Prompt.all.order("updated_at desc")
   end
 
   # GET /prompts/1 or /prompts/1.json

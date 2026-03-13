@@ -1,11 +1,15 @@
 import {log} from "@/app/lib/logger";
 import LlmGenerator from "./llm_generator";
-import HeadlinesGenerator from "./headlines_generator";
-import ClaimsGenerator from "./claims_generator";
+import HeadlinesGenerator from "./generators/headlines_generator";
+import ClaimsGenerator from "./generators/claims_generator";
+import ArticleTranslationGenerator from "./generators/article_translation_generator";
+import AttachmentCaptionGenerator from "@/app/generation/generators/attachment_caption_generator";
 
 const generatorMap = {
   "headlines": HeadlinesGenerator,
-  "claims": ClaimsGenerator
+  "claims": ClaimsGenerator,
+  "article-translation": ArticleTranslationGenerator,
+  "attachment-caption": AttachmentCaptionGenerator
 }
 
 export async function generateElement(elementName,llmName,params) {

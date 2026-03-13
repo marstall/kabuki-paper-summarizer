@@ -1,4 +1,4 @@
-import {generateElement} from "@/app/lib/llm_generators/everything_generator";
+import {generateElement} from "@/app/generation/everything_generator";
 import {bold,log} from '@/app/lib/logger'
 
 bold("headlines")

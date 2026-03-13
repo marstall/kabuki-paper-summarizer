@@ -72,11 +72,11 @@ export default function TranslationViewClient({translation, promptTitle,article,
               <AdminSection span={true}> <Link href={'#'} onClick={regenHeadlines}>regenerate headlines</Link></AdminSection>
             </div>
           </header>
-          <div className="article-body">
+          <div className="content">
 
             {attachment && <Attachment key={attachment.id} article={article} attachment={attachment}/>}
             <div className={styles.highlight}><span className={styles.icon}>👉</span>Click on an individual sentence to see its basis in the {article.year} study.</div>
-            <NavTabs/>
+            {/*<NavTabs/>*/}
             {state.selectedTab === 0 &&
               <TranslationSentenceBySentence translation={translation}/>}
             {state.selectedTab == 1 && <ClaimsTab article={article} translation={translation}/>}

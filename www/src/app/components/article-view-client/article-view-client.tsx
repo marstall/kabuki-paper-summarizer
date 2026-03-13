@@ -44,14 +44,14 @@ export default function ArticleViewClient({article, deleteArticleAction, deleteA
       {!article.translations || article.translations.length == 0 && <div>no translations.</div>}
 
       <table className={styles.noWrapTable}>
-        <tbody>
+        <tbody >
         {!_.isEmpty(article.translations) &&
           <tr>
             <th>title</th>
             <th>created</th>
             <th>published</th>
             <th>model</th>
-            <th>generation</th>
+            <th>prompt</th>
           </tr>}
         {article.translations.map(translation => {
           return <tr key={translation.id}>
@@ -72,6 +72,9 @@ export default function ArticleViewClient({article, deleteArticleAction, deleteA
             </td>
             <td>
               {translation.llms.model}
+            </td>
+            <td>
+              {translation.prompts.title}
             </td>
             <td>
               {translation.generation && <Link href={`/generations/${translation.generation}`}>

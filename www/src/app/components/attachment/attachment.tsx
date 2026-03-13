@@ -14,6 +14,7 @@ export default function Attachment({article,attachment, allowMaximize=true,showC
   useEffect(()=>{
     fetch(`/api/attachment-translation/${attachment.id}`).then((response)=>{
       response.json().then((json)=>{
+        console.log({json})
         const trans = _.get(json,'[0].body')
         if (!trans) return;
         setTranslation(trans)
@@ -77,7 +78,7 @@ export default function Attachment({article,attachment, allowMaximize=true,showC
       {captionStates[captionState] === "original" && <div><b>original caption</b></div>}
       <Markdown text={activeCaption}/>
       <AdminSection>
-        <Link className={'button'} href={`/articles/${article.id}/attachments/${attachment.id}`}>manage translation</Link>
+        {/*<Link className={'button'} href={`/articles/${article.id}/attachments/${attachment.id}`}>manage translation</Link>*/}
       </AdminSection>
     </div>}
   </div>

@@ -14,16 +14,36 @@
 
 .original {
   cursor: pointer;
+  background-color: rgba(238, 238, 238, 0.8);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  border-radius: 4px;
+  padding: 2px 6px;
+  display: inline;
 }
+
 
 .original .label {
   font-style:italic;
   margin-right:0.5rem;
 }
 
+.popupButton {
+  position:relative;
+  margin-top:-4px;
+}
+
+
+.popupButton .icon {
+  font-size:20px;
+  font-weight: bold;
+  padding-right:4px;
+}
+
+.linkText {
+}
+
 .originalContainer {
-  background-color: #eee;
-  padding:8px;
 }
 
 
