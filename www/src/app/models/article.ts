@@ -73,264 +73,264 @@ export default class Article extends BaseModel {
     }
     await this.reload();
   }
-
-  async produceTranslation({forceExtractClaims, numDrafts, reviewDraft, editDraft, generateMetadata,generationNote,translateAttachmentCaptions,generation,prompt}) {
-    if (!this.prismaArticle.claims || forceExtractClaims) {
-      log("extracting claims ...")
-      const json = await this.extractClaims();
-      await this.update("claims", json)
-    } else {
-      log("skipping claim extraction ...")
-    }
-
-    let drafts = null;
-    const writeDraftPrompt = prompt ||"based on ideas json"
-
-    if (numDrafts > 0) {
-      drafts = await this.writeDrafts(writeDraftPrompt, numDrafts);
-    } else {
-      log("skipping all drafts ...")
-    }
-    for (let draft of drafts || []) {
-      if (editDraft) {
-        const draftReview = reviewDraft ? await this.reviewDraft("review pass", draft) : ""
-        draft = await this.editDraft("editor pass 2", draft, draftReview);
-      } else {
-        log("skipping review + edit")
-      }
-
-      let json = {} as any;
-      if (generateMetadata) {
-        json = await this.generateMetadata(draft);
-        if (!json.category || json.category.length === 0) {
-          error("Generating metadata didn't work, stopping.")
-          return;
-        }
-      }
-      const translation = await Translation.create({
-        llm_id: Llm.configuredLlm.id,
-        title: json.title || this.prismaArticle.original_title,
-        second_title: json.second_title,
-        category: json.category,
-        pull_quote: _.get(json.pull_quote, 0),
-        pull_quote_index: _.get(json.pull_quote, 1),
-        definitions: json.definitions,
-        subheaders: json.subheaders,
-        body: draft,
-        article_id: Number(this.prismaArticle.id),
-        claims: this.prismaArticle.claims,
-        prompt1: await Prompt.get(writeDraftPrompt),
-        generation_note: generationNote,
-        generation,
-      })
-      // returns after the first iteration
-      return translation;
-    }
-
-  }
-
-
-  async generateMetadata(draft) {
-    const pre = new Date()
-    //   const category = `single word general category that this article falls into within Kabuki: examples could be
-    // 'GENETICS', 'KMT2D', 'KMT6A', 'BRAIN','HEART','DIET','THERAPY', etc. This will appear above the title.`
-    //   const title = `5 words or less. A 'hook' that pithily describes the meat of this article.`
-    //   const second_title = `12 words or less. This will appear beneath the title and is an expansion on the title.
-    //   This is a magazine convention, it provides a little more detail the title may have left out because it was so short.`
-    // const title = `A 'hook' that will draw compelling interest, ideally at a glance. It should capture something surprising or counterintuitive about the core finding.`
-    // const second_title = `a 'dek' which will appear beneath the title and provide a but more depth and clarity. If possible, it should sum up the core finding.`
-
-    const tags = '5 or fewer one or two-word tags that describe the content of the article within Kabuki Syndrome'
-    const pull_quote = `a single sentence direct quote from the article that highlights something interesting.
-     Should be an an array that also includes the index of paragraph it should precede, like :['pull quote', 5].
-     The first paragraph is number 1, the second paragraph is number 2, etc.`
-    // const definitions = `a hash of short definitions that will appear inline next to a subset of paragraphs.
-    //   For example, if paragraph 5 introduces the term "Enhancers, there should be an entry like
-    //   {5:"Enhancers are regulatory DNA regions that amplify gene expression."}.
-    //   The first paragraph is number 1, the second paragraph is number 2, etc.`
-    // const subheaders = `a short list of subheaders (no more than 4) to appear sprinkled throughout the text. They should be in sentence form
-    // and pull out a key fact from the next few paragraphs. In that sense, they are like a pull quote, but they should not be a direct quote.
-    // Format them like definitions, with the number of the paragraph they should appear before:  {"3":"subheader text"}. Should not have dependent
-    // clauses, multiple clauses, punctuation marks (except, judiciously, perhaps 1 comma) or parentheses.
-    // The first paragraph is number 1, the second paragraph is number 2, etc.
-    // Examples: "Kabuki mice performed poorly on the Morris Water maze", "A cancer drug improved outcomes, but was considered too toxic",
-    // "Boosting CREB improved enhancer timing"`
-    const jsonExample = {tags, pull_quote}
-    const instructions = `I need a number of strings to fill in spots in a typical magazine web layout. Can you read through the draft and generate
-    them as specified in this json file? ${JSON.stringify(jsonExample)}.
-    You must return valid JSON only.
-    Do not include markdown.
-    Do not wrap in \`\`\`json.
-    Do not add commentary.
-    Output must begin with { and end with }.    `
-    block("generating metadata ....")
-    log('instructions', instructions,)
-    // const response = await Llm.client.responses.create({
-    //   model: Llm.configuredLlm.model,
-    //   instructions,
-    //   input: draft,
-    // });
-    const responses = await Llm.chat(instructions, draft)
-    const response = responses[0].replace(/```json|```/g, '').trim(); // deepseek was wrapping json in backticks
-    const elapsed = (new Date() as any - (pre as any)) / 1000.0
-    block(`Completed in ${elapsed} seconds.`)
-    const json = JSON.parse(response)
-    bold("output")
-    block(JSON.stringify(json, null, 2))
-    return json
-  }
-
-
-  async translateAttachmentCaptions(generationNote,generation) {
-    const instructions = await Prompt.get("translate attachment caption")
-    const attachments = await prisma.attachments.findMany(
-      {where: {article_id:Number(this.prismaArticle.id)}})
-    for (const attachment of attachments) {
-      const pre = new Date()
-      const url = "https://kabuki-paper-summarizer-www.vercel.app/file/"+attachment.id;
-      const caption = attachment.caption;
-      if (!caption || caption.length<10) {
-        log("skipping this attachment because it has no caption.")
-        continue;
-      }
-      log("caption",caption)
-
-      const input = `ARTICLE TEXT
-      ${this.paragraphsJoined()}
-      
-      IMAGE URL
-      ${url}
-      
-      ORIGINAL CAPTION
-      ${caption}  
-      `
-      log("instructions",instructions)
-      log("input",input)
-      const responses = await Llm.chat(instructions, input)
-      const response = responses[0]
-      const elapsed = (new Date() as any - (pre as any)) / 1000.0
-      block(`Completed in ${elapsed} seconds.`)
-      bold("output")
-      block(response)
-      const _translation = await Translation.create({
-        llm_id: Llm.configuredLlm.id,
-        body: response,
-        attachment_id: Number(attachment.id),
-        generation_note: generationNote,
-        generation
-      })
-      log("saved as new translation w/id "+_translation.id)
-    }
-  }
-
-  async extractClaims(options={}) {
-    const pre = new Date()
-    const jsonExample = {
-      claims: [{
-        reference_id: "the reference number of the claim. start with 0. the next claim is 1, the next is 2, etc.",
-        claim: "the idea/proposition/claim that exists in the paper, put simply, matching the language used in the paper, without jargon.",
-        //discussion: "a 2-3 sentence paragraph going a little deeper, in a newsy, punchy voice, targeted to a kabuki parent who is not an expert in bio.",
-        //tags: "a list of relevant tags for this claim (ex: KMTD, metabolism, symptoms, therapy)",
-        //group: "maintain a small, intelligent list of groups (ex: Background, What Was Investigated, Results, What this means for Kabuki Syndrome) and assign each idea to a group.",
-        basedOnText: "a json array of the verbatim text passages this claim is based on. For example: [exact text of passage1, exact text of passage 2, exact text of passage 3]",
-        //citations: "any citations contained within the text passages this claim is based on"
-      }]
-    }
-    const instructions = `can you break down the following scientific paper into a list of its individual claims / ideas / propositions ?
-    return the list to me in the following json format: ${JSON.stringify(jsonExample)}. 
-    Important: Return ONLY raw JSON. Do NOT wrap the response in markdown.
-    Do NOT include \`\`\`json at the beginning/end or any extra text. The response must be directly parseable by JSON.parse().`
-    const input = this.paragraphsJoined()
-    // bold("input")
-    // block(input)
-    const responses = await Llm.chat(instructions, input,options)
-    let response = responses[0];
-    response = response.replace("```json","")
-    response = response.replace("```","")
-    // const response = await Llm.client.responses.create({
-    //   model: Llm.configuredLlm.model,
-    //   instructions,
-    //   input,
-    // });
-    const elapsed = (new Date() as any - (pre as any)) / 1000.0
-    block(`Completed in ${elapsed} seconds.`)
-    bold("response")
-    block(response)
-    const json = JSON.parse(response)
-    bold("json")
-    block(JSON.stringify(json, null, 2))
-    return json
-  }
-
-  async writeDrafts(promptName, num = 1) {
-    try {
-      const pre = new Date()
-      header(this.prismaArticle.original_title)
-      const input = JSON.stringify(this.prismaArticle.claims);
-      const instructions = await Prompt.get(promptName);
-      bold(`writing first draft, using prompt <${promptName}> with  model <${Llm.configuredLlm.model}> ...`)
-      log("")
-      block(instructions)
-      const responses = await Llm.chat(instructions, input, {n: num})
-
-      bold("draft")
-      responses.map((response, i) => {
-        header("option " + i)
-        block(response)
-        divider()
-      })
-
-      block(`Completed in ${(new Date() as any - (pre as any)) / 1000.0} seconds.`)
-      return responses
-    } catch (e) {
-      error(e)
-    }
-  }
-
-  async reviewDraft(promptName, draft) {
-    const pre = new Date()
-    try {
-      bold(`reviewing first draft with prompt <${promptName}> ...`)
-      log(await Prompt.get(promptName))
-      const response = await Llm.client.responses.create({
-        model: Llm.configuredLlm.model,
-        reasoning: {effort: "medium"},
-
-        instructions: await Prompt.get(promptName),
-        input: draft,
-      });
-
-      bold("review json")
-      const json = JSON.parse(response.output_text)
-      block(JSON.stringify(json, null, 2));
-      block(`Completed in ${(new Date() as any - (pre as any)) / 1000.0} seconds.`)
-      return json
-    } catch (e) {
-      error(e)
-    }
-  }
-
-  async editDraft(promptName, draft, draftReview) {
-    const pre = new Date()
-    try {
-      bold("editor pass")
-      const input = `Audit: ${draftReview === "string" ? draftReview : JSON.stringify(draftReview, null, 2)}
-        
-        Article: ${draft}`;
-
-      const response = await Llm.client.responses.create({
-        model: Llm.configuredLlm.model,
-        instructions: await Prompt.get(promptName),
-        reasoning: {effort: "medium"},
-        input,
-      });
-      bold("editor draft")
-      block(response.output_text);
-      block(`Completed in ${(new Date() as any - (pre as any)) / 1000.0} seconds.`)
-    } catch (e) {
-      error(e)
-    }
-  }
+  //
+  // async produceTranslation({forceExtractClaims, numDrafts, reviewDraft, editDraft, generateMetadata,generationNote,translateAttachmentCaptions,generation,prompt}) {
+  //   if (!this.prismaArticle.claims || forceExtractClaims) {
+  //     log("extracting claims ...")
+  //     const json = await this.extractClaims();
+  //     await this.update("claims", json)
+  //   } else {
+  //     log("skipping claim extraction ...")
+  //   }
+  //
+  //   let drafts = null;
+  //   const writeDraftPrompt = prompt ||"based on ideas json"
+  //
+  //   if (numDrafts > 0) {
+  //     drafts = await this.writeDrafts(writeDraftPrompt, numDrafts);
+  //   } else {
+  //     log("skipping all drafts ...")
+  //   }
+  //   for (let draft of drafts || []) {
+  //     if (editDraft) {
+  //       const draftReview = reviewDraft ? await this.reviewDraft("review pass", draft) : ""
+  //       draft = await this.editDraft("editor pass 2", draft, draftReview);
+  //     } else {
+  //       log("skipping review + edit")
+  //     }
+  //
+  //     let json = {} as any;
+  //     if (generateMetadata) {
+  //       json = await this.generateMetadata(draft);
+  //       if (!json.category || json.category.length === 0) {
+  //         error("Generating metadata didn't work, stopping.")
+  //         return;
+  //       }
+  //     }
+  //     const translation = await Translation.create({
+  //       llm_id: Llm.configuredLlm.id,
+  //       title: json.title || this.prismaArticle.original_title,
+  //       second_title: json.second_title,
+  //       category: json.category,
+  //       pull_quote: _.get(json.pull_quote, 0),
+  //       pull_quote_index: _.get(json.pull_quote, 1),
+  //       definitions: json.definitions,
+  //       subheaders: json.subheaders,
+  //       body: draft,
+  //       article_id: Number(this.prismaArticle.id),
+  //       claims: this.prismaArticle.claims,
+  //       prompt1: await Prompt.get(writeDraftPrompt),
+  //       generation_note: generationNote,
+  //       generation,
+  //     })
+  //     // returns after the first iteration
+  //     return translation;
+  //   }
+  //
+  // }
+  // //
+  // //
+  // // async generateMetadata(draft) {
+  // //   const pre = new Date()
+  // //   //   const category = `single word general category that this article falls into within Kabuki: examples could be
+  // //   // 'GENETICS', 'KMT2D', 'KMT6A', 'BRAIN','HEART','DIET','THERAPY', etc. This will appear above the title.`
+  // //   //   const title = `5 words or less. A 'hook' that pithily describes the meat of this article.`
+  // //   //   const second_title = `12 words or less. This will appear beneath the title and is an expansion on the title.
+  // //   //   This is a magazine convention, it provides a little more detail the title may have left out because it was so short.`
+  // //   // const title = `A 'hook' that will draw compelling interest, ideally at a glance. It should capture something surprising or counterintuitive about the core finding.`
+  // //   // const second_title = `a 'dek' which will appear beneath the title and provide a but more depth and clarity. If possible, it should sum up the core finding.`
+  // //
+  // //   const tags = '5 or fewer one or two-word tags that describe the content of the article within Kabuki Syndrome'
+  // //   const pull_quote = `a single sentence direct quote from the article that highlights something interesting.
+  // //    Should be an an array that also includes the index of paragraph it should precede, like :['pull quote', 5].
+  // //    The first paragraph is number 1, the second paragraph is number 2, etc.`
+  // //   // const definitions = `a hash of short definitions that will appear inline next to a subset of paragraphs.
+  // //   //   For example, if paragraph 5 introduces the term "Enhancers, there should be an entry like
+  // //   //   {5:"Enhancers are regulatory DNA regions that amplify gene expression."}.
+  // //   //   The first paragraph is number 1, the second paragraph is number 2, etc.`
+  // //   // const subheaders = `a short list of subheaders (no more than 4) to appear sprinkled throughout the text. They should be in sentence form
+  // //   // and pull out a key fact from the next few paragraphs. In that sense, they are like a pull quote, but they should not be a direct quote.
+  // //   // Format them like definitions, with the number of the paragraph they should appear before:  {"3":"subheader text"}. Should not have dependent
+  // //   // clauses, multiple clauses, punctuation marks (except, judiciously, perhaps 1 comma) or parentheses.
+  // //   // The first paragraph is number 1, the second paragraph is number 2, etc.
+  // //   // Examples: "Kabuki mice performed poorly on the Morris Water maze", "A cancer drug improved outcomes, but was considered too toxic",
+  // //   // "Boosting CREB improved enhancer timing"`
+  // //   const jsonExample = {tags, pull_quote}
+  // //   const instructions = `I need a number of strings to fill in spots in a typical magazine web layout. Can you read through the draft and generate
+  // //   them as specified in this json file? ${JSON.stringify(jsonExample)}.
+  // //   You must return valid JSON only.
+  // //   Do not include markdown.
+  // //   Do not wrap in \`\`\`json.
+  // //   Do not add commentary.
+  // //   Output must begin with { and end with }.    `
+  // //   block("generating metadata ....")
+  // //   log('instructions', instructions,)
+  // //   // const response = await Llm.client.responses.create({
+  // //   //   model: Llm.configuredLlm.model,
+  // //   //   instructions,
+  // //   //   input: draft,
+  // //   // });
+  // //   const responses = await Llm.chat(instructions, draft)
+  // //   const response = responses[0].replace(/```json|```/g, '').trim(); // deepseek was wrapping json in backticks
+  // //   const elapsed = (new Date() as any - (pre as any)) / 1000.0
+  // //   block(`Completed in ${elapsed} seconds.`)
+  // //   const json = JSON.parse(response)
+  // //   bold("output")
+  // //   block(JSON.stringify(json, null, 2))
+  // //   return json
+  // // }
+  // //
+  // // //
+  // // // async translateAttachmentCaptions(generationNote,generation) {
+  // // //   const instructions = await Prompt.get("translate attachment caption")
+  // // //   const attachments = await prisma.attachments.findMany(
+  // // //     {where: {article_id:Number(this.prismaArticle.id)}})
+  // // //   for (const attachment of attachments) {
+  // // //     const pre = new Date()
+  // // //     const url = "https://kabuki-paper-summarizer-www.vercel.app/file/"+attachment.id;
+  // // //     const caption = attachment.caption;
+  // // //     if (!caption || caption.length<10) {
+  // // //       log("skipping this attachment because it has no caption.")
+  // // //       continue;
+  // // //     }
+  // // //     log("caption",caption)
+  // // //
+  // // //     const input = `ARTICLE TEXT
+  // // //     ${this.paragraphsJoined()}
+  // // //
+  // // //     IMAGE URL
+  // // //     ${url}
+  // // //
+  // // //     ORIGINAL CAPTION
+  // // //     ${caption}
+  // // //     `
+  // // //     log("instructions",instructions)
+  // // //     log("input",input)
+  // // //     const responses = await Llm.chat(instructions, input)
+  // // //     const response = responses[0]
+  // // //     const elapsed = (new Date() as any - (pre as any)) / 1000.0
+  // // //     block(`Completed in ${elapsed} seconds.`)
+  // // //     bold("output")
+  // // //     block(response)
+  // // //     const _translation = await Translation.create({
+  // // //       llm_id: Llm.configuredLlm.id,
+  // // //       body: response,
+  // // //       attachment_id: Number(attachment.id),
+  // // //       generation_note: generationNote,
+  // // //       generation
+  // // //     })
+  // // //     log("saved as new translation w/id "+_translation.id)
+  // // //   }
+  // // // }
+  // // // //
+  // // // // async extractClaims(options={}) {
+  // // // //   const pre = new Date()
+  // // // //   const jsonExample = {
+  // // // //     claims: [{
+  // // // //       reference_id: "the reference number of the claim. start with 0. the next claim is 1, the next is 2, etc.",
+  // // // //       claim: "the idea/proposition/claim that exists in the paper, put simply, matching the language used in the paper, without jargon.",
+  // // // //       //discussion: "a 2-3 sentence paragraph going a little deeper, in a newsy, punchy voice, targeted to a kabuki parent who is not an expert in bio.",
+  // // // //       //tags: "a list of relevant tags for this claim (ex: KMTD, metabolism, symptoms, therapy)",
+  // // // //       //group: "maintain a small, intelligent list of groups (ex: Background, What Was Investigated, Results, What this means for Kabuki Syndrome) and assign each idea to a group.",
+  // // // //       basedOnText: "a json array of the verbatim text passages this claim is based on. For example: [exact text of passage1, exact text of passage 2, exact text of passage 3]",
+  // // // //       //citations: "any citations contained within the text passages this claim is based on"
+  // // // //     }]
+  // // // //   }
+  // // // //   const instructions = `can you break down the following scientific paper into a list of its individual claims / ideas / propositions ?
+  // // // //   return the list to me in the following json format: ${JSON.stringify(jsonExample)}.
+  // // // //   Important: Return ONLY raw JSON. Do NOT wrap the response in markdown.
+  // // // //   Do NOT include \`\`\`json at the beginning/end or any extra text. The response must be directly parseable by JSON.parse().`
+  // // // //   const input = this.paragraphsJoined()
+  // // // //   // bold("input")
+  // // // //   // block(input)
+  // // // //   const responses = await Llm.chat(instructions, input,options)
+  // // // //   let response = responses[0];
+  // // // //   response = response.replace("```json","")
+  // // // //   response = response.replace("```","")
+  // // // //   // const response = await Llm.client.responses.create({
+  // // // //   //   model: Llm.configuredLlm.model,
+  // // // //   //   instructions,
+  // // // //   //   input,
+  // // // //   // });
+  // // // //   const elapsed = (new Date() as any - (pre as any)) / 1000.0
+  // // // //   block(`Completed in ${elapsed} seconds.`)
+  // // // //   bold("response")
+  // // // //   block(response)
+  // // // //   const json = JSON.parse(response)
+  // // // //   bold("json")
+  // // // //   block(JSON.stringify(json, null, 2))
+  // // // //   return json
+  // // // // }
+  // // // // //
+  // // // // // async writeDrafts(promptName, num = 1) {
+  // // // // //   try {
+  // // // // //     const pre = new Date()
+  // // // // //     header(this.prismaArticle.original_title)
+  // // // // //     const input = JSON.stringify(this.prismaArticle.claims);
+  // // // // //     const instructions = await Prompt.get(promptName);
+  // // // // //     bold(`writing first draft, using prompt <${promptName}> with  model <${Llm.configuredLlm.model}> ...`)
+  // // // // //     log("")
+  // // // // //     block(instructions)
+  // // // // //     const responses = await Llm.chat(instructions, input, {n: num})
+  // // // // //
+  // // // // //     bold("draft")
+  // // // // //     responses.map((response, i) => {
+  // // // // //       header("option " + i)
+  // // // // //       block(response)
+  // // // // //       divider()
+  // // // // //     })
+  // // // // //
+  // // // // //     block(`Completed in ${(new Date() as any - (pre as any)) / 1000.0} seconds.`)
+  // // // // //     return responses
+  // // // // //   } catch (e) {
+  // // // // //     error(e)
+  // // // // //   }
+  // // // // // }
+  //
+  // async reviewDraft(promptName, draft) {
+  //   const pre = new Date()
+  //   try {
+  //     bold(`reviewing first draft with prompt <${promptName}> ...`)
+  //     log(await Prompt.get(promptName))
+  //     const response = await Llm.client.responses.create({
+  //       model: Llm.configuredLlm.model,
+  //       reasoning: {effort: "medium"},
+  //
+  //       instructions: await Prompt.get(promptName),
+  //       input: draft,
+  //     });
+  //
+  //     bold("review json")
+  //     const json = JSON.parse(response.output_text)
+  //     block(JSON.stringify(json, null, 2));
+  //     block(`Completed in ${(new Date() as any - (pre as any)) / 1000.0} seconds.`)
+  //     return json
+  //   } catch (e) {
+  //     error(e)
+  //   }
+  // }
+  //
+  // async editDraft(promptName, draft, draftReview) {
+  //   const pre = new Date()
+  //   try {
+  //     bold("editor pass")
+  //     const input = `Audit: ${draftReview === "string" ? draftReview : JSON.stringify(draftReview, null, 2)}
+  //
+  //       Article: ${draft}`;
+  //
+  //     const response = await Llm.client.responses.create({
+  //       model: Llm.configuredLlm.model,
+  //       instructions: await Prompt.get(promptName),
+  //       reasoning: {effort: "medium"},
+  //       input,
+  //     });
+  //     bold("editor draft")
+  //     block(response.output_text);
+  //     block(`Completed in ${(new Date() as any - (pre as any)) / 1000.0} seconds.`)
+  //   } catch (e) {
+  //     error(e)
+  //   }
+  // }
 
 
   async load(articleId) {

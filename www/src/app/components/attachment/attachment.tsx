@@ -78,7 +78,7 @@ export default function Attachment({article,attachment, allowMaximize=true,showC
       {captionStates[captionState] === "original" && <div><b>original caption</b></div>}
       <Markdown text={activeCaption}/>
       <AdminSection>
-        {/*<Link className={'button'} href={`/articles/${article.id}/attachments/${attachment.id}`}>manage translation</Link>*/}
+        <Link className={'button'} href={`/articles/${article.id}/attachments/${attachment.id}`}>manage translation</Link>
       </AdminSection>
     </div>}
   </div>
