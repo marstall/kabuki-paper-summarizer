@@ -8,6 +8,16 @@ export function translationReducer(state,action) {
     case 'selectTab': {
       return {...state,selectedTab:action.value}
     }
+    case 'setTranslationViewTarget': {
+      return {...state,
+        translationViewTarget:action.value
+      }
+    }
+    case 'setTranslationViewState': {
+      return {...state,
+        translationViewState:action.value
+      }
+    }
     case 'selectClaims': {
       return {...state,selectedClaims: action.claims,originalPassages:action.originalPassages}
     }
@@ -27,6 +37,8 @@ export function translationReducer(state,action) {
 export const initialState= {
   selectedClaims: [],
   selectedTab: 0,
-  originalOverlayShown: false
+  originalOverlayShown: false,
+  translationViewState: 'translation',
+  translationViewTarget: 'translation',
 }
 
