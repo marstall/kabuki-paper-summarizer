@@ -20,7 +20,7 @@ export default function MungedSentence({ paragraphIndex,sentenceIndex,klass, tex
     html=`<h1 class="title">${text.replace(/\#+/,"")}</h1>`
   }
 
-   //if (text.startsWith("---")) html="<div style={{borderTop:'1px dotted lightgray'}}/>"
+     if (text.startsWith("---")) html="<p style='border-top:1px solid lightgray'/>"
 
   // make ** text ** into </strong>
   if (text.startsWith("**") && text.endsWith("**"))
