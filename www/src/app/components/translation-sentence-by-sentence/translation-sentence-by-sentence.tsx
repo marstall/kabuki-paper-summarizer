@@ -2,6 +2,9 @@
 import '@/app/article.css'
 import Sentence from "@/app/components/sentence/sentence";
 import {extractParagraphs} from "@/utils/text";
+import SubscribeForm from "@/app/components/subscribe-form/subscribe-form";
+import styles from './translation-sentence-by-sentence.module.css'
+import {Fragment} from "react";
 
 function extractAnnotatedSentences(paragraph) {
   const matches = [...paragraph.matchAll(/(.+?\.)\s*(\(\d[^)]*\))?/g)];
@@ -85,12 +88,11 @@ function Paragraph({index, translation, processedParagraph}) {
   </div>
 }
 
-export default function TranslationSentenceBySentence({translation,numParagraphsToShow=null}) {
+export default function TranslationSentenceBySentence({translation, numParagraphsToShow = null}) {
   const unprocessedParagraphs = extractParagraphs(translation.body)
   const processedParagraphsArray = []
-  for (const [i,unprocessedParagraph] of unprocessedParagraphs.entries()) {
-    if (numParagraphsToShow===null || numParagraphsToShow && i<=numParagraphsToShow)
-    {
+  for (const [i, unprocessedParagraph] of unprocessedParagraphs.entries()) {
+    if (numParagraphsToShow === null || numParagraphsToShow && i <= numParagraphsToShow) {
       const processedSentences = []
       const sentencesEntries = extractAnnotatedSentences(unprocessedParagraph) // [['s','(1,2)'],etc.]
       for (const sentenceEntry of sentencesEntries) {
@@ -103,12 +105,12 @@ export default function TranslationSentenceBySentence({translation,numParagraphs
     }
   }
   // so we now have an array of paragraphs, each containing an array of sentences.
-
-  return <>
-  {processedParagraphsArray.map((processedParagraph, i) =>
+  return processedParagraphsArray.map((processedParagraph, i) => {
+      return <Fragment key={i}>
+        {i == 3 && <SubscribeForm/>}
         <Paragraph key={i} index={i} translation={translation}
                    processedParagraph={processedParagraph}/>
-      )}
-  </>
-
+      </Fragment>
+    }
+  )
 }

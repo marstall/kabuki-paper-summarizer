@@ -22,6 +22,7 @@ import AdminSection from '@/app/components/admin-section/admin-section'
 import Link from "next/link";
 import EditableText from "@/app/components/editable-text/editable-text";
 import regenerateHeadlines from "@/app/components/translation-view-client/regenerate-headlines";
+import SubscribeForm from "@/app/components/subscribe-form/subscribe-form";
 export default function TranslationViewClient({translation, promptTitle,article, llm, attachment}) {
   // translation.claims.claims.map((claim,i)=>{
   //   console.log(":::::: "+i+" ::::::")
@@ -92,6 +93,7 @@ export default function TranslationViewClient({translation, promptTitle,article,
             <div>{attachment && <Link className='button is-primary' href={`/articles/${article.id}/attachments/${attachment.id}`}>edit
               attachment</Link>}</div>
           </AdminSection>
+            <SubscribeForm/>
         </article>
       </div>
       {state.originalOverlayShown && <Overlay dismiss={dismissOriginalOverlay}>

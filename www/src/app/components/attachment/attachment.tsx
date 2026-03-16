@@ -14,7 +14,6 @@ export default function Attachment({article,attachment, allowMaximize=true,showC
   useEffect(()=>{
     fetch(`/api/attachment-translation/${attachment.id}`).then((response)=>{
       response.json().then((json)=>{
-        console.log({json})
         const trans = _.get(json,'[0].body')
         if (!trans) return;
         setTranslation(trans)

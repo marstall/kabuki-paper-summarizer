@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type {Metadata} from "next";
+import {Geist, Geist_Mono} from "next/font/google";
 import "./globals.css";
 import "./article.css";
 import SubscribeForm from "@/app/components/subscribe-form/subscribe-form";
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import {SpeedInsights} from "@vercel/speed-insights/next"
+import WelcomeOverlay from "@/app/components/welcome-overlay/welcome-overlay";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,8 +22,8 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  children,
-}: Readonly<{
+                                     children,
+                                   }: Readonly<{
   children: React.ReactNode;
 }>) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
@@ -35,7 +36,8 @@ export default function RootLayout({
       <meta charSet="utf-8"/>
       <meta property="og:site_name" content="The Kabuki Papers"/>
       <meta property="og:title" content="The Kabuki Papers"/>
-      <meta property="og:description" content="AI-generated plain-English summaries of Kabuki syndrome research papers."/>
+      <meta property="og:description"
+            content="AI-generated plain-English summaries of Kabuki syndrome research papers."/>
       <meta property="og:type" content="website"/>
       {ogUrl && <meta property="og:url" content={ogUrl}/>}
       <meta property="og:image" content={ogImage}/>
@@ -44,7 +46,8 @@ export default function RootLayout({
 
       <meta name="twitter:card" content="summary_large_image"/>
       <meta name="twitter:title" content="The Kabuki Papers"/>
-      <meta name="twitter:description" content="AI-generated plain-English summaries of Kabuki syndrome research papers."/>
+      <meta name="twitter:description"
+            content="AI-generated plain-English summaries of Kabuki syndrome research papers."/>
       <meta name="twitter:image" content={ogImage}/>
 
       <script src="https://kit.fontawesome.com/a208fe4da2.js" crossOrigin="anonymous"></script>
@@ -57,18 +60,19 @@ export default function RootLayout({
 
       <meta name="viewport" content="width=device-width, initial-scale=1"/>
     </head>
-    <body className={`${geistSans.variable} ${geistMono.variable}`}>
-    <div className="page subscribeBar">
-      <div className="pageInner">
-        <SubscribeForm/>
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <div className="page subscribeBar">
+        <div className="pageInner">
+          <WelcomeOverlay/>
+          <SubscribeForm/>
+        </div>
       </div>
-    </div>
-    <div className="page">
-      <div className="pageInner pageContent">
-        {children}
+      <div className="page">
+        <div className="pageInner pageContent">
+          {children}
+        </div>
       </div>
-    </div>
-    </body>
+      </body>
     </html>
   );
 }

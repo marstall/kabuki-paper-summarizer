@@ -29,7 +29,7 @@ function OriginalSentence({toggleOriginal, sentenceClaims,
       <span className={styles.label}>
         This sentence is based on the following original passage(s):
       </span>
-      {sentenceClaims.map((claim)=><span className={styles.originalPassage}>
+      {sentenceClaims.map((claim,i)=><span key={i} className={styles.originalPassage}>
         {claim.basedOnText}
         {dispatch && <span className={styles.popupButton}>
     <Link href={'#'} title="view this passage in the original paper" onClick={(e)=>{e.stopPropagation(); selectClaims([claim])}}>

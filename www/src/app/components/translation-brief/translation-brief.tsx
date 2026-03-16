@@ -34,7 +34,6 @@ export default async function TranslationBrief({translation, expanded = false}) 
           {article.title || translation.title}
         </Link>
       }
-
     </h1>
     <h2>
       <EditableText id={article.id} model='article' field="second_title">
