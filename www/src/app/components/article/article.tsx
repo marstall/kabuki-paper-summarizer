@@ -1,20 +1,37 @@
+'use client'
+
 import styles from '/article.module.css'
-import {useContext} from "react";
+import {useContext, useEffect, useState} from "react";
 import {TranslationContext} from "@/app/components/translation-view-client/translation-context";
 import _ from 'lodash'
 
 function Section({section, passagesToHighlight}) {
-  return section.paragraphs.map(paragraph => {
+  const [scrollTarget,setScrollTarget] = useState(null)
+  useEffect(()=>{
+    if (scrollTarget) {
+      const element = window.document.getElementById(scrollTarget)
+      element && element.scrollIntoView()
+    }
+  },[scrollTarget])
+  let found = false;
+  const ret = section.paragraphs.map(paragraph => {
       let body = paragraph.body;
       const openingTag="<span style='background-color: #f3f3f3;color: dodgerblue;font-weight:bold;border:0px dotted gray'>"
       const endingTag = "</span>"
       for (const passage of passagesToHighlight) {
-        const parts = _.split(passage,/\s?\.\.\.\s?/)
+        const parts = _.split(passage,".")
         for (const part of parts) {
-          body = _.replace(body,part,openingTag+part+endingTag)
+          if (part.length>0) {
+            const _body = body
+            if (body.search(part)>=0) {
+              found= true;
+              if (scrollTarget!==paragraph.id) setScrollTarget(paragraph.id)
+              body = _.replace(body,part,openingTag+part+endingTag)
+          }
+          }
         }
       }
-      return <div key={paragraph.id}>
+      return <div id={paragraph.id} key={paragraph.id}>
         <h4>
           {paragraph.title}
         </h4>
@@ -23,11 +40,13 @@ function Section({section, passagesToHighlight}) {
       </div>
     }
   )
+ console.log(found ? "found:": "not found:",passagesToHighlight)
+
+  return ret;
 }
 
 export default function Article({article, highlightClaims=[]}) {
   const state = useContext(TranslationContext);
-  console.log(state.originalPassages)
   const passagesToHighlight = highlightClaims.reduce((acc, claim) => {
     return [...acc, ...claim.basedOnText]
   }, [])

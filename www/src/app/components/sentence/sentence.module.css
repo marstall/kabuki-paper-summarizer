@@ -28,9 +28,19 @@
   margin-right:0.5rem;
 }
 
+.originalPassage {
+  margin:2px;
+  background-color: #ddf;
+  border:1px dotted #99f;
+  border-radius: 4px;
+  padding-left:4px;
+  padding-right: 4px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
 .popupButton {
-  position:relative;
-  margin-top:-4px;
+  margin-left:3px;
 }
 
 
@@ -51,10 +61,12 @@
   color: #333;
   /*text-decoration: underline;*/
   /*font-style:italic;*/
-  background-color: lightgoldenrodyellow;
+  background-color: white;
   font-family: Arial;
-  padding: 4px;
+  padding: 2px;
+  padding-bottom:0px;
   border: 1px solid lightgray;
   font-size: 14px;
   border-radius: 5px;
+  margin-top:-4px;
 }

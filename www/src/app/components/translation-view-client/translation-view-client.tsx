@@ -43,8 +43,8 @@ export default function TranslationViewClient({translation, promptTitle,article,
     window.location.reload();
   }
 
-  return <TranslationContext value={state}>
-    <TranslationDispatchContext value={dispatch}>
+  return <TranslationContext.Provider value={state}>
+    <TranslationDispatchContext.Provider value={dispatch}>
       <div>
         <Header minimal={true}/>
         <article>
@@ -100,6 +100,6 @@ export default function TranslationViewClient({translation, promptTitle,article,
         </div>
       </Overlay>}
 
-    </TranslationDispatchContext>
-  </TranslationContext>
+    </TranslationDispatchContext.Provider>
+  </TranslationContext.Provider>
 }
