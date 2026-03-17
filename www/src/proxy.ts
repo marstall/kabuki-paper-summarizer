@@ -5,8 +5,8 @@ const publicPathRegexes: RegExp[] = [
   /^\/$/,
   /^\/translations\/\d+\/?$/,
   /^\/file\/\d+\/?$/,
-  /^\/favicon.ico$/,
-  /^\/site_logo_1200x630.png$/,
+  /^\/.*\.ico$/,
+  /^\/.*\.png$/,
   /^\/api\/attachment-translation\/\d+\/?$/
 ]
 
