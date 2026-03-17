@@ -1,4 +1,5 @@
 import type {Metadata} from "next";
+import Script from "next/script";
 import {Geist, Geist_Mono} from "next/font/google";
 import "./globals.css";
 import "./article.css";
@@ -49,8 +50,6 @@ export default function RootLayout({
       <meta name="twitter:description"
             content="AI-generated plain-English summaries of Kabuki syndrome research papers."/>
       <meta name="twitter:image" content={ogImage}/>
-
-      <script src="https://kit.fontawesome.com/a208fe4da2.js" crossOrigin="anonymous"></script>
       <link
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css"
@@ -60,7 +59,7 @@ export default function RootLayout({
 
       <meta name="viewport" content="width=device-width, initial-scale=1"/>
     </head>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+    <body className={`${geistSans.variable} ${geistMono.variable}`}>
       <div className="page subscribeBar">
         <div className="pageInner">
           <WelcomeOverlay/>
@@ -72,6 +71,13 @@ export default function RootLayout({
           {children}
         </div>
       </div>
+      <Script src="https://www.googletagmanager.com/gtag/js?id=AW-18021159406" strategy="afterInteractive"/>
+      <Script id="gtag-init" strategy="afterInteractive">{`
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-18021159406');
+      `}</Script>
       </body>
     </html>
   );
