@@ -35,8 +35,8 @@ function Content(params) {
           Hi, welcome to The Kabuki Papers.
         </h1>
         <p>
-          I'm chris, <a href={'https://www.kabukibrain.org/t/when-we-received-our-kabuki-diagnosis-i-felt-overwhelmed-by-the-challenge-of-supporting-our-son-i-thought-i-could-never-understand-the-science-of-what-was-going-on-in-his-mind-and-body/9'}>dad of a Kabuki teenager</a> who's
-          never made it to the end of an academic paper about Kabuki (or any other subject).
+          I'm Chris, <a href={'https://www.kabukibrain.org/t/when-we-received-our-kabuki-diagnosis-i-felt-overwhelmed-by-the-challenge-of-supporting-our-son-i-thought-i-could-never-understand-the-science-of-what-was-going-on-in-his-mind-and-body/9'}>dad of a Kabuki teenager</a>.
+          Though I've tried, I've never made it to the end of an academic paper about Kabuki (or any other subject).
         </p>
         <p>
           AI changed that. It can translate this stuff into plain English beautifully.
