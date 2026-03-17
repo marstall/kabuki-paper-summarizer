@@ -48,7 +48,7 @@ export default function TranslationViewClient({translation, promptTitle,article,
     <TranslationDispatchContext.Provider value={dispatch}>
       <div>
         <Header minimal={true}/>
-        <div className={'content'}>
+        <article >
           <header className="article-header">
             <div className={'article-supertitle'}>
               <EditableText id={article.id} model='article' field="category">
@@ -94,7 +94,7 @@ export default function TranslationViewClient({translation, promptTitle,article,
               attachment</Link>}</div>
           </AdminSection>
             <SubscribeForm/>
-        </div>
+        </article>
       </div>
       {state.originalOverlayShown && <Overlay dismiss={dismissOriginalOverlay}>
         <div className="content">

@@ -17,7 +17,6 @@ export function proxy(request: NextRequest) {
 
   const isLocal =
     process.env.APP_ENV === "development" || process.env.NODE_ENV === "development"
-  console.log("proxy")
 
   if (!isLocal && !isPublicPath(pathname)) {
     return NextResponse.redirect(new URL("/", request.url))

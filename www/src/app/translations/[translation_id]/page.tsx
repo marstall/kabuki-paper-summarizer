@@ -1,5 +1,6 @@
-import TranslationView from "./translation-view"
+import TranslationView, {loadTranslation} from "./translation-view"
 import {prisma} from "@/app/lib/prisma";
+import type {Metadata, ResolvingMetadata} from "next";
 
 export const dynamic = 'force-dynamic'
 
@@ -16,7 +17,49 @@ function absoluteUrl(pathOrUrl) {
   return `${siteUrl.replace(/\/$/, "")}${pathOrUrl.startsWith("/") ? "" : "/"}${pathOrUrl}`;
 }
 
-export async function generateMetadata(_params) {
+type Props = {
+  params: Promise<{ slug: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+export async function generateMetadata(
+  { params, searchParams }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const _params = await params
+  console.log({_params})
+  const translation = await loadTranslation(_params['translation_id'])
+  const ret = {
+    title: translation.articles.title,
+    description: translation.articles.second_title,
+    openGraph: {
+      title: translation.articles.title,
+      description: translation.articles.second_title,
+      images: [
+        {
+          url: "https://www.thekabukipapers.org/site_logo_1200x630.png",
+          width: 1200,
+          height: 630
+        }
+      ],
+      locale: 'en_US',
+      type: 'website'
+    },
+    twitter: {
+      card: "summary_large_image",
+      title:translation.articles.title,
+      description:translation.articles.second_title,
+      images: ["https://www.thekabukipapers.org/site_logo_1200x630.png"],
+    },
+  }
+  console.log({ret})
+  return ret;
+}
+
+
+
+export async function _generateMetadata(_params) {
+  console.log("generateMetata page.tsx")
   const params = await _params;
   let translationId;
   try {
