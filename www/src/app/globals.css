@@ -1,3 +1,54 @@
+@font-face {
+  font-family: charterwoff;
+  src: url(/fonts/charter_regular-webfont.woff);
+}
+
+@font-face {
+  font-family: playfair;
+  src: url(/fonts/PlayfairDisplay-VariableFont_wght.ttf);
+}
+
+@font-face {
+  font-family: inter;
+  src: url(/fonts/Inter-VariableFont_opsz,wght.ttf);
+}
+
+@font-face {
+  font-family: merriweather;
+  src: url(/fonts/Merriweather-VariableFont_opsz,wdth,wght.ttf);
+}
+
+@font-face {
+  font-family: merriweather-italic;
+  src: url(/fonts/Merriweather-Italic-VariableFont_opsz,wdth,wght.ttf);
+}
+
+
+:root {
+  /* Measure */
+  --reading-width: 65ch;
+  --margin-rail: 0ch;
+
+  /* Spacing */
+  --space-xs: 0.5rem;
+  --space-s: 1rem;
+  --space-m: 1.75rem;
+  --space-l: 3rem;
+  --space-xl: 5rem;
+
+  /* Typography */
+  --body-font: "charter","charterwoff";
+  --ui-font: "inter";
+
+  --text-main: #1a1a1a;
+  --text-emphasized: black;
+  --rule: #e5e5e5;
+  --accent: #0a4cff;
+  --accent-2: rgb(55,123,42);
+  --link: rgb(193,98,90);
+  --text-muted: #666;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -19,7 +70,6 @@ body {
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: 'Merriweather',Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -98,12 +148,10 @@ a {
 }
 
 .translation-container .title {
-  font-family: "Playfair Display";
   font-size: 32px;
 }
 
 .translation-container p {
-  font-family: 'Merriweather';
   margin-bottom:1em;
 }
 

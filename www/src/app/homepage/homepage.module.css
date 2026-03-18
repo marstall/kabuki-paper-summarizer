@@ -12,31 +12,6 @@
   - text-main/text-muted/rule/accent: shared colors
 */
 
-:global(:root) {
-  /* Measure */
-  --reading-width: 65ch;
-  --margin-rail: 0ch;
-
-  /* Spacing */
-  --space-xs: 0.5rem;
-  --space-s: 1rem;
-  --space-m: 1.75rem;
-  --space-l: 3rem;
-  --space-xl: 5rem;
-
-  /* Typography */
-  --body-font: "Source Serif 4", "Charter", Georgia, serif;
-  --ui-font: "Inter", system-ui, -apple-system, sans-serif;
-
-  --text-main: #1a1a1a;
-  --text-emphasized: black;
-  --rule: #e5e5e5;
-  --accent: #0a4cff;
-  --accent-2: rgb(55,123,42);
-  --link: rgb(193,98,90);
-  --text-muted: #666;
-}
-
 .container {
   display: grid;
   /*
@@ -54,7 +29,6 @@
 }
 
 .latestPostsHeading {
-  font-family: var(--accent-2);
   font-size:16px;
   font-weight: bold;
   color: #333;

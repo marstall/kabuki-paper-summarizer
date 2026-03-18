@@ -1,3 +1,9 @@
+www/codeStyles/
+www/modules.xml
+www/paper_booper.iml
+www/prettier.xml
+www/vcs.xml
+www/workspace.xml
 .next
 .DS_Store
 .idea
