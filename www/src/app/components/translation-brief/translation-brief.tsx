@@ -18,13 +18,14 @@ export default async function TranslationBrief({translation, expanded = false}) 
   const attachment = article && article.attachments && article.attachments.length > 0 ? article.attachments[0] : null
   const text = extractText(translation.body)
 
-  return <div className={`${styles.container} ${expanded ? styles.expandedContainer : ''}`}>
-    <div className={styles.supertitle}>
+  return <article style={{marginTop:"-30px",borderBottom:'6px solid green',marginBottom:'20px'}} >
+      <header className="article-header">
+    <div className={'article-supertitle'} style={{fontSize: '14px',lineHeight: '0.5'}}>
       <EditableText id={article.id} model='article' field="category">
         {article.category || translation.category}
       </EditableText>
     </div>
-    <h1>
+    <h1 style={{fontSize: '34px'}}>
       {isLocal() ?
         <EditableText id={article.id} model='article' field="title">
           {article.title || translation.title}
@@ -49,11 +50,12 @@ export default async function TranslationBrief({translation, expanded = false}) 
       <Attachment article={article} attachment={attachment} allowMaximize={false} showCaption={false}/>
     </div>}
     {expanded && <div className={styles.text}>
-      <TranslationSentenceBySentence translation={translation} numParagraphsToShow={4}/>
+      <TranslationSentenceBySentence translation={translation} showSubscribeForm={false}numParagraphsToShow={4}/>
     </div>}
     <div className={styles.readMoreLink}>
       <Link href={`/translations/${translation.id}`}
             className={'button'}>Read more</Link>
     </div>
-  </div>
+      </header>
+    </article>
 }

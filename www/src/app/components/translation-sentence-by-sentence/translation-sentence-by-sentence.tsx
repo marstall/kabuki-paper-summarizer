@@ -88,7 +88,7 @@ function Paragraph({index, translation, processedParagraph}) {
   </div>
 }
 
-export default function TranslationSentenceBySentence({translation, numParagraphsToShow = null}) {
+export default function TranslationSentenceBySentence({translation, showSubscribeForm = true, numParagraphsToShow = null}) {
   const unprocessedParagraphs = extractParagraphs(translation.body)
   const processedParagraphsArray = []
   for (const [i, unprocessedParagraph] of unprocessedParagraphs.entries()) {
@@ -107,7 +107,7 @@ export default function TranslationSentenceBySentence({translation, numParagraph
   // so we now have an array of paragraphs, each containing an array of sentences.
   return processedParagraphsArray.map((processedParagraph, i) => {
       return <Fragment key={i}>
-        {i == 3 && <SubscribeForm/>}
+        {i == 3 && showSubscribeForm && <SubscribeForm/>}
         <Paragraph key={i} index={i} translation={translation}
                    processedParagraph={processedParagraph}/>
       </Fragment>
