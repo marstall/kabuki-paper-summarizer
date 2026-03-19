@@ -21,7 +21,7 @@ export async function handleTranslationShareImageGet(request, params) {
             flexDirection: 'column',
             width: '100%',
             height: 630,
-            padding: '20px',
+            padding: '20px 20px 0 20px',
             fontFamily:'charter',
             backgroundColor: '#ffffff',
           }}
@@ -31,9 +31,10 @@ export async function handleTranslationShareImageGet(request, params) {
             color: 'green',
             fontFamily: "charterBold",
             display: 'flex',
-            flexDirection: 'row'
+            flexDirection: 'row',
+            flexShrink: 0,
           }}>
-            <div>The Kabuki Papers</div>
+            <div>The Kabuki Papers </div>
             <div style={{color:'gray',marginLeft:'0.5rem'}}>Newsletter</div>
           </div>
           {/*<div style={{*/}
@@ -48,13 +49,14 @@ export async function handleTranslationShareImageGet(request, params) {
             color: 'black',
             fontSize: '98px',
             fontFamily: "charterBold",
-
+            flexShrink: 0,
           }}>
             {translation?.articles.title}
           </div>
           <div style={{
             fontSize: '36px',
-            color: '#555'
+            color: '#555',
+            overflow: 'hidden',
           }}>
             {translation?.articles.second_title}
           </div>
