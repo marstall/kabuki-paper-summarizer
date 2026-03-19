@@ -20,6 +20,7 @@ export async function handleTranslationShareImageGet(request, params) {
             display: 'flex',
             flexDirection: 'column',
             width: '100%',
+            height: 630,
             padding: '20px',
             fontFamily:'charter',
             backgroundColor: '#ffffff',
