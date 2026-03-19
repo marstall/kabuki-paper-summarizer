@@ -40,6 +40,9 @@ function Content(params) {
           <p>
           In this newsletter, I'll be attempting to make the science behind Kabuki Syndrome more accessible, through the magic of AI.
           </p>
+        <p>
+          Hope you'll join me!
+        </p>
         {/*  <p>*/}
         {/*  I've made many attempts at reading Kabuki-related scientific papers. Don't think I've made it through to the end of one of them.*/}
         {/*</p>*/}
