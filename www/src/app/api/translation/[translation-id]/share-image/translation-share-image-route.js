@@ -29,8 +29,11 @@ export async function handleTranslationShareImageGet(request, params) {
             fontSize: '42px',
             color: 'green',
             fontFamily: "charterBold",
+            display: 'flex',
+            flexDirection: 'row'
           }}>
-            The Kabuki Papers
+            <div>The Kabuki Papers</div>
+            <div style={{color:'gray',marginLeft:'0.5rem'}}>Newsletter</div>
           </div>
           {/*<div style={{*/}
           {/*  fontSize:'30px',*/}
