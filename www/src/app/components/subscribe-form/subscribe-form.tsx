@@ -1,6 +1,5 @@
 'use client'
 import styles from './subscribe-form.module.css'
-import "@/app/globals.css"
 
 export default function SubscribeForm({onSubmit=null,dismiss=null,showNotRightNow=false}) {
 
@@ -14,8 +13,8 @@ export default function SubscribeForm({onSubmit=null,dismiss=null,showNotRightNo
     className="embeddable-buttondown-form"
   >
     <label htmlFor="bd-email">Subscribe to free newsletter: </label>
-    <input type="email" name="email" id="bd-email"/>&nbsp;
-    <input className={styles.subscribeButton} type="submit" value="Subscribe"/>
+    <input placeholder={" email address"} type="email" name="email" id="bd-email"/>
+      <input className={styles.subscribeButton} type="submit" value="Subscribe"/>
       {showNotRightNow && <a href={'#'} className={styles.notRightNowButton} onClick={dismiss}>Not right now</a>}
   </form>
   </div>

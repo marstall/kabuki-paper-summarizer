@@ -32,21 +32,26 @@ function Content(params) {
     <div className={styles.content}>
       <div className={'content'}>
         <h1 className={'title'}>
-          Hi, welcome to The Kabuki Papers.
+          Welcome to The Kabuki Papers
         </h1>
         <p>
           I'm Chris, <a href={'https://www.kabukibrain.org/t/when-we-received-our-kabuki-diagnosis-i-felt-overwhelmed-by-the-challenge-of-supporting-our-son-i-thought-i-could-never-understand-the-science-of-what-was-going-on-in-his-mind-and-body/9'}>dad of a Kabuki teenager</a>.
-          Though I've tried, I've never made it to the end of an academic paper about Kabuki (or any other subject).
-        </p>
-        <p>
-          AI changed that. It can translate this stuff into plain English beautifully.
-        </p>
-        <p>
-          Here I'll be posting readable AI versions of Kabuki papers that sparked my curiosity, taught me something, blew my mind, etc.
-        </p>
-        <p>
-          Let's break through the jargon together!
-        </p>
+          </p>
+          <p>
+          In this newsletter, I'll be attempting to make the science behind Kabuki Syndrome more accessible, through the magic of AI.
+          </p>
+        {/*  <p>*/}
+        {/*  I've made many attempts at reading Kabuki-related scientific papers. Don't think I've made it through to the end of one of them.*/}
+        {/*</p>*/}
+        {/*<p>*/}
+        {/*  AI has really changed that for me. It can translate even the densest papers into terms I can understand.*/}
+        {/*</p>*/}
+        {/*<p>*/}
+        {/*  Here I'll be posting readable AI versions of Kabuki papers that sparked my curiosity, taught me something, blew my mind, or all of the above.*/}
+        {/*</p>*/}
+        {/*<p>*/}
+        {/*  Let's break through the jargon together!*/}
+        {/*</p>*/}
           <SubscribeForm onSubmit={dismiss} dismiss={dismiss} showNotRightNow={true}/>
       </div>
     </div>
