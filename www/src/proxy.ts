@@ -8,7 +8,7 @@ const publicPathRegexes: RegExp[] = [
   /^\/.*\.ico$/,
   /^\/.*\.png$/,
   /^\/icon$/,
-  /^\/api\/attachment-translation\/\d+\/?$/
+  /^\/api\/.+/
 ]
 
 function isPublicPath(pathname: string): boolean {

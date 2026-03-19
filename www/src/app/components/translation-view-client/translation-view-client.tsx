@@ -47,7 +47,7 @@ export default function TranslationViewClient({translation, promptTitle,article,
   return <TranslationContext.Provider value={state}>
     <TranslationDispatchContext.Provider value={dispatch}>
       <div>
-        <img src={`/api/translation/${translation.id}/share-image`}/>
+        {/*<img src={`/api/translation/${translation.id}/share-image`}/>*/}
         <Header minimal={true}/>
         <article >
           <header className="article-header">
