@@ -37,7 +37,7 @@
 
   /* Typography */
   --body-font: "charter","charterwoff";
-  --ui-font: "inter";
+  --ui-font: "inter","Helvetica";
 
   --text-main: #1a1a1a;
   --text-emphasized: black;
