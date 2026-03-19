@@ -22,6 +22,7 @@ export async function handleTranslationShareImageGet(request, params) {
             width: '100%',
             padding: '20px',
             fontFamily:'charter',
+            backgroundColor: '#ffffff',
           }}
         >
           <div style={{
