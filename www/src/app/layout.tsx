@@ -6,6 +6,7 @@ import "./article.css";
 import SubscribeForm from "@/app/components/subscribe-form/subscribe-form";
 import {SpeedInsights} from "@vercel/speed-insights/next"
 import WelcomeOverlay from "@/app/components/welcome-overlay/welcome-overlay";
+import PlausibleProvider from 'next-plausible'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -60,32 +61,16 @@ export default function RootLayout({
     <html lang="en">
     <head>
       <meta charSet="utf-8"/>
-      {/*<meta property="og:site_name" content="The Kabuki Papers"/>*/}
-      {/*<meta property="og:title" content="The Kabuki Papers"/>*/}
-      {/*<meta property="og:description"*/}
-      {/*      content="AI-generated plain-English summaries of Kabuki syndrome research papers."/>*/}
-      {/*<meta property="og:type" content="website"/>*/}
-      {/*{ogUrl && <meta property="og:url" content={ogUrl}/>}*/}
-      {/*<meta property="og:image" content={ogImage}/>*/}
-      {/*<meta property="og:image:width" content="1200"/>*/}
-      {/*<meta property="og:image:height" content="630"/>*/}
-
-      {/*<meta name="twitter:card" content="summary_large_image"/>*/}
-      {/*<meta name="twitter:title" content="The Kabuki Papers"/>*/}
-      {/*<meta name="twitter:description"*/}
-      {/*      content="AI-generated plain-English summaries of Kabuki syndrome research papers."/>*/}
-      {/*<meta name="twitter:image" content={ogImage}/>*/}
       <link
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css"
       />
-      {/*<link rel="stylesheet"*/}
-      {/*      href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Merriweather"/>*/}
 
       <meta name="viewport" content="width=device-width, initial-scale=1"/>
     </head>
     <body>
-      <div className="page subscribeBar">
+    <PlausibleProvider domain="thekabukipapers.org">
+    <div className="page subscribeBar">
         <div className="pageInner">
           <WelcomeOverlay/>
           <SubscribeForm/>
@@ -96,14 +81,8 @@ export default function RootLayout({
           {children}
         </div>
       </div>
-      <Script src="https://www.googletagmanager.com/gtag/js?id=AW-18021159406" strategy="afterInteractive"/>
-      <Script id="gtag-init" strategy="afterInteractive">{`
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'AW-18021159406');
-      `}</Script>
-      </body>
+    </PlausibleProvider>
+    </body>
     </html>
   );
 }
