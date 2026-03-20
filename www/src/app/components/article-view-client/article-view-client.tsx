@@ -74,7 +74,7 @@ export default function ArticleViewClient({article, deleteArticleAction, deleteA
               {translation.llms.model}
             </td>
             <td>
-              {translation.prompts.title}
+              {translation.prompts?.title}
             </td>
             <td>
               {translation.generation && <Link href={`/generations/${translation.generation}`}>

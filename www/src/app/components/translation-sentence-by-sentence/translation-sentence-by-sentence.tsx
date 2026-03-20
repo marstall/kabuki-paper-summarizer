@@ -107,9 +107,9 @@ export default function TranslationSentenceBySentence({translation, showSubscrib
   // so we now have an array of paragraphs, each containing an array of sentences.
   return processedParagraphsArray.map((processedParagraph, i) => {
       return <Fragment key={i}>
-        {i == 3 && showSubscribeForm && <SubscribeForm/>}
         <Paragraph key={i} index={i} translation={translation}
                    processedParagraph={processedParagraph}/>
+        {i === 10 && processedParagraphsArray.length>20 && showSubscribeForm && <SubscribeForm/>}
       </Fragment>
     }
   )

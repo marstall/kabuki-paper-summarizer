@@ -4,7 +4,13 @@ import { prisma } from '../lib/prisma'
 
 
 export default async function Articles() {
-  const articles = await prisma.articles.findMany()
+  const articles = await prisma.articles.findMany(
+    {
+      orderBy: {created_at: 'desc'},
+      include: {translations: {where: {NOT: {published_at: null}}}}
+//      include: {translations: true}
+    }
+  )
 
   return <div>
     <h1 className="title">Articles</h1>
@@ -16,6 +22,12 @@ export default async function Articles() {
           <Link className="button" href={href}>
             {article.original_title}
           </Link>
+          {article.translations.map((translation) => {
+            const published = translation.published_at ? "✅" : ""
+            return <div key={translation.id}>
+              {published} <Link href={`/translations/${translation.id}`}>{article.title}</Link>
+            </div>
+          })}
         </div>
       })}</div>
     <br/>

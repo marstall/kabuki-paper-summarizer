@@ -70,8 +70,10 @@ export default function TranslationViewClient({translation, promptTitle,article,
               href={article.url}>{article.original_title}</a>&rdquo;</span> by {article.attribution.trim()}.
               <br/>Written by {llm.provider} AI. Edited by <span
                 className={styles.meLink}><a href={'https://www.linkedin.com/in/chrismarstall/'}>KabukiDadChris</a></span>.
-              <span style={{display:'none'}}> w/ prompt '{promptTitle}'.</span>
-              <AdminSection span={true}> <Link href={'#'} onClick={regenHeadlines}>regenerate headlines</Link></AdminSection>
+              <AdminSection span={true}>
+                <span> prompt: '{promptTitle}'.</span> &nbsp;
+                <Link href={'#'} onClick={regenHeadlines}>regenerate headlines</Link>
+              </AdminSection>
             </div>
           </header>
           <div className="content">
