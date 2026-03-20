@@ -68,7 +68,7 @@ export default function Attachment({article,attachment, allowMaximize=true,showC
         <Image alt={attachment.alt_text} src={url} width={attachment.width} height={attachment.height}/>
       </Link>
       :
-        <Image className={styles.image} alt={attachment.alt_text} src={url} width={attachment.width}
+        <Image loading="eager" className={styles.image} alt={attachment.alt_text} src={url} width={attachment.width}
                height={attachment.height}/>
     }
     </div>

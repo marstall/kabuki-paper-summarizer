@@ -3,25 +3,20 @@
   src: url(/fonts/charter_regular-webfont.woff);
 }
 
-@font-face {
-  font-family: playfair;
-  src: url(/fonts/PlayfairDisplay-VariableFont_wght.ttf);
-}
+/*@font-face {*/
+/*  font-family: playfair;*/
+/*  src: url(/fonts/PlayfairDisplay-VariableFont_wght.ttf);*/
+/*}*/
 
-@font-face {
-  font-family: inter;
-  src: url(/fonts/Inter-VariableFont_opsz,wght.ttf);
-}
+/*@font-face {*/
+/*  font-family: merriweather;*/
+/*  src: url(/fonts/Merriweather-VariableFont_opsz,wdth,wght.ttf);*/
+/*}*/
 
-@font-face {
-  font-family: merriweather;
-  src: url(/fonts/Merriweather-VariableFont_opsz,wdth,wght.ttf);
-}
-
-@font-face {
-  font-family: merriweather-italic;
-  src: url(/fonts/Merriweather-Italic-VariableFont_opsz,wdth,wght.ttf);
-}
+/*@font-face {*/
+/*  font-family: merriweather-italic;*/
+/*  src: url(/fonts/Merriweather-Italic-VariableFont_opsz,wdth,wght.ttf);*/
+/*}*/
 
 :root {
   /* Measure */
@@ -37,7 +32,7 @@
 
   /* Typography */
   --body-font: "charter","charterwoff";
-  --ui-font: "inter","Helvetica";
+  --ui-font: "Helvetica";
 
   --text-main: #1a1a1a;
   --text-emphasized: black;
