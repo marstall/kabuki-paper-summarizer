@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
-const { withPlausibleProxy } = require('next-plausible')
 
-const nextConfig: NextConfig = withPlausibleProxy()({
+const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   experimental: {
@@ -12,6 +11,6 @@ const nextConfig: NextConfig = withPlausibleProxy()({
   turbopack: {
     root: __dirname,
   },
-});
+};
 
 export default nextConfig;
