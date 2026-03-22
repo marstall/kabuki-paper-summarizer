@@ -11,7 +11,7 @@ export default async function TranslationView({translation_id}: any) {
     article={translation.articles}
     llm={translation.llms}
     promptTitle={_.get(translation, "prompts.title")}
-    attachment={_.get(translation,'articles.attachments[0]',null)}
+    attachments={_.get(translation,'articles.attachments',[])}
   />
 
 }

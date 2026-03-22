@@ -1,14 +1,23 @@
 
+.superContainer {
+  border-top: 6px solid green;
+  margin-bottom: 4rem;
+}
+
+.superContainer:first-of-type {
+  border-top: none;
+}
 
 .container {
   font-family: var(--body-font);
   color: var(--text-main);
   line-height: 1.55;
   font-size: 18px;
-  margin-bottom:2rem;
-  border-bottom:1px dotted lightgray;
-  padding-bottom:1rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px dotted lightgray;
+  padding-bottom: 1rem;
 }
+
 .expandedContainer {
   padding-bottom: 1rem;
   border-bottom: 4px solid lightgray;
@@ -19,6 +28,7 @@
   line-height: 1.1;
   font-weight: bold;
 }
+
 .container h2 {
   font-family: var(--ui-font);
   color: #333;
@@ -29,21 +39,21 @@
   font-size: smaller;
   font-weight: bold;
   color: var(--accent-2);
-  margin-bottom:0.25rem;
+  margin-bottom: 0.25rem;
 }
 
 .dateline {
   font-family: var(--ui-font);
-  color:#999;
+  color: #999;
   font-size: 12px;
-  margin-bottom:0.25rem;
+  margin-bottom: 0.25rem;
 }
 
 .dateline a {
-  color:#999;
+  color: #999;
 }
 
 .readMoreLink {
-  margin-top:1rem;
-  margin-left:0px
+  margin-top: 1rem;
+  margin-left: 0px
 }

@@ -59,6 +59,7 @@ export default async function ArticleView({id}) {
   )
   const attachments = await prisma.attachments.findMany({
       where: {article_id: Number(id)},
+      orderBy:{created_at: 'desc'},
       select: {
         id: true,
         caption: true,

@@ -12,13 +12,13 @@ function extractText(body) {
   return firstParagraph(body)
 }
 
-export default async function TranslationBrief({translation, expanded = false}) {
+export default async function TranslationBrief({translation,showFirstAttachmentBelowHeadline=false, showFirstAttachmentAtTop=false,showFirstParagraphs = false}) {
   const article = translation.articles;
   if (!article) return null;
   const attachment = article && article.attachments && article.attachments.length > 0 ? article.attachments[0] : null
   const text = extractText(translation.body)
 
-  return <article style={{marginTop:"-30px",borderBottom:'6px solid green',marginBottom:'20px'}} >
+  return <article className={styles.superContainer} >
       <header className="article-header">
     <div className={'article-supertitle'} style={{fontSize: '14px',lineHeight: '0.5'}}>
       <EditableText id={article.id} model='article' field="category">
@@ -36,6 +36,9 @@ export default async function TranslationBrief({translation, expanded = false}) 
         </Link>
       }
     </h1>
+        {showFirstAttachmentAtTop && attachment && <div className={styles.attachment}>
+          <Attachment article={article} attachment={attachment} allowMaximize={false} showCaption={false}/>
+        </div>}
     <h2>
       <EditableText id={article.id} model='article' field="second_title">
         {article.second_title || translation.second_title}
@@ -45,12 +48,12 @@ export default async function TranslationBrief({translation, expanded = false}) 
       href={'https://www.linkedin.com/in/chrismarstall/'}>KabukiDadChris</a>. Posted
       on {shortDate(translation.published_at)}.
     </div>
-
-    {expanded && attachment && <div className={styles.attachment}>
+    {showFirstAttachmentBelowHeadline && attachment && <div className={styles.attachment}>
       <Attachment article={article} attachment={attachment} allowMaximize={false} showCaption={false}/>
     </div>}
-    {expanded && <div className={styles.text}>
-      <TranslationSentenceBySentence translation={translation} showSubscribeForm={false}numParagraphsToShow={4}/>
+
+    {showFirstParagraphs && <div className={styles.text}>
+      <TranslationSentenceBySentence translation={translation} showSubscribeForm={false} numParagraphsToShow={4}/>
     </div>}
     <div className={styles.readMoreLink}>
       <Link href={`/translations/${translation.id}`}

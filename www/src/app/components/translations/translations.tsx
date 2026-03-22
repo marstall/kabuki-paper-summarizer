@@ -5,7 +5,7 @@ import TranslationBrief from '@/app/components/translation-brief/translation-bri
 export default async function Translations(params: any) {
   const translations = await prisma.translations.findMany(
     {
-      where: {NOT: {published_at:null}},
+      where: {NOT: {published_at: null}},
       orderBy: {published_at: "desc"},
       include: {
         llms: true,
@@ -21,6 +21,10 @@ export default async function Translations(params: any) {
         }
       }
     })
-  return translations.map((translation,i) =>
-    <TranslationBrief expanded={i==0} key={translation.id} translation={translation}/>)
+  return <div> {translations.map((translation, i) =>
+    <TranslationBrief showFirstParagraphs={i == 0}
+                      showFirstAttachmentAtTop={i != 0}
+                      showFirstAttachmentBelowHeadline={i == 0}
+                      key={translation.id} translation={translation}/>)
+}</div>
 }
