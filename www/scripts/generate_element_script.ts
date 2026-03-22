@@ -3,7 +3,6 @@ import {prisma} from '../src/app/lib/prisma'
 import Log, {bold,block, error, log} from '@/app/lib/logger'
 import yargs from 'yargs'
 import {hideBin} from 'yargs/helpers'
-import Article from '@/app/models/article'
 import Llm from '@/app/models/llm'
 import {shortDateTime} from "@/utils/date";
 import {generateElement} from "@/app/generation/generate_element";

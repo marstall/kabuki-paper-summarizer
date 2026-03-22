@@ -30,6 +30,7 @@ export default function Attachment({article,attachment, allowMaximize=true,showC
   const [captionState, setCaptionState] = useState(0);
   const [maximized, setMaximized] = useState(false);
   const [activeCaption,setActiveCaption] = useState(attachment.caption)
+  const reallyShowCaption = showCaption && activeCaption
   useEffect(()=>{
     if (_.isEmpty(attachment.caption)) {
       setActiveCaption(translation)
@@ -61,8 +62,8 @@ export default function Attachment({article,attachment, allowMaximize=true,showC
   const hoverTextOptions = ["click to show full plain-english caption",
     "click to show original caption", "click to return to plain-english caption."
   ]
-  return <div className={maximized ? styles.containerMaximized : styles.containerInline} style={!showCaption ? {backgroundColor:'white'}: {}} key={attachment.id}>
-    <div onClick={toggleMaximized} className={styles.imageContainer}>
+  return <div className={maximized ? styles.containerMaximized : styles.containerInline} style={!reallyShowCaption ? {backgroundColor:'white'}: {}} key={attachment.id} >
+    <div onClick={toggleMaximized} className={styles.imageContainer} >
     {allowEdit ?
       <Link href={`/attachments/${attachment.id}`} className="button">
         <Image alt={attachment.alt_text} src={url} width={attachment.width} height={attachment.height}/>
@@ -72,13 +73,13 @@ export default function Attachment({article,attachment, allowMaximize=true,showC
                height={attachment.height}/>
     }
     </div>
-    {showCaption && <div title={hoverTextOptions[captionState]} onClick={stepCaption}
+    {reallyShowCaption && <div title={hoverTextOptions[captionState]} onClick={stepCaption}
          className={captionStates[captionState] === "minimized" ? styles.captionMinimized : styles.captionMaximized}>
       {captionStates[captionState] === "original" && <div><b>original caption</b></div>}
       <Markdown text={activeCaption}/>
-      <AdminSection>
-        <Link className={'button'} href={`/articles/${article.id}/attachments/${attachment.id}`}>manage translation</Link>
-      </AdminSection>
+      {/*<AdminSection>*/}
+      {/*  <Link className={'button'} href={`/articles/${article.id}/attachments/${attachment.id}`}>manage translation</Link>*/}
+      {/*</AdminSection>*/}
     </div>}
   </div>
 }
