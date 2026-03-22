@@ -77,7 +77,6 @@ export default function TranslationViewClient({translation, promptTitle,article,
             </div>
           </header>
           <div className="content">
-
             {attachment && <Attachment key={attachment.id} article={article} attachment={attachment}/>}
             <div className={styles.highlight}><span className={styles.icon}>👉</span>Click on an individual sentence to see its basis in the {article.year} study.</div>
             {/*<NavTabs/>*/}

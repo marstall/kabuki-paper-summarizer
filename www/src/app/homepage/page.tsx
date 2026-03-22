@@ -1,6 +1,14 @@
 import Homepage from "./homepage"
 import {prisma} from '@/app/lib/prisma'
+import type {Metadata} from "next";
+
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: '/',
+  },
+};
 
 export default async function Page() {
   const rows = await prisma.$queryRaw

@@ -26,9 +26,13 @@ export const metadata: Metadata = {
   keywords: ["kabuki","kabuki syndrome"],
   creator: "Chris Marstall",
   metadataBase: new URL('https://www.thekabukipapers.org'),
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     title: "The Kabuki Papers",
     description: "The science of Kabuki Syndrome, illuminated by AI",
+    url: 'https://www.thekabukipapers.org',
     images: [
       {
         url: "https://www.thekabukipapers.org/site_logo_1200x630.png",

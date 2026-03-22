@@ -52,6 +52,7 @@ export default function ArticleViewClient({article, deleteArticleAction, deleteA
             <th>published</th>
             <th>model</th>
             <th>prompt</th>
+            <th>generation</th>
           </tr>}
         {article.translations.map(translation => {
           return <tr key={translation.id}>
