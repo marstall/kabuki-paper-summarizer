@@ -76,7 +76,7 @@ export default function RootLayout({
     <PlausibleProvider domain="thekabukipapers.org">
     <div className="page subscribeBar">
         <div className="pageInner">
-          <WelcomeOverlay/>
+          {/*<WelcomeOverlay/>*/}
           <SubscribeForm/>
         </div>
       </div>
