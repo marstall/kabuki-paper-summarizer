@@ -2,12 +2,13 @@
 .superContainer {
   border: 0px dotted purple;
   border-top: 6px solid green;
-  padding-top: 0rem !important;
+  padding-top: 1rem !important;
   margin-bottom: 4rem;
 }
 
 .superContainer:first-of-type {
   border-top: none;
+  padding-top: 0rem !important;
 }
 
 .container {

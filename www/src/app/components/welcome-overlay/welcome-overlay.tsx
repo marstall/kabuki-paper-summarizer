@@ -17,7 +17,7 @@ function Content(params) {
      const overlayState = cookies.hideWelcomeMessage ? "hidden" : "shown"
     setOverlayState(overlayState)
   },[cookies.hideWelcomeMessage])
-//  if (cookies.hideWelcomeMessage === 'true') return null;
+ return null;
 //
 // //  console.log("cookies.hideWelcomeMessage",cookies.hideWelcomeMessage)
 //
