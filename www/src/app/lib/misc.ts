@@ -3,5 +3,5 @@ return process.env.APP_ENV === "development" || process.env.NODE_ENV === "develo
 }
 
 export function isMobile() {
-  return window.innerWidth<600
+  return typeof window !== 'undefined' && window.innerWidth < 600
 }
