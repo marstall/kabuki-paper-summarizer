@@ -368,6 +368,10 @@ a:hover {
     grid-template-columns: 1fr;
   }
 
+  .article-header {
+    margin-top:0rem;
+  }
+
   .article-body > * {
     grid-column: 1;
   }

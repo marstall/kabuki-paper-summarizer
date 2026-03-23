@@ -18,23 +18,34 @@ export default function Header({admin=false,minimal=false}) {
       {/*Making the science behind Kabuki Syndrome more accessible, one paper at a time*/}
     {/*Using AI to make the science of Kabuki Syndrome more accessible, one paper at a time.*/}
       Kabuki Syndrome science, illuminated by AI
+      {/*<ul className={styles.creditsList}>*/}
+      {/*  <li >*/}
+      {/*    ⏺ Kabuki science in plain English, via AI*/}
+      {/*  </li>*/}
+      {/*  <li>*/}
+      {/*    ⏺ Tap sentences to show scientific basis*/}
+      {/*  </li>*/}
+      {/*  <li>*/}
+      {/*    ⏺ Edited by a dad to a Kabuki teen*/}
+      {/*  </li>*/}
+      {/*</ul>*/}
     </div>
-    {!minimal && <div className={styles.credits}>
-      <ul className={styles.creditsList}>
-        {/*<li className={styles.creditItem}>*/}
-        {/*  <span className={styles.creditIcon}>🧬</span>*/}
-        {/*  <span className={styles.creditText}>Kabuki-related academic papers translated into plain English by AI.</span>*/}
-        {/*</li>*/}
-        {/*<li className={styles.creditItem}>*/}
-        {/*  <span className={styles.creditIcon}>🔍</span>*/}
-        {/*  <span className={styles.creditText}>Tap any sentence to show source passages.</span>*/}
-        {/*</li>*/}
-        {/*<li className={styles.creditItem}>*/}
-        {/*  <span className={styles.creditIcon}>👨</span>*/}
-        {/*  <span className={styles.creditText}>Edited by a curious Kabuki parent.</span>*/}
-        {/*</li>*/}
-      </ul>
-    </div>}
+    {/*{!minimal && <div className={styles.credits}>*/}
+    {/*  /!*<ul className={styles.creditsList}>*!/*/}
+    {/*  /!*  <li className={styles.creditItem}>*!/*/}
+    {/*  /!*    <span className={styles.creditIcon}>🧬</span>*!/*/}
+    {/*  /!*    <span className={styles.creditText}>Kabuki-related academic papers translated into plain English by AI.</span>*!/*/}
+    {/*  /!*  </li>*!/*/}
+    {/*  /!*  <li className={styles.creditItem}>*!/*/}
+    {/*  /!*    <span className={styles.creditIcon}>🔍</span>*!/*/}
+    {/*  /!*    <span className={styles.creditText}>Tap any sentence to show source passages.</span>*!/*/}
+    {/*  /!*  </li>*!/*/}
+    {/*  /!*  <li className={styles.creditItem}>*!/*/}
+    {/*  /!*    <span className={styles.creditIcon}>👨</span>*!/*/}
+    {/*  /!*    <span className={styles.creditText}>Edited by a curious Kabuki parent.</span>*!/*/}
+    {/*  /!*  </li>*!/*/}
+    {/*  /!*</ul>*!/*/}
+    {/*</div>}*/}
   </div>
 
 }

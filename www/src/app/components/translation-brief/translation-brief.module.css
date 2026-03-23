@@ -1,6 +1,8 @@
 
 .superContainer {
+  border: 0px dotted purple;
   border-top: 6px solid green;
+  padding-top: 0rem !important;
   margin-bottom: 4rem;
 }
 
@@ -38,6 +40,7 @@
   font-family: var(--ui-font);
   font-size: smaller;
   font-weight: bold;
+  text-transform: uppercase;
   color: var(--accent-2);
   margin-bottom: 0.25rem;
 }

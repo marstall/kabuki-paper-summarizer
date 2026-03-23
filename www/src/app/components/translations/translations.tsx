@@ -9,9 +9,18 @@ export default async function Translations(params: any) {
       orderBy: {published_at: "desc"},
       include: {
         llms: true,
-        articles: {
+        articles:
+          {
           include: {
             attachments: {
+              select: {
+                id: true,
+                caption: true,
+                size: true,
+                width: true,
+                height: true,
+                alt_text: true
+              },
               orderBy: {id: 'desc'}
             }
           }

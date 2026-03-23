@@ -25,7 +25,7 @@ export default async function TranslationBrief({
 
   return <article className={styles.superContainer}>
     <header className="article-header">
-      <div className={'article-supertitle'} style={{fontSize: '14px', lineHeight: '0.5'}}>
+      <div className={styles.supertitle} style={{fontSize: '14px', lineHeight: '0.5'}}>
         <EditableText id={article.id} model='article' field="category">
           {article.category || translation.category}
         </EditableText>
@@ -58,7 +58,10 @@ export default async function TranslationBrief({
       </div>}
 
       {showFirstParagraphs && <div className={styles.text}>
-        <TranslationSentenceBySentence translation={translation} showSubscribeForm={false} numParagraphsToShow={4}/>
+        <TranslationSentenceBySentence translation={{
+          body: translation.body,
+          claims: translation.claims
+        }} showSubscribeForm={false} numParagraphsToShow={4}/>
       </div>}
       <div className={styles.readMoreLink}>
         <Link href={`/translations/${translation.id}`}

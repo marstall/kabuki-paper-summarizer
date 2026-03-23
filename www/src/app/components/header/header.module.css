@@ -13,6 +13,7 @@
 */
 
 .container {
+  border: 0px dashed black;
   display: flex;
   flex-direction: column;
   gap: 0.5rem; /* tweak */
@@ -70,17 +71,21 @@
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
+  margin-top: 4px;
+  margin-left:3px;
 }
 
 .creditItem {
   display: grid;
-  grid-template-columns: 1.1em 1fr;
+  grid-template-columns: 4px 1fr;
   column-gap: 0.35rem;
   align-items: start;
 }
 
 .creditIcon {
   line-height: 1.1;
+  font-size:15px;
+  transform: translateY(-3px);
 }
 
 .creditText {
@@ -90,6 +95,10 @@
 }
 
 @media (max-width: 600px) {
+  .container {
+    margin-bottom:1.7rem;
+
+  }
   .creditItem {
     column-gap:0.6rem;
   }

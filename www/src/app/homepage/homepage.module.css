@@ -29,8 +29,16 @@
 }
 
 .latestPostsHeading {
-  font-size:16px;
+  margin-top:1rem;
+  font-size: 16px;
   font-weight: bold;
-  color: #333;
-  margin-bottom:1rem;
+  color: #444;
 }
+
+@media (max-width: 600px) {
+  .latestPostsHeading {
+    margin-top:0rem;
+    margin-bottom: 1rem;
+  }
+}
+

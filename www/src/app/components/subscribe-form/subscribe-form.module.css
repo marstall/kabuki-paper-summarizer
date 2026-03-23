@@ -1,49 +1,54 @@
-.containerx {
-  background-color: #ffc;
-  font-family: "American Typewriter";
-  display: flex;
-  justify-content: center;
-  padding: 1rem;
-  width: 100%;
-}
 
 .container {
   background-color: #ffc;
   font-family: "American Typewriter";
+  font-size: 14px;
   width: 100%;
-  margin: 0;
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
-  padding-left: 0.75rem;
   margin-bottom: 0.75rem;
+}
+
+.container form {
+  display: flex;
+  align-items: center;
+}
+
+.label {
+  white-space: nowrap
+}
+
+.emailInput {
+  width: 10rem;
+  margin-left: 0.5rem;
 }
 
 @media (max-width: 600px) {
   .container {
-    display: flex !important;
-    flex-direction: column;
+    /*display: flex !important;*/
+    /*flex-direction: column;*/
   }
 
   .container form {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    /*display: flex;*/
+    /*flex-direction: column;*/
+    /*gap: 0.5rem;*/
   }
 
   .container input[type="email"] {
-    width: 100%;
-    margin-left: 0;
+    /*width: 100%;*/
+    /*margin-left: 0;*/
   }
 
   .subscribeButton {
-    width: 100%;
-    margin-left: 0 !important;
+    /*width: 100%;*/
+    /*margin-left: 0 !important;*/
   }
 
   .notRightNowButton {
-    width: 100%;
-    margin-left: 0 !important;
-    text-align: center;
+    /*width: 100%;*/
+    /*margin-left: 0 !important;*/
+    /*text-align: center;*/
   }
 }
 
