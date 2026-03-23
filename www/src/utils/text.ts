@@ -7,6 +7,6 @@ export function firstParagraph(body) {
 }
 
 export function extractParagraphs(body) {
-  const paragraphs = body.split(/[\r\n]/)
-  return paragraphs.filter(p => p.length > 0)
+  const paragraphs = body?.split(/[\r\n]/)
+  return paragraphs?.filter(p => p.length > 0)
 }

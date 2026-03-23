@@ -12,10 +12,7 @@ export default async function Translations(params: any) {
         articles: {
           include: {
             attachments: {
-              orderBy: {id: 'desc'},
-              include: {
-                translations: true
-              }
+              orderBy: {id: 'desc'}
             }
           }
         }
@@ -23,8 +20,8 @@ export default async function Translations(params: any) {
     })
   return <div> {translations.map((translation, i) =>
     <TranslationBrief showFirstParagraphs={i == 0}
-                      showFirstAttachmentAtTop={i != 0}
-                      showFirstAttachmentBelowHeadline={i == 0}
+                      showFirstAttachmentBelowCreditLine={i == 0}
+                      showFirstAttachmentBelowHeadline={i != 0}
                       key={translation.id} translation={translation}/>)
 }</div>
 }

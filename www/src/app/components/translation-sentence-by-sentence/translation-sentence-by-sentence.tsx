@@ -90,7 +90,8 @@ function Paragraph({index, translation, processedParagraph}) {
 }
 
 export default function TranslationSentenceBySentence({translation, showSubscribeForm = true, numParagraphsToShow = null, attachments=[]}) {
-  const unprocessedParagraphs = extractParagraphs(translation.body)
+  const unprocessedParagraphs = extractParagraphs(translation?.body)
+  if (!unprocessedParagraphs||unprocessedParagraphs.length==0) return null;
   const processedParagraphsArray = []
   for (const [i, unprocessedParagraph] of unprocessedParagraphs.entries()) {
     if (numParagraphsToShow === null || numParagraphsToShow && i <= numParagraphsToShow) {
@@ -110,9 +111,9 @@ export default function TranslationSentenceBySentence({translation, showSubscrib
       return <Fragment key={i}>
         <Paragraph key={i} index={i} translation={translation}
                    processedParagraph={processedParagraph}/>
-        {i==3 && attachments.length>0 && <Attachment key={attachments[0].id} article={translation.article} attachment={attachments[0]}/>}
-        {i==7 && attachments.length>1 && <Attachment key={attachments[1].id} article={translation.article} attachment={attachments[1]}/>}
-        {i==9 && attachments.length>2 && <Attachment key={attachments[2].id} article={translation.article} attachment={attachments[2]}/>}
+        {i==3 && attachments.length>0 && <Attachment key={attachments[0].id} article={translation?.article} attachment={attachments[0]}/>}
+        {i==7 && attachments.length>1 && <Attachment key={attachments[1].id} article={translation?.article} attachment={attachments[1]}/>}
+        {i==9 && attachments.length>2 && <Attachment key={attachments[2].id} article={translation?.article} attachment={attachments[2]}/>}
         {i === 10 && processedParagraphsArray.length>20 && showSubscribeForm && <SubscribeForm/>}
       </Fragment>
     }
