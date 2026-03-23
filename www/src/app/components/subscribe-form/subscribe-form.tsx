@@ -1,17 +1,18 @@
 'use client'
 import styles from './subscribe-form.module.css'
 import {useState} from "react";
-import {isMobile} from '@/app/lib/misc'
+import {useIsMobile} from '@/app/lib/client'
 
 export default function SubscribeForm({onSubmit = null, dismiss = null, showNotRightNow = false}) {
   let [widthMinimized,setWidthMinimized] = useState(false)
+  const isMobile = useIsMobile()
   function handleInputFocused(bool) {
-    if (isMobile()) {
+    if (isMobile) {
       setWidthMinimized(bool)
     }
   }
   let showSubmitButton = true
-  if (isMobile()) {
+  if (isMobile) {
     if (!widthMinimized) showSubmitButton = false;
   }
   return <div className={styles.container}>
