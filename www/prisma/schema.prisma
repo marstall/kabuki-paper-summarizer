@@ -170,6 +170,10 @@ model attachments {
   size         Int?
   alt_text     String?        @db.VarChar
   string       String?        @db.VarChar
+  type         String?        @db.VarChar
+  component    String?        @db.VarChar
+  params       Json?
+  llm_id       BigInt?
   articles     articles?      @relation(fields: [article_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_be6e675f54")
   translations translations[]
 

@@ -55,7 +55,9 @@ export default class AttachmentCaptionGenerator extends LlmGenerator {
       where: {id: attachmentId},
       include: {articles:true}
     }))
-    if (!attachment.caption) return await new Promise<ChatResponse>(()=>({answer:""}));
+    if (!attachment.caption) {
+      return await new Promise<ChatResponse>(()=>({answer:""}));
+    }
     const url = "https://kabuki-paper-summarizer-www.vercel.app/file/"+attachment.id;
     const caption = attachment.caption;
 

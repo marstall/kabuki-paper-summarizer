@@ -66,11 +66,12 @@ export default function Attachment({article,attachment, allowMaximize=true,showC
     <div onClick={toggleMaximized} className={styles.imageContainer} >
     {allowEdit ?
       <Link href={`/attachments/${attachment.id}`} className="button">
-        <Image alt={attachment.alt_text} src={url} width={attachment.width} height={attachment.height}/>
+        <Image alt={attachment.alt_text} src={url}
+               width={attachment.width||600} height={attachment.height||1200}/>
       </Link>
       :
-        <Image loading="eager" className={styles.image} alt={attachment.alt_text} src={url} width={attachment.width}
-               height={attachment.height}/>
+        <Image alt='attachment' loading="eager" className={styles.image} alt={attachment.alt_text} src={url} width={attachment.width||600}
+               height={attachment.height||1200}/>
     }
     </div>
     {reallyShowCaption && <div title={hoverTextOptions[captionState]} onClick={stepCaption}

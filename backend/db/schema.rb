@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_06_155147) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_24_192958) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "uuid-ossp"
@@ -35,11 +35,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_155147) do
     t.bigint "article_id"
     t.binary "bytes"
     t.string "caption"
+    t.string "component"
     t.string "content_type"
     t.datetime "created_at", null: false
     t.integer "height"
+    t.bigint "llm_id"
+    t.jsonb "params"
     t.integer "size"
     t.string "string"
+    t.string "type"
     t.datetime "updated_at", null: false
     t.integer "width"
     t.index ["article_id"], name: "index_attachments_on_article_id"

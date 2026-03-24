@@ -8,7 +8,7 @@ export const size = {
 export const contentType = 'image/png'
 
 export default function Icon() {
-  return new ImageResponse(
+  const response = new ImageResponse(
     (
       <div
         style={{
@@ -30,5 +30,6 @@ export default function Icon() {
       ...size
     }
   )
+  return response
 
 }
