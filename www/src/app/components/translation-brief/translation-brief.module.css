@@ -12,12 +12,9 @@
 }
 
 @media (max-width: 600px) {
-
   .superContainer:first-of-type {
-
     padding-top: 0rem !important;
   }
-
 }
 
 .container {
