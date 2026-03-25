@@ -3,8 +3,7 @@ import {prisma} from "@/app/lib/prisma";
 import {ImageResponse} from "next/og";
 
 export default function ChatExchangePanel(attachment) {
-  const response = attachment.params;
-  const {panel} = JSON.parse(response)
+  const panel = attachment.params;
   if (!panel) {
     return <div>panel not found</div>
   }
