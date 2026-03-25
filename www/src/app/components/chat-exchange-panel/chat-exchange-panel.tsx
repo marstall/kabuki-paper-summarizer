@@ -7,9 +7,9 @@ export default function ChatExchangePanel(attachment) {
   if (!panel) {
     return <div>panel not found</div>
   }
-  const questionLines = Math.ceil(panel.question.length / 30)
-  const answerLines = Math.ceil(panel.answer.length / 30)
-  const estimatedHeight = 250 + (questionLines * 75) + (answerLines * 75)
+  const questionLines = Math.ceil(panel.question.length / 25)
+  const answerLines = Math.ceil(panel.answer.length / 25)
+  const estimatedHeight = 280 + (questionLines * 85) + (answerLines * 85)
   
   return new ImageResponse(
     <div style={{
@@ -25,8 +25,8 @@ export default function ChatExchangePanel(attachment) {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: '24px 56px 32px 56px',
-        fontSize: '44px',
+        padding: '28px 60px 36px 60px',
+        fontSize: '50px',
         fontWeight: '600',
         color: 'black'
       }}>
@@ -58,8 +58,8 @@ export default function ChatExchangePanel(attachment) {
       <div style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '32px',
-        padding: '0 56px 80px 56px'
+        gap: '36px',
+        padding: '0 60px 90px 60px'
       }}>
         <div style={{
           display: 'flex',
@@ -69,10 +69,10 @@ export default function ChatExchangePanel(attachment) {
           <div style={{
             backgroundColor: '#E5E5EA',
             color: 'black',
-            padding: '32px 42px',
-            borderRadius: '48px',
+            padding: '36px 48px',
+            borderRadius: '52px',
             maxWidth: '70%',
-            fontSize: '44px',
+            fontSize: '52px',
             lineHeight: '1.4'
           }}>
             {panel.question}
@@ -87,10 +87,10 @@ export default function ChatExchangePanel(attachment) {
           <div style={{
             backgroundColor: '#007AFF',
             color: 'white',
-            padding: '32px 42px',
-            borderRadius: '48px',
+            padding: '36px 48px',
+            borderRadius: '52px',
             maxWidth: '70%',
-            fontSize: '44px',
+            fontSize: '52px',
             lineHeight: '1.4'
           }}>
             {panel.answer}
