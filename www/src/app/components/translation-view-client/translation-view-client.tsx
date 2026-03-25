@@ -78,7 +78,7 @@ export default function TranslationViewClient({translation, promptTitle,article,
             </div>
           </header>
           <div className="content">
-            <div className={styles.highlight}><span className={styles.icon}>👉</span>Click on an individual sentence to see its basis in the {article.year} study.</div>
+            {/*<div className={styles.highlight}><span className={styles.icon}>👉</span>Click on an individual sentence to see its basis in the {article.year} study.</div>*/}
             {/*<NavTabs/>*/}
             {state.selectedTab === 0 &&
               <TranslationSentenceBySentence translation={translation} attachments={attachments}/>}

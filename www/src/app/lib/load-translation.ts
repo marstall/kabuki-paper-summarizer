@@ -13,7 +13,7 @@ export const loadTranslation = cache(async (translation_id) =>{
           include: {
             attachments: {
               where: {active:true},
-              orderBy: {created_at: 'desc'},
+              orderBy: {order: 'asc'},
               select: {
                 id: true,
                 caption: true,

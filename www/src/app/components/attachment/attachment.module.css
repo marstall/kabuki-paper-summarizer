@@ -3,7 +3,7 @@
   top:0;
   left:0;
   position:absolute;
-  border: 1px solid #eee;
+  /*border: 1px solid #eee;*/
   margin: 1rem;
   padding:1rem;
   padding-bottom:4rem;
@@ -16,9 +16,15 @@
   margin-top: 0.25rem;
   margin-bottom: 1rem;
   padding:0rem;
-  border: 1px solid #eee;
+  border-radius: 1rem;
+  /*border: 1px solid #eee;*/
 }
 
+.imageContainer {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+}
 .image {
   width:100% !important;
   height: auto;

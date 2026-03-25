@@ -58,7 +58,8 @@ export default function Attachment({article,attachment, allowMaximize=true,showC
     }
   }
 
-  const url = '/file/' + attachment.id
+  const cacheBuster = `?t=${Date.now()}`
+  const url = '/file/' + attachment.id + cacheBuster
   const hoverTextOptions = ["click to show full plain-english caption",
     "click to show original caption", "click to return to plain-english caption."
   ]
@@ -67,11 +68,14 @@ export default function Attachment({article,attachment, allowMaximize=true,showC
     {allowEdit ?
       <Link href={`/attachments/${attachment.id}`} className="button">
         <Image alt={attachment.alt_text || attachment.caption || 'Article attachment'} src={url}
-               width={attachment.width||600} height={attachment.height||1200}/>
+               width={attachment.width||600} height={attachment.height||1200}
+               style={{ width: '100%', height: 'auto' }}
+        />
       </Link>
       :
         <Image alt={attachment.alt_text || attachment.caption || 'Article attachment'}  loading="eager" className={styles.image} src={url} width={attachment.width||600}
-               height={attachment.height||1200}/>
+               height={attachment.height||1200}
+              />
     }
     </div>
     {reallyShowCaption && <div title={hoverTextOptions[captionState]} onClick={stepCaption}

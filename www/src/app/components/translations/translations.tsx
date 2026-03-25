@@ -22,7 +22,7 @@ export default async function Translations(params: any) {
                 height: true,
                 alt_text: true
               },
-              orderBy: {id: 'desc'}
+              orderBy: {order: 'asc'}
             }
           }
         }
