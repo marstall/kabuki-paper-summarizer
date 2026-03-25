@@ -21,9 +21,6 @@ export async function get(request: Request,
     return new Response(attachment.bytes, {
       headers: {
         'Content-Type': attachment.content_type,
-        // 'Cache-Control': 'no-store, no-cache, must-revalidate',
-        // 'Pragma': 'no-cache',
-        // 'Expires': '0'
       }
     })
   }
