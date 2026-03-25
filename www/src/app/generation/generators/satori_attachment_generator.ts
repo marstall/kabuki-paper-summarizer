@@ -33,7 +33,8 @@ export default class SatoriAttachmentGenerator extends LlmGenerator {
           params: response.answer,
           article_id: Number(params.articleId),
           created_at: now,
-          updated_at: now
+          updated_at: now,
+          active: false
         }
       })
     } catch (e) {

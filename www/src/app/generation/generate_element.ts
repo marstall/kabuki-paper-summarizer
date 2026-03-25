@@ -5,13 +5,15 @@ import ClaimsGenerator from "./generators/claims_generator";
 import ArticleTranslationGenerator from "./generators/article_translation_generator";
 import AttachmentCaptionGenerator from "@/app/generation/generators/attachment_caption_generator";
 import SatoriAttachmentGenerator from "@/app/generation/generators/satori_attachment_generator";
+import ChatExchangeAttachmentsGenerator from "@/app/generation/generators/chat_exchange_panel_attachments_generator";
 
 const generatorMap = {
   "headlines": HeadlinesGenerator,
   "claims": ClaimsGenerator,
   "article-translation": ArticleTranslationGenerator,
   "attachment-caption": AttachmentCaptionGenerator,
-  "satori-attachment": SatoriAttachmentGenerator
+  "satori-attachment": SatoriAttachmentGenerator,
+  "chat-exchange-panel-attachments": ChatExchangeAttachmentsGenerator
 }
 
 export async function generateElement(elementName,llmName,params) {

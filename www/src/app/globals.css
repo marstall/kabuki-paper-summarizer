@@ -31,9 +31,15 @@
   --space-xl: 5rem;
 
   /* Typography */
-  --body-font: "charter","charterwoff";
+  --body-font: "Google Sans Text", "charter","charterwoff";
   --ui-font: "Helvetica";
-
+  /*body {*/
+  /*  font-family: Google Sans Text, Arial, Helvetica, sans-serif;*/
+  /*  font-size: 1rem;*/
+  /*  font-weight: 400;*/
+  /*  letter-spacing: .1px;*/
+  /*  line-height: 1.5;*/
+  /*}*/
   --text-main: #1a1a1a;
   --text-emphasized: black;
   --rule: #e5e5e5;

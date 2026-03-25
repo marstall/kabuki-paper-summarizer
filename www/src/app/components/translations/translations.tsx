@@ -13,6 +13,7 @@ export default async function Translations(params: any) {
           {
           include: {
             attachments: {
+              where: {active: true},
               select: {
                 id: true,
                 caption: true,

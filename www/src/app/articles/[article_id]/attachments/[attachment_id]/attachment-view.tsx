@@ -33,11 +33,26 @@ export default async function AttachmentView({attachment_id}: any) {
   async function deleteAttachment() {
     'use server'
     if (!allowDeleteAttachment) return;
-    await prisma.attachments.delete(({where: {id: attachmentId}}))
+    await prisma.attachments.delete({where: {id: attachmentId}})
     redirect(`/articles/${article.id}`)
   }
 
+  async function toggleActive() {
+    'use server'
+    const isActive = attachment.active||false
+    await prisma.attachments.update(
+      {
+        where: {id: attachmentId},
+        data: {
+          active:!isActive
+        }
+      }
+    )
+    redirect(`/articles/${article.id}/attachments/${attachmentId}`)
+  }
+
   const imgUrl = `/file/${attachment.id}`
+  const isActive = attachment.active||false
   return <div className={'content'}>
     <Header admin={true}/>
 
@@ -70,6 +85,12 @@ export default async function AttachmentView({attachment_id}: any) {
         </div>
       })}
     </div>
+    <br/>
+    <form action={toggleActive}>
+      <button className={'button'} type={'submit'}>
+        {isActive ? "Unpublish" : "Publish"}
+      </button>
+    </form>
     <br/>
     <form action={deleteAllUnpublishedTranslations}>
       <button className={'button is-danger'} type={'submit'}>

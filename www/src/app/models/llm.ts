@@ -72,6 +72,7 @@ export default class Llm {
       reasoning: {effort: "medium"},
       input
     });
+    const answer = response?.output_text.replace(/```json|```/g, '').trim(); // deepseek wrapping json in ```json ... ```
     const {input_tokens,output_tokens,total_tokens} = response.usage
     return {
       answer:response?.output_text,
@@ -91,8 +92,9 @@ export default class Llm {
       messages,
     });
     const {prompt_tokens,completion_tokens,total_tokens} = completion.usage
-    const response = completion.choices && completion.choices.length>0 ?
+    let response = completion.choices && completion.choices.length>0 ?
       completion.choices[0].message?.content : ""
+    response = response?.replace(/```json|```/g, '').trim(); // deepseek ignoring prompting and wrapping json in ```json ... ```
     return {
       answer:response,prompt_tokens,completion_tokens,total_tokens
     }

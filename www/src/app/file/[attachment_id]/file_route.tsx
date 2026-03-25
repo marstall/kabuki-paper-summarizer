@@ -1,22 +1,8 @@
 import {prisma} from "@/app/lib/prisma"
-import {ImageResponse} from "next/og";
+import ChatExchangePanel from "@/app/components/chat-exchange-panel/chat-exchange-panel";
 
-function ChatAttachmentResponse(attachment) {
-  const response = attachment.params;
-  const json = JSON.parse(response)
-  console.log(JSON.stringify(response,null,2))
-  return new ImageResponse(<div style={{margin:"5rem",fontSize: 16, display: 'flex',flexDirection:'column'}}>
-    <h1>CHAT</h1>
 
-    {json.panels.map((panel) => <div style={{display: 'flex',marginBottom:'2rem',flexDirection: 'column'}}>
-        <div style={{ display: 'flex'}}>q: {panel.question}</div>
-        <div style={{ display: 'flex'}}>a: {panel.answer}</div>
-      </div>
-    )}
-  </div>)
-}
-
-const componentMap = {"chat-exchange": ChatAttachmentResponse}
+const componentMap = {"chat-exchange-panel": ChatExchangePanel}
 
 
 export async function get(request: Request,
