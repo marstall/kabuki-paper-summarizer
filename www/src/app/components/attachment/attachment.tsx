@@ -59,7 +59,7 @@ export default function Attachment({article,attachment, allowMaximize=true,showC
   }
 
   const cacheBuster = `?t=${Date.now()}`
-  const url = '/file/' + attachment.id + cacheBuster
+  const url = '/file/' + attachment.id// + cacheBuster
   const hoverTextOptions = ["click to show full plain-english caption",
     "click to show original caption", "click to return to plain-english caption."
   ]
