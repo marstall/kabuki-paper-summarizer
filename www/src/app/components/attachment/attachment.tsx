@@ -66,11 +66,11 @@ export default function Attachment({article,attachment, allowMaximize=true,showC
     <div onClick={toggleMaximized} className={styles.imageContainer} >
     {allowEdit ?
       <Link href={`/attachments/${attachment.id}`} className="button">
-        <Image alt={attachment.alt_text} src={url}
+        <Image alt={attachment.alt_text || attachment.caption || 'Article attachment'} src={url}
                width={attachment.width||600} height={attachment.height||1200}/>
       </Link>
       :
-        <Image alt={attachment.alt_text}  loading="eager" className={styles.image} src={url} width={attachment.width||600}
+        <Image alt={attachment.alt_text || attachment.caption || 'Article attachment'}  loading="eager" className={styles.image} src={url} width={attachment.width||600}
                height={attachment.height||1200}/>
     }
     </div>
