@@ -101,7 +101,7 @@ export default function ChatExchangePanel(attachment) {
           {panel.answer}
         </div>
           <div style={{display: 'flex'}}>
-            <img src={'http://localhost:3000/redhead.png'} style={{width: '240px'}}/>
+            <img src={'http://localhost:3000/dadhead.png'} style={{width: '240px'}}/>
           </div>
         </div>
       </div>

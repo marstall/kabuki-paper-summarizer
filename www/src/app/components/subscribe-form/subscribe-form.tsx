@@ -3,7 +3,7 @@ import styles from './subscribe-form.module.css'
 import {useState} from "react";
 import {useIsMobile} from '@/app/lib/client'
 
-export default function SubscribeForm({onSubmit = null, dismiss = null, showNotRightNow = false}) {
+export default function SubscribeForm({onSubmit = null, dismiss = null, showNotRightNow = false,showLabel= true,backgroundColor}) {
   let [widthMinimized,setWidthMinimized] = useState(false)
   const isMobile = useIsMobile()
   function handleInputFocused(bool) {
@@ -15,7 +15,7 @@ export default function SubscribeForm({onSubmit = null, dismiss = null, showNotR
   if (isMobile) {
     if (!widthMinimized) showSubmitButton = false;
   }
-  return <div className={styles.container}>
+  return <div className={styles.container} style={{backgroundColor}}>
     <form
       action="https://buttondown.com/api/emails/embed-subscribe/marstall"
       method="post"
@@ -24,8 +24,8 @@ export default function SubscribeForm({onSubmit = null, dismiss = null, showNotR
       }}
       className="embeddable-buttondown-form"
     >
-      {!widthMinimized && <label className={styles.label} htmlFor="bd-email">Subscribe to free newsletter:</label>}
-     <input className={styles.emailInput} onFocus={()=>handleInputFocused(true)} onBlur={()=>handleInputFocused(false)}
+      {!widthMinimized && showLabel && <label className={styles.label} htmlFor="bd-email">Subscribe to free newsletter:</label>}
+     <input style={{height:'1.3rem'}} className={styles.emailInput} onFocus={()=>handleInputFocused(true)} onBlur={()=>handleInputFocused(false)}
              placeholder={"email address"}
              type="email" name="email" id="bd-email"/>
       {showSubmitButton && <input className={styles.subscribeButton} type="submit" value="Subscribe"/>}
