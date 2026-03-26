@@ -3,7 +3,7 @@ import styles from './subscribe-form.module.css'
 import {useState} from "react";
 import {useIsMobile} from '@/app/lib/client'
 
-export default function SubscribeForm({onSubmit = null, dismiss = null, showNotRightNow = false,showLabel= true,backgroundColor}) {
+export default function SubscribeForm({onSubmit = null, dismiss = null, showNotRightNow = false,showLabel= true}) {
   let [widthMinimized,setWidthMinimized] = useState(false)
   const isMobile = useIsMobile()
   function handleInputFocused(bool) {
@@ -15,7 +15,7 @@ export default function SubscribeForm({onSubmit = null, dismiss = null, showNotR
   if (isMobile) {
     if (!widthMinimized) showSubmitButton = false;
   }
-  return <div className={styles.container} style={{backgroundColor}}>
+  return <div className={styles.container} >
     <form
       action="https://buttondown.com/api/emails/embed-subscribe/marstall"
       method="post"
