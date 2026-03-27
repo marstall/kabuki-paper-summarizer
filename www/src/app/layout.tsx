@@ -73,7 +73,7 @@ export default function RootLayout({
       <meta name="viewport" content="width=device-width, initial-scale=1"/>
     </head>
     <body>
-    <PlausibleProvider domain="thekabukipapers.org">
+    {/*<PlausibleProvider domain="thekabukipapers.org">*/}
     <div className="page subscribeBar">
         <div className="pageInner">
           <WelcomeOverlay/>
@@ -85,7 +85,7 @@ export default function RootLayout({
           {children}
         </div>
       </div>
-    </PlausibleProvider>
+    {/*</PlausibleProvider>*/}
     </body>
     </html>
   );
