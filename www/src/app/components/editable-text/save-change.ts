@@ -12,11 +12,11 @@ export default async function save(model,id,field:string, type,subfield=null,val
   }
 
   if (type==='jsonb') {
-    const object = await modelMap[field].findUnique({where:{id}})
-    object[subfield]=value;
-    value=object;
+    const object = await modelMap[model].findUnique({where:{id}})
+    const json = object[field]
+    json[subfield]=value;
+    value=json;
   }
-
   const results = await modelMap[model].update({
     where: {
       id

@@ -113,22 +113,22 @@ export default function TranslationSentenceBySentence({translation,
   const len = processedParagraphsArray.length;
   return processedParagraphsArray.map((processedParagraph, i) => {
       return <Fragment key={i}>
-        {i==len/2 && attachments.length>1 &&
+        {i==4 && attachments.length>1 &&
           <Attachment key={attachments[1].id}
                       article={translation?.article}
                       attachment={attachments[1]}/>}
+        {i==8 && attachments.length>1 &&
+          <Attachment key={attachments[2].id}
+                      article={translation?.article}
+                      attachment={attachments[2]}/>}
+        {(i==12) && attachments.length>=2 &&
+          <Attachment key={attachments[3].id}
+                      article={translation?.article}
+                      attachment={attachments[3]}/>}
         <Paragraph key={i} index={i} translation={translation}
                    processedParagraph={processedParagraph}/>
         {/*{i === 10 && processedParagraphsArray.length>20*/}
         {/*  && showSubscribeForm && <SubscribeForm/>}*/}
-        {i==len-1 && attachments.length>=2 &&
-          <Attachment key={attachments[2].id}
-                      article={translation?.article}
-                      attachment={attachments[2]}/>}
-        {i==len-1 && attachments.length>=3 &&
-          <Attachment key={attachments[3].id}
-                      article={translation?.article}
-                      attachment={attachments[3]}/>}
 
       </Fragment>
     }

@@ -23,7 +23,8 @@ export default function ChatExchangePanel({attachment}) {
       <div className={styles.item}>
         <div className={styles.textContainer}>
           <div className={styles.text}>
-            <EditableText id={attachment.id} model='attachment' field="jsonb:params.question">
+            <EditableText id={attachment.id} model='attachment'
+                          type='jsonb' field="params" subfield="question">
             {format(panel.question)}
             </EditableText>
           </div>
@@ -40,7 +41,7 @@ export default function ChatExchangePanel({attachment}) {
         <div className={styles.textContainer}>
           <div className={styles.text}>
             <EditableText id={attachment.id} model='attachment'
-                          type='jsonb' field="params" path="answer">
+                          type='jsonb' field="params" subfield="answer">
             {format(panel.answer)}
             </EditableText>
           </div>
