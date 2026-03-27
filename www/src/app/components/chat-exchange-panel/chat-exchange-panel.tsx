@@ -16,7 +16,7 @@ export default function ChatExchangePanel({attachment}) {
     <div className={styles.question}>
       <div className={styles.iconContainer}>
         <div className={styles.icon}>
-            <img src={'http://localhost:3000/redhead.png'}/>
+            <img src={'/redhead.png'}/>
         </div>
       </div>
       <div className={styles.item}>
@@ -30,7 +30,7 @@ export default function ChatExchangePanel({attachment}) {
     <div className={styles.answer}>
       <div className={styles.iconContainer}>
         <div className={styles.icon}>
-          <img src={'http://localhost:3000/redhead.png'}/>
+          <img src={'/dadhead.png'}/>
         </div>
       </div>
       <div className={styles.item}>
