@@ -6,8 +6,6 @@ import styles from './attachment.module.css'
 import Markdown from "@/app/components/markdown/markdown";
 import {useState, useEffect} from "react";
 import _ from 'lodash'
-import AdminSection from "@/app/components/admin-section/admin-section";
-import {ReactAttachment} from "@/app/components/react-attachment/react-attachment";
 import ChatExchangePanel from "@/app/components/chat-exchange-panel/chat-exchange-panel";
 
 export const attachmentComponentMap = {

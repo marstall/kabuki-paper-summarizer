@@ -1,3 +1,4 @@
+'use client'
 import styles from './chat-exchange-panel.module.css'
 import {ImageResponse} from "next/og";
 
