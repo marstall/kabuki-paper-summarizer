@@ -15,7 +15,7 @@ export default function SubscribeForm({onSubmit = null, dismiss = null, showNotR
   if (isMobile) {
     if (!widthMinimized) showSubmitButton = false;
   }
-  return <div className={styles.container} >
+  return <div className={styles.container}>
     <form
       action="https://buttondown.com/api/emails/embed-subscribe/marstall"
       method="post"

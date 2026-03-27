@@ -20,6 +20,11 @@ export const loadTranslation = cache(async (translation_id) =>{
                 size: true,
                 width: true,
                 height: true,
+                type: true,
+                component:true,
+                params: true,
+                active: true,
+                order: true,
                 alt_text: true
               }
             },
