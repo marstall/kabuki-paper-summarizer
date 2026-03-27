@@ -44,11 +44,11 @@ export default async function TranslationBrief({
       {showFirstAttachmentBelowHeadline && attachment && <div className={styles.attachment}>
         <Attachment article={article} attachment={attachment} allowMaximize={false} showCaption={false}/>
       </div>}
-      <h2>
+      <div className={styles.secondTitle}>
         <EditableText id={article.id} model='article' field="second_title">
           {article.second_title || translation.second_title}
         </EditableText>
-      </h2>
+      </div>
       <div className={styles.dateline}>Written by {translation.llms.provider} AI. Edited by <a
         href={'https://www.linkedin.com/in/chrismarstall/'}>KabukiDadChris</a>. Posted
         on {shortDate(translation.published_at)}.

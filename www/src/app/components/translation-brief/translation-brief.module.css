@@ -38,7 +38,7 @@
   font-weight: bold;
 }
 
-.container h2 {
+.secondTitle {
   font-family: var(--ui-font);
   color: #333;
 }
@@ -66,4 +66,8 @@
 .readMoreLink {
   margin-top: 1rem;
   margin-left: 0px
+}
+
+.attachment {
+  margin-top: 1rem;
 }

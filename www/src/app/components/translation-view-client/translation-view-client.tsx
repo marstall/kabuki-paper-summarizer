@@ -63,8 +63,7 @@ export default function TranslationViewClient({translation, promptTitle,article,
                 {article.title || article.original_title}
               </EditableText>
             </h1>
-            {attachments.length>0 && <Attachment key={attachments[0].id} article={translation?.article} attachment={attachments[0]}/>}
-            <div className="dek"><EditableText id={article.id} model='article' field="second_title">
+            <div className={styles.secondTitle}><EditableText id={article.id} model='article' field="second_title">
               {article.second_title}
             </EditableText>
             </div>
@@ -73,6 +72,7 @@ export default function TranslationViewClient({translation, promptTitle,article,
               href={article.url}>{article.original_title}</a>&rdquo;</span> by {article.attribution.trim()}.
               <br/>Written by {llm.provider} AI. Edited by <span
                 className={styles.meLink}><a href={'https://www.linkedin.com/in/chrismarstall/'}>KabukiDadChris</a></span>.
+              Art by Gus.
               <AdminSection span={true}>
                 <span> prompt: '{promptTitle}'.</span> &nbsp;
                 <Link href={'#'} onClick={regenHeadlines}>regenerate headlines</Link>
@@ -82,6 +82,8 @@ export default function TranslationViewClient({translation, promptTitle,article,
           <div className="content">
             {/*<div className={styles.highlight}><span className={styles.icon}>👉</span>Click on an individual sentence to see its basis in the {article.year} study.</div>*/}
             {/*<NavTabs/>*/}
+            {attachments.length>0 && <Attachment key={attachments[0].id} article={translation?.article} attachment={attachments[0]}/>}
+
             {state.selectedTab === 0 &&
               <TranslationSentenceBySentence translation={translation} attachments={attachments}/>}
             {state.selectedTab == 1 && <ClaimsTab article={article} translation={translation}/>}

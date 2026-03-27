@@ -25,6 +25,11 @@
   color: #666666;
 }
 
+.secondTitle {
+  font-family: var(--ui-font);
+  color: #333;
+}
+
 .highlight {
   font-size:smaller;
   font-style: italic;

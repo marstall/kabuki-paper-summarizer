@@ -20,7 +20,10 @@ export default async function Translations(params: any) {
                 size: true,
                 width: true,
                 height: true,
-                alt_text: true
+                alt_text: true,
+                type: true,
+                component: true,
+                params: true
               },
               orderBy: {order: 'asc'}
             }

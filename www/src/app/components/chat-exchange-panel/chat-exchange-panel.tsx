@@ -2,8 +2,10 @@
 import styles from './chat-exchange-panel.module.css'
 import {ImageResponse} from "next/og";
 
+function format(s) {
+  return s?.replaceAll(/\(.+\)/g,"").trim()
+}
 export default function ChatExchangePanel({attachment}) {
-
   const panel = attachment.params;
   if (!panel) {
     return <div>panel not found</div>
@@ -20,7 +22,7 @@ export default function ChatExchangePanel({attachment}) {
       <div className={styles.item}>
         <div className={styles.textContainer}>
           <div className={styles.text}>
-            {panel.question}
+            {format(panel.question)}
           </div>
         </div>
       </div>
@@ -34,7 +36,7 @@ export default function ChatExchangePanel({attachment}) {
       <div className={styles.item}>
         <div className={styles.textContainer}>
           <div className={styles.text}>
-            {panel.answer}
+            {format(panel.answer)}
           </div>
         </div>
       </div>

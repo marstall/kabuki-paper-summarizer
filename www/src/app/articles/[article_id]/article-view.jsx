@@ -9,26 +9,25 @@ export default async function ArticleView({id}) {
       where: {id},
       include: {
         attachments: {
-          orderBy: {
-            id: 'asc'
-          },
+          orderBy:[{order: 'asc'},{created_at: 'desc'}],
           select: {
             id: true,
             caption: true,
             size: true,
             width: true,
             height: true,
-            alt_text: true
+            alt_text: true,
+            type:true,
+            component:true,
+            params:true
           },
         },
         translations: {
-          include: {
-            llms: true,
-            prompts:true
-          },
-          orderBy: {
-            created_at: 'desc'
-          },
+          include: {llms: true, prompts: true},
+          orderBy: [
+            {published_at: 'asc'},
+            {created_at: 'desc'}
+          ],
         },
         sections: {
           orderBy: {
@@ -48,30 +47,30 @@ export default async function ArticleView({id}) {
   // const sections = await prisma.sections.findMany(
   //   {where: {article_id: id}}
   // )
-  const translations = await prisma.translations.findMany({
-      where: {article_id: Number(id)},
-      include: {llms: true, prompts: true},
-      orderBy: [
-        {published_at: 'asc'},
-        {created_at: 'desc'}
-      ],
-    }
-  )
-  const attachments = await prisma.attachments.findMany({
-      where: {article_id: Number(id)},
-      orderBy:{created_at: 'desc'},
-      select: {
-        id: true,
-        caption: true,
-        size: true,
-        width: true,
-        height: true,
-        alt_text: true
-      },
-    }
-  )
-  article.translations = translations;
-  article.attachments = attachments;
+  // const translations = await prisma.translations.findMany({
+  //     where: {article_id: Number(id)},
+  //     include: {llms: true, prompts: true},
+  //     orderBy: [
+  //       {published_at: 'asc'},
+  //       {created_at: 'desc'}
+  //     ],
+  //   }
+  // )
+  // const attachments = await prisma.attachments.findMany({
+  //     where: {article_id: Number(id)},
+  //     orderBy:{created_at: 'desc'},
+  //     select: {
+  //       id: true,
+  //       caption: true,
+  //       size: true,
+  //       width: true,
+  //       height: true,
+  //       alt_text: true
+  //     },
+  //   }
+  // )
+  // article.translations = translations;
+  // article.attachments = attachments;
 
   async function deleteArticleAction() {
     'use server'
