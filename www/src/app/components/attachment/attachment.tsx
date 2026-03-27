@@ -11,7 +11,7 @@ import ChatExchangePanel from "@/app/components/chat-exchange-panel/chat-exchang
 export const attachmentComponentMap = {
   'chat-exchange-panel': ChatExchangePanel
 }
-export default function Attachment({article, attachment, allowMaximize = true, showCaption = true, allowEdit = false}) {
+export default function Attachment({article, attachment, allowMaximize = false, showCaption = true, allowEdit = false}) {
 
   const [translation, setTranslation] = useState("")
   useEffect(() => {
@@ -82,7 +82,7 @@ export default function Attachment({article, attachment, allowMaximize = true, s
         : attachment.type === 'component' ?
           <ChatExchangePanel attachment={attachment}/>
           :
-          <div>{attachment.type}
+          <div>
             <Image alt={attachment.alt_text || attachment.caption || 'Article attachment'}
                    loading="eager"
                    className={styles.image} src={url} width={attachment.width || 600}

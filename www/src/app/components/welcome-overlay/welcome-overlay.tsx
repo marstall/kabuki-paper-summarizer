@@ -21,7 +21,7 @@ function Content(params) {
 // //  console.log("cookies.hideWelcomeMessage",cookies.hideWelcomeMessage)
 //
   function dismiss() {
-    setCookie('hideWelcomeMessage', 'true')
+    setCookie('hideWelcomeMessage', 'true',{maxAge:300000000})
     setOverlayState("hidden")
   }
 

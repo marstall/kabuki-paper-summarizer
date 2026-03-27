@@ -17,7 +17,7 @@ function InlineEditor({save,children,setEditing}) {
   </div>
 }
 
-export default function EditableText({model,id,field,children}) {
+export default function EditableText({model,id,field,type="string",subfield=null,children}) {
   if (!isLocal()) return <span>{children}</span>
 
   const [content,setContent] = useState(children)
@@ -28,15 +28,20 @@ export default function EditableText({model,id,field,children}) {
   }
 
   async function _save() {
-    const element = document.getElementById('inline-editor') as HTMLTextAreaElement
+    const element =
+      document.getElementById('inline-editor') as HTMLTextAreaElement
     const value = element.value
-    await save(model,id,field,value)
+    await save(model,id,field,type,subfield,value)
     setEditing(false);
     setContent(value)
   }
 
-  return <span className={styles.container} onClick={editing ? null : handleContainerClick}>
-    {editing ? <InlineEditor setEditing={setEditing} save={_save}>{content}</InlineEditor>
+  return <span className={styles.container}
+               onClick={editing ? null : handleContainerClick}>
+    {editing ? <InlineEditor
+        setEditing={setEditing}
+        save={_save}>{content}
+    </InlineEditor>
       : content
     }
   </span>
