@@ -1,15 +1,9 @@
 
 .container {
-  /*border-top: 1px dotted #ccc;*/
-  /*padding-top:1rem;*/
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
-  font-size:12px;
-  display: flex;
-  flex-direction: row;
-  font-family: Arial;
-}
-.container div {
-  margin-right:0.5rem;
+  color: lightgray;
 
+}
+
+.container a {
+  color: lightgray;
 }

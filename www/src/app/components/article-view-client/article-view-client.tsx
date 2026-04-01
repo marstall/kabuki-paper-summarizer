@@ -26,7 +26,7 @@ function Section({section}) {
 }
 
 export default function ArticleViewClient({article, deleteArticleAction,
-                                            deleteAllUnpublishedTranslationsAction}) {
+                                            deleteAllUnpublishedTranslationsAction,deleteAllUnpublishedAttachmentsAction}) {
   const deleteDisabled = !(_.isEmpty(article.translations)
     && _.isEmpty(article.sections) && _.isEmpty(article.attachments))
   const createAttachmentUrl = `/articles/${article.id}/attachments/create-edit`
@@ -120,6 +120,24 @@ export default function ArticleViewClient({article, deleteArticleAction,
         <Link className={'button'} href={createAttachmentUrl}>
           Add attachment</Link>
       </p>
+      {!_.isEmpty(article.attachments) &&
+        <>
+          <>
+            <form action={deleteAllUnpublishedAttachmentsAction}>
+              <button className={"button is-danger"} type={'submit'}>
+                Delete All unpublished attachments for this Article
+              </button>
+            </form>
+            <br/>
+            <form action={()=>{return deleteAllUnpublishedAttachmentsAction("component")}}>
+              <button className={"button is-danger"} type={'submit'}>
+                Delete All unpublished component-type attachments for this Article
+              </button>
+            </form>
+            <hr/>
+          </>
+        </>
+      }
     </div>
     <hr/>
     <div className={"block"}>

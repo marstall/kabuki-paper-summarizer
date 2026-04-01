@@ -1,5 +1,6 @@
 import {prisma} from '@/app/lib/prisma'
-import ArticleViewClient from "../../components/article-view-client/article-view-client.tsx";
+import ArticleViewClient
+  from "../../components/article-view-client/article-view-client.tsx";
 import {redirect} from "next/navigation";
 
 
@@ -9,7 +10,7 @@ export default async function ArticleView({id}) {
       where: {id},
       include: {
         attachments: {
-          orderBy:[{order: 'asc'},{created_at: 'desc'}],
+          orderBy: [{order: 'asc'}, {created_at: 'desc'}],
           select: {
             id: true,
             caption: true,
@@ -17,9 +18,9 @@ export default async function ArticleView({id}) {
             width: true,
             height: true,
             alt_text: true,
-            type:true,
-            component:true,
-            params:true
+            type: true,
+            component: true,
+            params: true
           },
         },
         translations: {
@@ -75,29 +76,43 @@ export default async function ArticleView({id}) {
   async function deleteArticleAction() {
     'use server'
     await prisma.articles.delete({
-      where: {
-        id: article.id
-      },
-    });
+                                   where: {
+                                     id: article.id
+                                   },
+                                 });
     redirect("/articles")
   }
 
   async function deleteAllUnpublishedTranslationsAction() {
     'use server'
     await prisma.translations.deleteMany({
-      where: {
-        article_id: article.id,
-        published_at: null
-      }
-    })
+                                           where: {
+                                             article_id: article.id,
+                                             published_at: null
+                                           }
+                                         })
     redirect(`/articles/${article.id}`)
   }
 
+  async function deleteAllUnpublishedAttachmentsAction(type = null) {
+    'use server'
+    const typeWhereClause = type ? {type} : {}
+    await prisma.attachments.deleteMany({
+                                          where: {
+                                            article_id: article.id,
+                                            active: false,
+                                            ...typeWhereClause,
+                                          }
+                                        })
+    console.log("deleteAllUnpublishedAttachmentsAction 1")
+    redirect(`/articles/${article.id}`)
+  }
 
   return <ArticleViewClient
     article={article}
     deleteArticleAction={deleteArticleAction}
     deleteAllUnpublishedTranslationsAction={deleteAllUnpublishedTranslationsAction}
+    deleteAllUnpublishedAttachmentsAction={deleteAllUnpublishedAttachmentsAction}
   />
 
 }

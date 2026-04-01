@@ -4,7 +4,7 @@ import {ImageResponse} from "next/og";
 import EditableText from "@/app/components/editable-text/editable-text";
 
 function format(s) {
-  return s?.replaceAll(/\(.+\)/g,"").trim()
+  return s?.replaceAll(/\([^)]+\)/g,"").trim()
 }
 export default function ChatExchangePanel({attachment}) {
   const panel = attachment.params;

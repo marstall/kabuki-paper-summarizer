@@ -1,6 +1,6 @@
 import {prisma} from "@/app/lib/prisma";
 import Link from "next/link";
-import Attachment from "@/app/models/attachment";
+import Attachment from "@/app/components/attachment/attachment";
 import {redirect} from "next/navigation";
 import {shortDate, shortDateTime} from "@/utils/date";
 import Markdown from "@/app/components/markdown/markdown";
@@ -59,7 +59,7 @@ export default async function AttachmentView({attachment_id}: any) {
     <div className={'above-h1'}>{article.original_title}</div>
     <div className={'block'}>
       <h1 className={'title'}>Attachment</h1>
-      <img src={imgUrl}/>
+      <Attachment article={article} attachment={attachment} allowMaximize={false} showCaption={false}/>
     </div>
     <div className={'block'}>
       <h4 className={'title'}>Original caption</h4>

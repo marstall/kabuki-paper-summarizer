@@ -70,9 +70,11 @@ export default function TranslationViewClient({translation, promptTitle,article,
             <div className="byline">
               This is an AI-written plain-English version of the {article.year} paper <span className={styles.articleLink}>&ldquo;<a
               href={article.url}>{article.original_title}</a>&rdquo;</span> by {article.attribution.trim()}.
-              <br/>Written by {llm.provider} AI. Edited by <span
-                className={styles.meLink}><a href={'https://www.linkedin.com/in/chrismarstall/'}>KabukiDadChris</a></span>.
-              Art by Gus.
+              {/*We use a variety of tactics to reduce errors and hallucinations. However, it's possible for some to creep*/}
+              {/*through, so don't take this as gospel.*/}
+              {/*<br/>Written by {llm.provider} AI. Edited by <span*/}
+              {/*  className={styles.meLink}><a href={'https://www.linkedin.com/in/chrismarstall/'}>KabukiDadChris</a></span>.*/}
+              {/*Art by Gus.*/}
               <AdminSection span={true}>
                 <span> prompt: '{promptTitle}'.</span> &nbsp;
                 <Link href={'#'} onClick={regenHeadlines}>regenerate headlines</Link>
