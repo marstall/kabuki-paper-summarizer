@@ -23,6 +23,7 @@ export const metadata: Metadata = {
     template: "%s | The Kabuki Papers",
     absolute: "The Kabuki Papers"
   },
+  description: "The science of Kabuki Syndrome, illuminated by AI",
   keywords: ["kabuki","kabuki syndrome"],
   creator: "Chris Marstall",
   metadataBase: new URL('https://www.thekabukipapers.org'),
