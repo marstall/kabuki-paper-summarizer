@@ -86,6 +86,11 @@ const argv = await yargs(hideBin(process.argv))
     type: 'string',
     demandOption: false,
   })
+  .option('max-tokens', {
+    alias: 'mt',
+    type: 'number',
+    demandOption: false,
+  })
   .option('do-nothing', {
     alias: 'x',
     type: 'boolean',
@@ -105,6 +110,7 @@ const listLlms = argv['list-llms']||false
 const logLevels = argv['log-levels']
 const generation = argv['generation']||(Math.floor(Date.now()/1000)+"")
 const doNothing = argv['do-nothing']
+const maxTokens = argv['max-tokens']
 const prompt = argv['prompt']
 const errors = []
 if (!listLlms && !doNothing) {
@@ -122,7 +128,8 @@ const params = {
   logLevels,
   generation,
   prompt,
-  attachmentId
+  attachmentId,
+  maxTokens
 }
 
 if (errors.length > 0) {

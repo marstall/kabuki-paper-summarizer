@@ -7,6 +7,8 @@ import {error, log} from "@/app/lib/logger";
 const DEFAULT_PROMPT_NAME = "claims json with examples 1"
 export default class ArticleTranslationGenerator extends LlmGenerator {
   async generate(params) {
+    const options = {}
+    options['max_tokens']||=params.maxTokens;
     const promptName = params.prompt || DEFAULT_PROMPT_NAME
     const {articleId} = params
     if (!articleId) throw ("articleId required.")
@@ -20,7 +22,7 @@ export default class ArticleTranslationGenerator extends LlmGenerator {
     const prompt = prompts[0]
     const instructions = prompt.body
 
-    return await this.llm.chat(instructions, input)
+    return await this.llm.chat(instructions, input,options)
   }
 
   async save(response, params) {
