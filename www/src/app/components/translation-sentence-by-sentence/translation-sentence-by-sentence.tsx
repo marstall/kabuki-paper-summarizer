@@ -113,11 +113,11 @@ export default function TranslationSentenceBySentence({translation,
   const len = processedParagraphsArray.length;
   return processedParagraphsArray.map((processedParagraph, i) => {
       return <Fragment key={i}>
-        {i==1 && attachments.length>1 &&
+        {i==0 && attachments.length>1 &&
           <Attachment key={attachments[1].id}
                       article={translation?.article}
                       attachment={attachments[1]}/>}
-        {i==1 && attachments.length>1 &&
+        {i==0 && attachments.length>1 &&
           <Attachment key={attachments[2].id}
                       article={translation?.article}
                       attachment={attachments[2]}/>}

@@ -2,6 +2,7 @@ import {prisma} from '@/app/lib/prisma'
 import ArticleViewClient
   from "../../components/article-view-client/article-view-client.tsx";
 import {redirect} from "next/navigation";
+import {generateElement} from "../../generation/generate_element.ts";
 
 
 export default async function ArticleView({id}) {
@@ -108,8 +109,18 @@ export default async function ArticleView({id}) {
     redirect(`/articles/${article.id}`)
   }
 
+  async function generateElement_(elementName,llmName="claude",params={}) {
+    'use server'
+    console.log(`generating element ${elementName} for article ${article.id}`)
+
+    await generateElement(elementName,llmName,{...params,save:true,articleId:article.id})
+    console.log(`generated element ${elementName} for article ${article.id}`)
+    redirect(`/articles/${article.id}`)
+  }
+
   return <ArticleViewClient
     article={article}
+    generateElement={generateElement_}
     deleteArticleAction={deleteArticleAction}
     deleteAllUnpublishedTranslationsAction={deleteAllUnpublishedTranslationsAction}
     deleteAllUnpublishedAttachmentsAction={deleteAllUnpublishedAttachmentsAction}

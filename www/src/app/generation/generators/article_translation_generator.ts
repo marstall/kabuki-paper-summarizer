@@ -4,7 +4,7 @@ import {prisma} from "@/app/lib/prisma";
 import {extractFullTextFromArticle} from "@/app/models/article";
 import {error, log} from "@/app/lib/logger";
 
-const DEFAULT_PROMPT_NAME = "claims json with examples 1"
+const DEFAULT_PROMPT_NAME = "eli5 with 3 examples refined"
 export default class ArticleTranslationGenerator extends LlmGenerator {
   async generate(params) {
     const options = {}

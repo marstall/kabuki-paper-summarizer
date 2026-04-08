@@ -61,7 +61,7 @@ export default class Llm {
   }
 
   isOpenAICompatible() {
-    const compatibleProviders = ["OpenAI", "Kimi", "DeepSeek"];
+    const compatibleProviders = ["OpenAI", "Kimi", "DeepSeek","Ollama"];
     return compatibleProviders.includes(this.prismaLlm.provider);
   }
 

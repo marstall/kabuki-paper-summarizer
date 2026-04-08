@@ -9,6 +9,7 @@ import _ from 'lodash'
 import {prisma} from "@/app/lib/prisma";
 import {redirect} from "next/navigation";
 import {shortDateTime} from "@/utils/date";
+import {useState} from "react";
 
 function Section({section}) {
   return section.paragraphs.map(paragraph =>
@@ -25,11 +26,48 @@ function Section({section}) {
   )
 }
 
-export default function ArticleViewClient({article, deleteArticleAction,
-                                            deleteAllUnpublishedTranslationsAction,deleteAllUnpublishedAttachmentsAction}) {
+function generateClaimsDescription(article) {
+  const claims = article?.claims
+  if (_.isEmpty(claims)) {
+    return "no claims"
+  }
+  if (!claims) return "no claims"
+  const claimTexts =  claims.claims.map(claim=>claim.claim)
+  return <><ul>
+  {claimTexts.slice(0,2).map((t,i)=><li key={i}>{t}</li>)}
+  </ul>
+  <div>
+  ... and {claimTexts.length-2} others
+    </div>
+  </>
+}
+
+export default function ArticleViewClient({
+                                            article,
+                                            generateElement,
+                                            deleteArticleAction,
+                                            deleteAllUnpublishedTranslationsAction,
+                                            deleteAllUnpublishedAttachmentsAction
+                                          }) {
   const deleteDisabled = !(_.isEmpty(article.translations)
     && _.isEmpty(article.sections) && _.isEmpty(article.attachments))
   const createAttachmentUrl = `/articles/${article.id}/attachments/create-edit`
+  const [generating,setGenerating] = useState(false)
+
+  function performElementGeneration(elementName,llmName="claude",params={}) {
+
+    console.log("performElementGeneration")
+    document.querySelectorAll("button").forEach(b=>b.disabled=true)
+    setTimeout(async ()=>{
+      // setGenerating(true);
+      await generateElement(elementName,llmName,params)
+      // setGenerating(false);
+      document.querySelectorAll("button").forEach(b=>b.disabled=false)
+    },0)
+  }
+
+
+  const claimsDescription = generating ? "..." : generateClaimsDescription(article)
   return <div className="content">
     <h1>{article.original_title}</h1>
     <p>
@@ -41,7 +79,20 @@ export default function ArticleViewClient({article, deleteArticleAction,
       </i>
     </p>
     <hr/>
+    <h3>Claims</h3>
+    <div className={'block'}>
+      {claimsDescription}
+      {_.isEmpty(article.claims) && <>
+        <br/>
+        <form action={() => performElementGeneration("claims")}>
+          <button disabled={generating} className={"button"} type={'submit'}>
+            {generating ? "generating ... " : "Generate claims"}
+          </button>
+        </form>
+      </>
+      }
 
+    </div>
     <h3>Translations</h3>
     <div className={"block"}>
       {!article.translations || article.translations.length == 0
@@ -85,8 +136,8 @@ export default function ArticleViewClient({article, deleteArticleAction,
             <td>
               {translation.generation
                 && <Link href={`/generations/${translation.generation}`}>
-                {translation.generation}
-              </Link>}
+                  {translation.generation}
+                </Link>}
               <br/>
               {translation.generation_note}
             </td>
@@ -94,7 +145,34 @@ export default function ArticleViewClient({article, deleteArticleAction,
         })}
         </tbody>
       </table>
+      {!_.isEmpty(article.claims) &&
+        <form action={()=>performElementGeneration("article-translation","claude","eli5 with 3 examples refined")}>
+          <button disabled={generating} className={"button"} type={'submit'}>
+            {generating ? "generating ... " : "Generate Translation"}
+          </button>
+        </form>
+      }
       <hr/>
+      {!_.isEmpty(article.translations) &&
+        <>
+          <form action={() => performElementGeneration("headlines","claude",{translationId:article.translations[0].id})}>
+            <button disabled={generating} className={"button"} type={'submit'}>
+              {generating ? "generating ... " : "Generate Headlines"}
+            </button>
+          </form>
+          <br/>
+          <>
+            <form action={() => performElementGeneration("chat-exchange-panel-attachments","claude",{prompt:"comic book 1"})}>
+              <button disabled={generating} className={"button"} type={'submit'}>
+                {generating ? "generating ... " : "Generate Chat Exchange Attachments"}
+              </button>
+            </form>
+            <hr/>
+          </>
+
+        </>
+
+      }
       {!_.isEmpty(article.translations) &&
         <>
           <form action={deleteAllUnpublishedTranslationsAction}>
@@ -129,7 +207,9 @@ export default function ArticleViewClient({article, deleteArticleAction,
               </button>
             </form>
             <br/>
-            <form action={()=>{return deleteAllUnpublishedAttachmentsAction("component")}}>
+            <form action={() => {
+              return deleteAllUnpublishedAttachmentsAction("component")
+            }}>
               <button className={"button is-danger"} type={'submit'}>
                 Delete All unpublished component-type attachments for this Article
               </button>
@@ -158,7 +238,8 @@ export default function ArticleViewClient({article, deleteArticleAction,
     <div className={"block"}>
       <form action={deleteArticleAction}>
         <button disabled={deleteDisabled} className={"button is-danger"}
-                type={'submit'}>Delete</button>
+                type={'submit'}>Delete
+        </button>
       </form>
     </div>
   </div>
