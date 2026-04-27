@@ -117,14 +117,18 @@ export default function TranslationSentenceBySentence({translation,
           <Attachment key={attachments[1].id}
                       article={translation?.article}
                       attachment={attachments[1]}/>}
-        {i==0 && attachments.length>1 &&
+        {i==0 && attachments.length>2 &&
           <Attachment key={attachments[2].id}
                       article={translation?.article}
                       attachment={attachments[2]}/>}
-        {(i==1) && attachments.length>=2 &&
+        {(i==0) && attachments.length>=3 &&
           <Attachment key={attachments[3].id}
                       article={translation?.article}
                       attachment={attachments[3]}/>}
+        {/*{(i==0) && attachments.length>=4 &&*/}
+        {/*  <Attachment key={attachments[4].id}*/}
+        {/*              article={translation?.article}*/}
+        {/*              attachment={attachments[3]}/>}*/}
         <Paragraph key={i} index={i} translation={translation}
                    processedParagraph={processedParagraph}/>
         {/*{i === 10 && processedParagraphsArray.length>20*/}

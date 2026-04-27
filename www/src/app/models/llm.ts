@@ -75,7 +75,7 @@ export default class Llm {
     const answer = response?.output_text.replace(/```json|```/g, '').trim(); // deepseek wrapping json in ```json ... ```
     const {input_tokens,output_tokens,total_tokens} = response.usage
     return {
-      answer:response?.output_text,
+      answer,
       input_tokens,output_tokens,total_tokens
     }
   }
@@ -101,9 +101,9 @@ export default class Llm {
   }
 
   async claudeMessagesCreateTypeHandler(instructions, input, options) {
-    const finalInstructions = `${instructions}
-    Write the prose sections of your response in <smoothly_flowing_prose_paragraphs> tags.
-    `
+    // const finalInstructions = `${instructions}
+    // Write the prose sections of your response in <smoothly_flowing_prose_paragraphs> tags.
+    // `
     const response = await this.client().messages.create(({
       model: this.prismaLlm.model,
       max_tokens: options.max_tokens || 5000,
@@ -119,8 +119,10 @@ export default class Llm {
       if (content.type=='thinking') answerThinking = content.thinking
     }
     const {input_tokens,cache_creation_input_tokens,cache_read_input_tokens,output_tokens} = response.usage
-    answerText= answerText.replaceAll("<smoothly_flowing_prose_paragraphs>","")
-    answerText= answerText.replaceAll("</smoothly_flowing_prose_paragraphs>","")
+    answerText = answerText.replace(/```json|```/g, '').trim(); // deepseek wrapping json in ```json ... ```
+    // answerText= answerText.replaceAll("<smoothly_flowing_prose_paragraphs>","")
+    // answerText= answerText.replaceAll("</smoothly_flowing_prose_paragraphs>","")
+
     return {
       answer:answerText,
       input_tokens,cache_creation_input_tokens,cache_read_input_tokens,output_tokens,
