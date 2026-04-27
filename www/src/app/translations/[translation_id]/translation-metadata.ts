@@ -7,6 +7,7 @@ export default async function generateTranslationMetadata(params) {
   const ret = {
     title: translation.articles.title,
     description: translation.articles.second_title,
+    alternates: { canonical: null },
     openGraph: {
       title: translation.articles.title,
       description: translation.articles.second_title,
