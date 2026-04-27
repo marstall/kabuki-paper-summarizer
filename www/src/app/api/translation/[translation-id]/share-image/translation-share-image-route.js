@@ -13,7 +13,7 @@ export async function handleTranslationShareImageGet(request, params) {
       join(process.cwd(), 'public/fonts/charter_bold-webfont.woff')
     )
     const translation = await loadTranslation(params['translation-id']);
-    return new ImageResponse(
+    const imageResponse = new ImageResponse(
       (
         <div
           style={{
@@ -77,6 +77,15 @@ export async function handleTranslationShareImageGet(request, params) {
           },
         ], }
     )
+
+    const buffer = await imageResponse.arrayBuffer()
+    return new Response(Buffer.from(buffer), {
+      headers: {
+        'Content-Type': 'image/png',
+        'Content-Length': String(buffer.byteLength),
+        'Cache-Control': 'public, max-age=86400, s-maxage=86400',
+      },
+    })
   } catch (e) {
     console.log(`${e.message}`)
     return new Response(`Failed to generate the image`, {
