@@ -26,47 +26,70 @@ function Section({section}) {
   )
 }
 
-function generateClaimsDescription(article) {
-  const claims = article?.claims
-  if (_.isEmpty(claims)) {
-    return "no claims"
-  }
-  if (!claims) return "no claims"
-  const claimTexts =  claims.claims.map(claim=>claim.claim)
-  return <><ul>
-  {claimTexts.slice(0,2).map((t,i)=><li key={i}>{t}</li>)}
-  </ul>
-  <div>
-  ... and {claimTexts.length-2} others
-    </div>
-  </>
-}
+
 
 export default function ArticleViewClient({
                                             article,
+                                            llms,
                                             generateElement,
                                             deleteArticleAction,
                                             deleteAllUnpublishedTranslationsAction,
-                                            deleteAllUnpublishedAttachmentsAction
+                                            deleteAllUnpublishedAttachmentsAction,
+                                            deleteClaimsAction
                                           }) {
+  const [claimsLimit,setClaimsLimit]= useState(2);
+  const [activeLlm,setActiveLlm] = useState("claude")
+  function toggleClaimsLimit() {
+    setClaimsLimit(claimsLimit ? null : 2)
+  }
+
+  function LlmPicker() {
+    return <select className='select' name={'llm'} value={activeLlm} onChange={e => setActiveLlm(e.target.value)}>
+      {llms.map(llm=>{
+        return <option value={llm.name} key={llm.id}>{llm.name}</option>
+        }
+      )}</select>
+  }
+
+  function generateClaimsDescription(article) {
+    const claims = article?.claims
+    if (_.isEmpty(claims)) {
+      return "no claims"
+    }
+    if (!claims) return "no claims"
+    let claimTexts = claims.claims.map(claim => claim.claim)
+    const claimCount = claimTexts.length;
+    if (claimsLimit) claimTexts = claimTexts.slice(0, claimsLimit)
+    return <>
+      <ul>
+        {claimTexts.map((t, i) => <li key={i}>{t}</li>)}
+      </ul>
+      <div>
+        ... and {claimCount - claimsLimit} others
+      </div>
+      <div><br/>
+        <a className={'button'} href={'#'} onClick={toggleClaimsLimit}>{claimsLimit ? 'Show all claims' : 'Show fewer claims'}</a>
+      </div>
+    </>
+  }
+
   const deleteDisabled = !(_.isEmpty(article.translations)
     && _.isEmpty(article.sections) && _.isEmpty(article.attachments))
   const createAttachmentUrl = `/articles/${article.id}/attachments/create-edit`
-  const [generating,setGenerating] = useState(false)
+  const [generating, setGenerating] = useState(false)
 
-  function performElementGeneration(elementName,llmName="claude",params={}) {
-
-    console.log("performElementGeneration")
-    document.querySelectorAll("button").forEach(b=>b.disabled=true)
-    setTimeout(async ()=>{
+  function performElementGeneration(elementName , params = {}) {
+    console.log(`performElementGeneration,activeLlm: ${activeLlm}`)
+    document.querySelectorAll("button").forEach(b => b.disabled = true)
+    setTimeout(async () => {
       // setGenerating(true);
-      await generateElement(elementName,llmName,params)
+      await generateElement(elementName, activeLlm, params)
       // setGenerating(false);
-      document.querySelectorAll("button").forEach(b=>b.disabled=false)
-    },0)
+      document.querySelectorAll("button").forEach(b => b.disabled = false)
+    }, 0)
   }
 
-
+  const hasClaims = !_.isEmpty(article.claims)
   const claimsDescription = generating ? "..." : generateClaimsDescription(article)
   return <div className="content">
     <h1>{article.original_title}</h1>
@@ -79,18 +102,33 @@ export default function ArticleViewClient({
       </i>
     </p>
     <hr/>
+    <h3>Active Llm</h3>
+    <div className={'block'}>
+      <LlmPicker/>
+    </div>
     <h3>Claims</h3>
     <div className={'block'}>
       {claimsDescription}
-      {_.isEmpty(article.claims) && <>
         <br/>
-        <form action={() => performElementGeneration("claims")}>
-          <button disabled={generating} className={"button"} type={'submit'}>
-            {generating ? "generating ... " : "Generate claims"}
-          </button>
-        </form>
-      </>
+        <br/>
+      <form action={() => performElementGeneration("claims")}>
+        <button disabled={generating} className={"button"} type={'submit'}>
+          {generating ? "generating ... " : `${hasClaims ?'Reg': 'G'}enerate claims`}
+        </button>
+      </form>
+      {hasClaims &&
+        <>
+          <br/>
+          <form action={deleteClaimsAction}>
+            <button className={"button is-danger"} type={'submit'}>
+              Delete Claims
+            </button>
+          </form>
+          <hr/>
+        </>
       }
+      <hr/>
+
 
     </div>
     <h3>Translations</h3>
@@ -146,7 +184,7 @@ export default function ArticleViewClient({
         </tbody>
       </table>
       {!_.isEmpty(article.claims) &&
-        <form action={()=>performElementGeneration("article-translation","claude","eli5 with 3 examples refined")}>
+        <form action={() => performElementGeneration("article-translation",  "eli5 with 3 examples refined")}>
           <button disabled={generating} className={"button"} type={'submit'}>
             {generating ? "generating ... " : "Generate Translation"}
           </button>
@@ -155,14 +193,16 @@ export default function ArticleViewClient({
       <hr/>
       {!_.isEmpty(article.translations) &&
         <>
-          <form action={() => performElementGeneration("headlines","claude",{translationId:article.translations[0].id})}>
+          <form
+            action={() => performElementGeneration("headlines", {translationId: article.translations[0].id})}>
             <button disabled={generating} className={"button"} type={'submit'}>
               {generating ? "generating ... " : "Generate Headlines"}
             </button>
           </form>
           <br/>
           <>
-            <form action={() => performElementGeneration("chat-exchange-panel-attachments","claude",{prompt:"comic book 1"})}>
+            <form
+              action={() => performElementGeneration("chat-exchange-panel-attachments",  {prompt: "comic book 1"})}>
               <button disabled={generating} className={"button"} type={'submit'}>
                 {generating ? "generating ... " : "Generate Chat Exchange Attachments"}
               </button>
