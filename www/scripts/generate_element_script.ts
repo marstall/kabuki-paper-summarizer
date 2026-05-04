@@ -5,9 +5,9 @@ import yargs from 'yargs'
 import {hideBin} from 'yargs/helpers'
 import Llm from '@/app/models/llm'
 import {shortDateTime} from "@/utils/date";
-import {generateElement} from "@/app/generation/generate_element";
+import {generateElement} from "@/app/lib/generation/generate_element";
 
-const DEFAULT_LLM="deepseek"
+const DEFAULT_LLM="claude"
 
 async function main(elementName,llmName: string, params) {
   function doNothing() {

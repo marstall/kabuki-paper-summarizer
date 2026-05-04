@@ -38,7 +38,8 @@ export default function ArticleViewClient({
                                             deleteClaimsAction
                                           }) {
   const [claimsLimit,setClaimsLimit]= useState(2);
-  const [activeLlm,setActiveLlm] = useState("claude")
+  const [activeLlm,setActiveLlm] = useState("claude" +
+    "")
   function toggleClaimsLimit() {
     setClaimsLimit(claimsLimit ? null : 2)
   }
@@ -173,7 +174,7 @@ export default function ArticleViewClient({
             </td>
             <td>
               {translation.generation
-                && <Link href={`/generations/${translation.generation}`}>
+                && <Link href={`/multiversions/${translation.generation}`}>
                   {translation.generation}
                 </Link>}
               <br/>

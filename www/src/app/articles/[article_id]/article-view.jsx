@@ -2,7 +2,7 @@ import {prisma} from '@/app/lib/prisma'
 import ArticleViewClient
   from "../../components/article-view-client/article-view-client.tsx";
 import {redirect} from "next/navigation";
-import {generateElement} from "../../generation/generate_element.ts";
+import {generateElement} from "../../lib/generation/generate_element.ts";
 
 
 export default async function ArticleView({id}) {

@@ -4,7 +4,7 @@ import TranslationViewClient from "@/app/components/translation-view-client/tran
 import TranslationView from "@/app/translations/[translation_id]/translation-view";
 import Link from "next/link";
 
-export default async function GenerationView(params) {
+export default async function MultiversionView(params) {
   const {generation} = params;
   const translations = await prisma.translations.findMany({
       where: {

@@ -1,7 +1,7 @@
-import GenerationView from './generation-view'
+import MultiversionView from './multiversion-view'
 
 export default async function Page({params}) {
   const _params = await params;
   const {generation} = _params;
-  return <GenerationView generation={generation}/>
+  return <MultiversionView generation={generation}/>
 }

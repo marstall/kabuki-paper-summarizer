@@ -3,9 +3,9 @@ import LlmGenerator from "./llm_generator";
 import HeadlinesGenerator from "./generators/headlines_generator";
 import ClaimsGenerator from "./generators/claims_generator";
 import ArticleTranslationGenerator from "./generators/article_translation_generator";
-import AttachmentCaptionGenerator from "@/app/generation/generators/attachment_caption_generator";
-import SatoriAttachmentGenerator from "@/app/generation/generators/satori_attachment_generator";
-import ChatExchangeAttachmentsGenerator from "@/app/generation/generators/chat_exchange_panel_attachments_generator";
+import AttachmentCaptionGenerator from "@/app/lib/generation/generators/attachment_caption_generator";
+import SatoriAttachmentGenerator from "@/app/lib/generation/generators/satori_attachment_generator";
+import ChatExchangeAttachmentsGenerator from "@/app/lib/generation/generators/chat_exchange_panel_attachments_generator";
 
 const generatorMap = {
   "headlines": HeadlinesGenerator,
