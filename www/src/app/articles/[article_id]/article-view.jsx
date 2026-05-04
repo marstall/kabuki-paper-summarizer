@@ -97,12 +97,15 @@ export default async function ArticleView({id}) {
 
   async function generateElement_(elementName, llmName = "claude", params = {}) {
     'use server'
-    console.log(`generating element ${elementName} for article ${article.id}`)
+    const STREAMING=true;
+    const response = await generateElement(elementName, llmName,
+                          {...params, stream:STREAMING,save: true, articleId: article.id})
+    if (STREAMING) {
+      return response;
+    } else {
+      redirect(`/articles/${article.id}`)
 
-    await generateElement(elementName, llmName,
-                          {...params, save: true, articleId: article.id})
-    console.log(`generated element ${elementName} for article ${article.id}`)
-    redirect(`/articles/${article.id}`)
+    }
   }
 
   return <ArticleViewClient

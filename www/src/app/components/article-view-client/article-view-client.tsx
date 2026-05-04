@@ -37,6 +37,7 @@ export default function ArticleViewClient({
                                             deleteAllUnpublishedAttachmentsAction,
                                             deleteClaimsAction
                                           }) {
+  const [response,setResponse] = useState("")
   const [claimsLimit,setClaimsLimit]= useState(2);
   const [activeLlm,setActiveLlm] = useState("claude" +
     "")
@@ -84,7 +85,35 @@ export default function ArticleViewClient({
     document.querySelectorAll("button").forEach(b => b.disabled = true)
     setTimeout(async () => {
       // setGenerating(true);
-      await generateElement(elementName, activeLlm, params)
+      const response = await generateElement(elementName, activeLlm, params)
+      let started=false;
+      let stopped=false;
+      let completeResponseText=""
+      for await (const messageStreamEvent of response) {
+        switch (messageStreamEvent.type) {
+          case 'content_block_delta':
+            if (started) {
+              const text = messageStreamEvent.delta.text
+              console.log(text)
+              setResponse(r=>r+text)
+            }
+            break;
+          case 'content_block_start':
+            console.log("received content_block_start")
+            started=true;
+            break;
+          case 'message_start':
+            console.log("received message_start")
+            break;
+          //started=true;
+          case 'content_block_stop':
+            console.log("received content_block_stop")
+            stopped=true;
+            break;
+          default:
+            console.log("unknown type: "+messageStreamEvent.type)
+        }
+      }
       // setGenerating(false);
       document.querySelectorAll("button").forEach(b => b.disabled = false)
     }, 0)
@@ -109,6 +138,9 @@ export default function ArticleViewClient({
     </div>
     <h3>Claims</h3>
     <div className={'block'}>
+      <div className={'block'}>
+        {response}
+      </div>
       {claimsDescription}
         <br/>
         <br/>

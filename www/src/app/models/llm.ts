@@ -101,33 +101,33 @@ export default class Llm {
   }
 
   async claudeMessagesCreateTypeHandler(instructions, input, options) {
-    // const finalInstructions = `${instructions}
-    // Write the prose sections of your response in <smoothly_flowing_prose_paragraphs> tags.
-    // `
     const response = await this.client().messages.create(({
       model: this.prismaLlm.model,
       max_tokens: options.max_tokens || 5000,
+      stream:options.stream,
       system: instructions,
       messages: [
         {role: "user", content: input}
       ]
     }))
-    let answerText;
-    let answerThinking; // MiniMax returns context.thinking ...
-    for (const content of response.content) {
-      if (content.type=='text') answerText = content.text
-      if (content.type=='thinking') answerThinking = content.thinking
-    }
-    const {input_tokens,cache_creation_input_tokens,cache_read_input_tokens,output_tokens} = response.usage
-    answerText = answerText.replace(/```json|```/g, '').trim(); // deepseek wrapping json in ```json ... ```
-    // answerText= answerText.replaceAll("<smoothly_flowing_prose_paragraphs>","")
-    // answerText= answerText.replaceAll("</smoothly_flowing_prose_paragraphs>","")
+    if (options.stream) {
+      return response;
+    } else {
+      let answerText;
+      let answerThinking; // MiniMax returns context.thinking ...
+      for (const content of response.content) {
+        if (content.type=='text') answerText = content.text
+        if (content.type=='thinking') answerThinking = content.thinking
+      }
+      const {input_tokens,cache_creation_input_tokens,cache_read_input_tokens,output_tokens} = response.usage
+      answerText = answerText.replace(/```json|```/g, '').trim(); // deepseek wrapping json in ```json ... ```
 
-    return {
-      answer:answerText,
-      input_tokens,cache_creation_input_tokens,cache_read_input_tokens,output_tokens,
-      thinking:answerThinking
-    };
+      return {
+        answer:answerText,
+        input_tokens,cache_creation_input_tokens,cache_read_input_tokens,output_tokens,
+        thinking:answerThinking
+      };
+    }
   }
 
   async geminiGenerateContentTypeHandler(instructions, input, options) {
@@ -145,7 +145,7 @@ export default class Llm {
     return {answer:response.text,promptTokenCount,candidatesTokenCount,totalTokenCount,thoughtsTokenCount}
   }
 
-  async chat(instructions, input, options = {}): Promise<ChatResponse> {
+  async chat(instructions, input, options = {}): Promise<any> {
     const chatHandlers = {
       "openai-responses": this.openAiResponsesTypeHandler,
       "openai-chat-completions": this.openAiChatCompletionsTypeHandler,
