@@ -1,0 +1,4 @@
+
+ .noWrapTable :global(th),
+ .noWrapTable :global(td) {
+ }

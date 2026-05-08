@@ -2,7 +2,7 @@ import React from "react";
 import MarkdownIt from "markdown-it";
 
 const mdParser = new MarkdownIt({
-  html: false,
+  html: true,
   linkify: true,
   typographer: true
 })

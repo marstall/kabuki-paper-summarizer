@@ -7,6 +7,7 @@ import SubscribeForm from "@/app/components/subscribe-form/subscribe-form";
 import {SpeedInsights} from "@vercel/speed-insights/next"
 import WelcomeOverlay from "@/app/components/welcome-overlay/welcome-overlay";
 import PlausibleProvider from 'next-plausible'
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -75,6 +76,7 @@ export default function RootLayout({
     </head>
     <body>
     <PlausibleProvider domain="thekabukipapers.org">
+      <div className={'superheader'}><Link href={'/articles/36'}>intro</Link></div>
     <div className="page subscribeBar">
         <div className="pageInner">
           <WelcomeOverlay/>

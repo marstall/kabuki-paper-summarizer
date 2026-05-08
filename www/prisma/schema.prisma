@@ -20,6 +20,7 @@ model articles {
   title           String?        @db.VarChar
   second_title    String?        @db.VarChar
   category        String?        @db.VarChar
+  type            String?        @db.VarChar
   attachments     attachments[]
   sections        sections[]
   translations    translations[]

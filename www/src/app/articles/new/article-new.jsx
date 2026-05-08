@@ -14,92 +14,103 @@ could re-populate the fields with the right data.
 
 
 async function submit(prevState, formData) {
-  'use server'
+    'use server'
 
-  const url = formData.get('url') || "";
-  const original_title = formData.get('original_title');
-  const year = Number(formData.get('year'));
-  const attribution = formData.get('attribution') || "";
-  const title = formData.get('title') || "";
-  const second_title = formData.get('second_title') || "";
-  const category = formData.get('category') || "";
-  const full_text = formData.get('full_text') || "";
-  const articleId = Number(formData.get('article_id'));
+    const url = formData.get('url') || "";
+    const original_title = formData.get('original_title');
+    const year = Number(formData.get('year'));
+    const attribution = formData.get('attribution') || "";
+    const title = formData.get('title') || "";
+    const second_title = formData.get('second_title') || "";
+    const category = formData.get('category') || "";
+    const full_text = formData.get('full_text') || "";
+    const articleId = Number(formData.get('article_id'));
+    const type = formData.get('type') || "article"
 
-  const errors = []
-  if (url?.length < 1) errors.push("URL is not long enough")
-  if (original_title?.length < 1) errors.push("Original title is not long enough")
+    const errors = []
+    const isPlain = type==='plain';
+    if (type==='article') {
+        if (url?.length < 1) errors.push("URL is not long enough")
+        if (original_title?.length < 1) errors.push("Original title is not long enough")
 
-  if (year?.length < 1 || !isFinite(Number(year))) errors.push("Year must be in format 1929, 2024, etc.")
-  //if (full_text?.length<1) errors.push("Body is not long enough")
-  if (attribution?.length < 1) errors.push("Attribution is not long enough")
-
-  if (errors.length === 0) {
-    const now = new Date()
-    try {
-      if (articleId) {
-        await prisma.articles.update(
-          {
-            where: {
-              id: articleId
-            },
-            data: {
-              url,
-              original_title,
-              title,
-              second_title,
-              category,
-              year,
-              attribution,
-              full_text
-            }
-          }
-        )
-      } else {
-        await prisma.articles.create({
-          data: {
-            created_at: now,
-            updated_at: now,
-            url,
-            original_title,
-            title,
-            second_title,
-            category,
-            year: Number(year),
-            attribution
-          }
-        })
-      }
-
-    } catch (e) {
-      errors.push(e.message)
+        if (year?.length < 1 || !isFinite(Number(year))) errors.push("Year must be in format 1929, 2024, etc.")
+        //if (full_text?.length<1) errors.push("Body is not long enough")
+        if (attribution?.length < 1) errors.push("Attribution is not long enough")
+    } else if (type==='plain') {
+        if (original_title?.length < 1) errors.push("title is not long enough")
+        if (full_text?.length < 1) errors.push("body is not long enough")
     }
     if (errors.length === 0) {
-      //toast("Success!")
-      if (articleId) {
-        redirect(`/articles/${articleId}`)
-      } else {
-        redirect(`/articles`)
-      }
+        const now = new Date()
+        try {
+            if (articleId) {
+                await prisma.articles.update(
+                    {
+                        where: {
+                            id: articleId
+                        },
+                        data: {
+                            url,
+                            original_title,
+                            title,
+                            second_title,
+                            category,
+                            year,
+                            attribution,
+                            full_text,
+                            type
+                        }
+                    }
+                )
+            } else {
+                await prisma.articles.create({
+                    data: {
+                        created_at: now,
+                        updated_at: now,
+                        url,
+                        original_title,
+                        title,
+                        second_title,
+                        category,
+                        year: year && Number(year),
+                        attribution,
+                        full_text,
+                        type
+                    }
+                })
+            }
+
+        } catch (e) {
+            errors.push(e.message)
+        }
+        if (errors.length === 0) {
+            //toast("Success!")
+            if (articleId) {
+                redirect(`/articles/${articleId}`)
+            } else {
+                redirect(`/articles`)
+            }
+        }
     } else return {
-      url,
-      original_title,
-      year,
-      attribution,
-      full_text,
-      title,
-      second_title,
-      category,
-      errors
+        url,
+        original_title,
+        year,
+        attribution,
+        full_text,
+        title,
+        second_title,
+        category,
+        type,
+        errors
     }
 
-  }
+
 }
 
 export default async function ArticleNew({article_id}) {
-  const article = article_id && await prisma.articles.findUnique({where: {id: article_id}});
+    const article = article_id && await prisma.articles.findUnique({where: {id: article_id}});
 
-  return (
-    <ArticleForm article={article} action={submit}/>
-  );
+    return (
+        <ArticleForm article={article} action={submit}/>
+    );
 }

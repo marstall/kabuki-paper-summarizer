@@ -10,14 +10,16 @@ export default async function createEditAttachment(initialState: any, formData: 
   const caption = formData.get("caption") as string
   const alt_text = formData.get("alt_text") as string
 
+  const isImage = file?.type?.startsWith("image")
+  const isVideo = file?.type?.startsWith("video")
   const errors = []
-  if (!file?.type?.startsWith("image")) {
-    errors.push("only images are allowed as uploads. file type is "+file?.type)
+  if (!isVideo && !isImage) {
+    errors.push(" only images and videos are allowed as uploads. file type is "+file?.type)
   }
   if (errors.length === 0) {
     const bytes = new Uint8Array(await file.arrayBuffer())
-    const dimensions = imageSize(bytes)
-    console.log(dimensions.width, dimensions.height)
+    const dimensions = isImage ? imageSize(bytes) : null
+    //console.log(dimensions.width, dimensions.height)
 
 
     const now = new Date();
@@ -28,8 +30,8 @@ export default async function createEditAttachment(initialState: any, formData: 
         article_id: Number(initialState.article_id),
         content_type: file.type,
         size: bytes.length,
-        width: dimensions.width,
-        height: dimensions.height,
+        width: dimensions?.width,
+        height: dimensions?.height,
         alt_text,
         created_at: now,
         updated_at: now

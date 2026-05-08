@@ -1,3 +1,7 @@
+.idea/inspectionProfiles/
+.idea/kabuki-paper-summarizer.iml
+.idea/modules.xml
+.idea/vcs.xml
 www/codeStyles/
 www/modules.xml
 www/paper_booper.iml
