@@ -11,6 +11,7 @@
     "db:generate": "prisma generate",
     "postinstall": "prisma generate",
     "dev": "next dev",
+    "dev:debug": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

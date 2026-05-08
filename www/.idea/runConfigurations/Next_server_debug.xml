@@ -1,0 +1,5 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Next server debug" type="NodeJSRemoteDebugConfigurationType" path-mappings="[]" port="9229" host="localhost">
+    <method v="2" />
+  </configuration>
+</component>

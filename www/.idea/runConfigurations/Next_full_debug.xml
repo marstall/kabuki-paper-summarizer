@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Next full debug" type="CompoundRunConfigurationType">
+    <toRun name="Next dev (debug)" type="js.build_tools.npm" />
+    <toRun name="Next client debug" type="JavascriptDebugType" />
+    <toRun name="Next server debug" type="NodeJSRemoteDebugConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>

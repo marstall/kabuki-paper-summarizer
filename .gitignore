@@ -6,7 +6,6 @@ www/vcs.xml
 www/workspace.xml
 .next
 .DS_Store
-.idea
 .bundle
 .vercel
 .env*.local
