@@ -26,10 +26,7 @@ article {
   color: var(--text-main);
   line-height: 1.55;
   font-size: 18px;
-  a {
-    text-decoration: underline;
-    color: green;
-  }
+
 
   a:link {
   }
@@ -362,7 +359,7 @@ li {
   Subtle link styling: keep underline, but tune thickness/offset for readability.
 */
 
-a {
+.article-body a {
   color: var(--accent);
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;
