@@ -1,9 +1,6 @@
 import GenerateClient from "@/app/generate/generate-client";
-import {generateElement} from "@/app/lib/generation/generate_element";
+import LlmPickerClient from "@/app/components/llm-picker/llm-picker-client";
 
-async function streamingFunction() {
-  'use server'
-}
 
 export default function Generate(params) {
   return <section className="section">
@@ -20,7 +17,7 @@ export default function Generate(params) {
           the UI should be perfect/responsive:
            - It should show "optimistic" UI
            - It should show elements being generated in real time
-           - It should be cancelablel
+           - It should be cancelable
            - It should be responsive during generation
            The general pattern is that we will be calling server actions
            to do the necessary work - but the server actions should stream
@@ -31,7 +28,7 @@ export default function Generate(params) {
            Let's start with the article and llm dropdowns.
 
         */}
-        <GenerateClient streamingFunction={streamingFunction}/>
+        <GenerateClient/>
       </div>
     </div>
   </section>
