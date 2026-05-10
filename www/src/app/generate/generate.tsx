@@ -1,6 +1,21 @@
 import GenerateClient from "@/app/generate/generate-client";
 import LlmPickerClient from "@/app/components/llm-picker/llm-picker-client";
+import {generateElement} from "@/app/lib/generation/generate_element"
+import {redirect} from "next/navigation";
 
+
+// async function generateElement_(elementName, llmName = "claude", params = {}) {
+//   "use server"
+//   const STREAMING = true;
+//   const response = await generateElement(elementName, llmName,
+//       {...params, stream: STREAMING, save: true, articleId: 34})
+//   if (STREAMING) {
+//     return response;
+//   } else {
+//     redirect(`/articles/${34}`)
+//
+//   }
+// }
 
 export default function Generate(params) {
   return <section className="section">
@@ -28,7 +43,7 @@ export default function Generate(params) {
            Let's start with the article and llm dropdowns.
 
         */}
-        <GenerateClient/>
+        <GenerateClient generateElement={generateElement}/>
       </div>
     </div>
   </section>

@@ -17,13 +17,13 @@ const generatorMap = {
 }
 
 export async function generateElement(elementName,llmName,params) {
+  "use server"
   if (params.stream) {
     const generator = await LlmGenerator.create(generatorMap[elementName],llmName)
     return await generator.generate(params)
   } else {
     const generator = await LlmGenerator.create(generatorMap[elementName],llmName)
     const response = await generator.generate(params)
-    log("response",response)
     if (params.save) {
       log("skipped save.")
       await generator.save(response,params)

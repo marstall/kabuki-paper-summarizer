@@ -90,6 +90,7 @@ export default class ClaimsGenerator extends LlmGenerator {
         }
         return {answer: completeResponseText}
       } else {
+
         return await this.llm.chat(prompt, fullText, {stream: false, max_tokens: 20000})
       }
     }
