@@ -1,6 +1,6 @@
 @font-face {
-  font-family: charterwoff;
-  src: url(/fonts/charter_regular-webfont.woff);
+    font-family: charterwoff;
+    src: url(/fonts/charter_regular-webfont.woff);
 }
 
 /*@font-face {*/
@@ -18,169 +18,168 @@
 /*  src: url(/fonts/Merriweather-Italic-VariableFont_opsz,wdth,wght.ttf);*/
 /*}*/
 .superheader {
-  position:absolute;
-  width:100%;
-  display:flex;
-  justify-content: end;
-  align-items: center;
-  padding-right:0.5rem;
-  padding-top:0.6rem;
-  font-size:14px;
+    position: absolute;
+    width: 100%;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    padding-right: 0.5rem;
+    padding-top: 0.6rem;
+    font-size: 14px;
 
-  font-family: "American Typewriter";
+    font-family: "American Typewriter";
 }
 
 .superheader a {
-    background-color:lightblue;
-  padding:2px;
-  padding-left:4px;
-  padding-right:4px;
-  border-radius: 4px;
+    background-color: lightblue;
+    padding: 2px;
+    padding-left: 4px;
+    padding-right: 4px;
+    border-radius: 4px;
 }
+
 @media (max-width: 600px) {
-  .superheader {
-    display: none;
-  }
-  }
-
-
+    .superheader {
+        display: none;
+    }
+}
 
 
 :root {
-  /* Measure */
-  --reading-width: 65ch;
-  --margin-rail: 0ch;
+    /* Measure */
+    --reading-width: 65ch;
+    --margin-rail: 0ch;
 
-  /* Spacing */
-  --space-xs: 0.5rem;
-  --space-s: 1rem;
-  --space-m: 1.75rem;
-  --space-l: 3rem;
-  --space-xl: 5rem;
+    /* Spacing */
+    --space-xs: 0.5rem;
+    --space-s: 1rem;
+    --space-m: 1.75rem;
+    --space-l: 3rem;
+    --space-xl: 5rem;
 
-  /* Typography */
-  --body-font: "Google Sans Text", "charter","charterwoff";
-  --ui-font: "Helvetica";
-  /*body {*/
-  /*  font-family: Google Sans Text, Arial, Helvetica, sans-serif;*/
-  /*  font-size: 1rem;*/
-  /*  font-weight: 400;*/
-  /*  letter-spacing: .1px;*/
-  /*  line-height: 1.5;*/
-  /*}*/
-  --text-main: #1a1a1a;
-  --text-emphasized: black;
-  --rule: #e5e5e5;
-  --accent: #0a4cff;
-  --accent-2: rgb(55,123,42);
-  --link: rgb(193,98,90);
-  --text-muted: #666;
+    /* Typography */
+    --body-font: "Google Sans Text", "charter", "charterwoff";
+    --ui-font: "Helvetica";
+    /*body {*/
+    /*  font-family: Google Sans Text, Arial, Helvetica, sans-serif;*/
+    /*  font-size: 1rem;*/
+    /*  font-weight: 400;*/
+    /*  letter-spacing: .1px;*/
+    /*  line-height: 1.5;*/
+    /*}*/
+    --text-main: #1a1a1a;
+    --text-emphasized: black;
+    --rule: #e5e5e5;
+    --accent: #0a4cff;
+    --accent-2: rgb(55, 123, 42);
+    --link: rgb(193, 98, 90);
+    --text-muted: #666;
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+    --background: #ffffff;
+    --foreground: #171717;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+    :root {
+        --background: #0a0a0a;
+        --foreground: #ededed;
+    }
 }
 
 html,
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
+    max-width: 100vw;
+    overflow-x: hidden;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    color: var(--foreground);
+    background: var(--background);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .page {
-  width: 100%;
+    width: 100%;
 }
 
 .pageInner {
-  width: 100%;
-  max-width: 1100px;
-  /*
-    This sets the page to have a maximum width of 1100 pixels.
-    This helps to ensure that the page is not wider than the viewport,
-    which can cause the page to scroll horizontally.
+    width: 100%;
+    max-width: 1100px;
+    /*
+      This sets the page to have a maximum width of 1100 pixels.
+      This helps to ensure that the page is not wider than the viewport,
+      which can cause the page to scroll horizontally.
 
-    The margin: 0 auto; line also centers the page horizontally on the screen.
-  */
-  margin: 0 auto;
+      The margin: 0 auto; line also centers the page horizontally on the screen.
+    */
+    margin: 0 auto;
 
-  padding-left: clamp(2rem,21vw,16rem);
-  padding-right: clamp(2rem,21vw,16rem);
+    padding-left: clamp(2rem, 21vw, 16rem);
+    padding-right: clamp(2rem, 21vw, 16rem);
 }
 
 a:link {
-  color: black;
+    color: black;
 }
 
 a:visited {
-  color: black;
+    color: black;
 }
 
 
 .pageContent {
-  padding-top: 4vw;
-  padding-bottom: 4vw;
+    padding-top: 4vw;
+    padding-bottom: 4vw;
 }
 
 .subscribeBar {
-  background-color: #ffc;
+    background-color: #ffc;
 }
 
 @media (max-width: 600px) {
-  .pageInner {
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
+    .pageInner {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
 
-  .pageContent {
-    padding-top: 0vw;
-    padding-bottom: 8vw;
-  }
+    .pageContent {
+        padding-top: 0vw;
+        padding-bottom: 8vw;
+    }
 }
 
 * {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
 }
 
 a {
-  color: inherit;
-  text-decoration: none;
+    color: inherit;
+    text-decoration: none;
 }
 
 @media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+    html {
+        color-scheme: dark;
+    }
 }
 
 .translation-container {
-  max-width: 600px;
-  margin: 0 auto;
-  margin-top: 0em;
+    max-width: 600px;
+    margin: 0 auto;
+    margin-top: 0em;
 }
 
 .translation-container .title {
-  font-size: 32px;
+    font-size: 32px;
 }
 
 .translation-container p {
-  margin-bottom:1em;
+    margin-bottom: 1em;
 }
 
 .translation-container p:hover {
@@ -188,7 +187,16 @@ a {
 }
 
 .above-h1 {
-  font-size: smaller;
-  text-transform: uppercase;
-  color: #cccccc;
+    font-size: smaller;
+    text-transform: uppercase;
+    color: #cccccc;
+}
+
+.article-plain a {
+    color: black;
+    text-decoration: underline;
+}
+
+.article-plain {
+    background-color: lightblue;
 }

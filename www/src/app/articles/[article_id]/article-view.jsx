@@ -3,7 +3,8 @@ import ArticleViewClient
     from "../../components/article-view-client/article-view-client.tsx";
 import {redirect} from "next/navigation";
 import {generateElement} from "../../lib/generation/generate_element.ts";
-import PlainArticleViewClient from "../../components/plain-article-view-client/plain-article-view-client.tsx";
+import PlainArticleViewClient
+    from "../../components/plain-article-view-client/plain-article-view-client.tsx";
 
 
 export default async function ArticleView({id}) {

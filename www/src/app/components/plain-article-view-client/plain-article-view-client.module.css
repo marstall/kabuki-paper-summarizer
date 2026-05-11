@@ -1,4 +1,15 @@
 
- .noWrapTable :global(th),
- .noWrapTable :global(td) {
- }
+.noWrapTable :global(th),
+.noWrapTable :global(td) {
+}
+
+.content {
+    border: 0px solid red;
+}
+
+.content a {
+    color: green;
+    font-weight: bold;
+    border-bottom: 2px solid green;
+}
+

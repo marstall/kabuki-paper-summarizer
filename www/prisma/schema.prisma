@@ -179,6 +179,7 @@ model attachments {
   order        Int?
   prompt_id    BigInt?
   prompt_text  String?
+  mime_type    String?
   articles     articles?      @relation(fields: [article_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_be6e675f54")
   translations translations[]
 
