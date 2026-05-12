@@ -18,7 +18,7 @@ export default function ArticleForm({article, action}) {
             setType(formData.type)
         }
     }, [formData?.type])
-    const isPlain = type==='plain'
+    const isPlain = type === 'plain'
 
     return !isPending && <>
         <Errors errors={formData}/>
@@ -32,7 +32,8 @@ export default function ArticleForm({article, action}) {
                             name="type"
                             value={type}
                     >
-                        <option value={"article"}>article based on paper</option>
+                        <option value={"article"}>article based on paper
+                        </option>
                         <option value={"plain"}>plain article</option>
                     </select>
                 </div>
@@ -73,7 +74,7 @@ export default function ArticleForm({article, action}) {
                            placeholder="Text input"/>
                 </div>
             </div>}
-            {!isPlain && <div className="field">
+            <div className="field">
                 <label className="label">Second Title</label>
                 <div className="control">
         <textarea
@@ -85,7 +86,7 @@ export default function ArticleForm({article, action}) {
             style={{resize: 'vertical'}}
         ></textarea>
                 </div>
-            </div>}
+            </div>
             {!isPlain && <div className="field">
                 <label className="label">Publication year</label>
                 <div className="control">
