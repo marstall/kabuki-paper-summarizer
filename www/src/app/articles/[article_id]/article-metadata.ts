@@ -11,7 +11,7 @@ export default async function generateArticleMetadata(params) {
             description: article.second_title,
             images: [
                 {
-                    url: `https://www.thekabukipapers.org/api/translation/${article.id}/share-image`,
+                    url: `https://www.thekabukipapers.org/api/article/${article.id}/share-image`,
                     width: 1200,
                     height: 630
                 }
