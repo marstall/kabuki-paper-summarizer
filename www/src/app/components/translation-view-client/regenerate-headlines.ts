@@ -3,5 +3,8 @@
 import {generateElement} from "@/app/lib/generation/generate_element"
 
 export default async function regenerateHeadlines(translationId) {
-  await generateElement("headlines","claude",{translationId,save:true})
+    await generateElement("headlines", "claude-haiku-latest", {
+        translationId,
+        save: true
+    })
 }

@@ -56,15 +56,16 @@ export default function ArticleForm({article, action}) {
                            placeholder="Text input"/>
                 </div>
             </div>}
-            <div className="field">
-                <label className="label">{isPlain ? "Title" : "Body"}</label>
+            {!isPlain && <div className="field">
+                <label className="label">{isPlain ? "Title" : "Original" +
+                    " Title"}</label>
                 <div className="control">
                     <input className="input" type="text"
                            name="original_title"
                            defaultValue={getval("original_title")}
                            placeholder="Text input"/>
                 </div>
-            </div>
+            </div>}
             {!isPlain && <div className="field">
                 <label className="label">Title</label>
                 <div className="control">

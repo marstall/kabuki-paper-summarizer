@@ -98,7 +98,7 @@ export default async function ArticleView({id}) {
     }
 
 
-    async function generateElement_(elementName, llmName = "claude", params = {}) {
+    async function generateElement_(elementName, llmName = "claude-haiku-latest", params = {}) {
         'use server'
         const STREAMING = true;
         const response = await generateElement(elementName, llmName,

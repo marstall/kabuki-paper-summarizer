@@ -1,0 +1,56 @@
+.keyval {
+    margin: 1rem 0 1rem 0;
+    border: 1px dotted gray;
+    padding: 0.5rem;
+    font-family: "American Typewriter";
+    width: fit-content;
+}
+
+.keyval span:first-child {
+    padding-right: 8px;
+    margin-right: 4px;
+    border-right: 3px dotted black;
+}
+
+.keyval span:nth-child(2) {
+    font-weight: bold;
+    color: green;
+}
+
+.tinykeyval {
+    opacity: 0.8;
+    margin: 0.5rem 0 0.5rem 0;
+    border: 2px solid lightblue;
+    font-size: 12px;
+    text-transform: uppercase;
+    width: fit-content;
+}
+
+.tinykeyval span:first-child {
+    padding: 2px 4px;
+    background-color: lightblue;
+}
+
+.tinykeyval span:nth-child(2) {
+    padding-right: 4px;
+    font-weight: bold;
+}
+
+
+.thinking {
+    color: gray;
+    font-style: italic;
+    font-size: smaller;
+}
+
+.response {
+    width: 100%;
+    background-color: white;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.buttonsContainer {
+    display: flex;
+    gap: 0.5rem;
+}

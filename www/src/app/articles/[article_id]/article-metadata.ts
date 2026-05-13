@@ -26,6 +26,5 @@ export default async function generateArticleMetadata(params) {
             images: [`https://www.thekabukipapers.org/api/article/${article.id}/share-image`],
         },
     }
-    console.log({ret})
     return ret;
 }

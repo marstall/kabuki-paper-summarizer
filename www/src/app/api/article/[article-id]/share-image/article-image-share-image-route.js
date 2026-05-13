@@ -12,7 +12,6 @@ export async function handleArticleShareImageGet(request, params) {
         const charterBold = await readFile(
             join(process.cwd(), 'public/fonts/charter_bold-webfont.woff')
         )
-        console.log("article-share-image")
         const article = await loadArticle(params['article-id']);
         const imageResponse = new ImageResponse(
             (

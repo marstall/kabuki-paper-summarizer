@@ -1,4 +1,4 @@
-import {handleArticleShareImageGet} from "./article-share-image-route";
+import {handleArticleShareImageGet} from "./article-image-share-image-route";
 import {NextRequest} from "next/server";
 
 export async function GET(request: NextRequest, {params}) {

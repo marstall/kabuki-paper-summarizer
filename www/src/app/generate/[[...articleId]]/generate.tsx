@@ -1,7 +1,5 @@
-import GenerateClient from "@/app/generate/generate-client";
-import LlmPickerClient from "@/app/components/llm-picker/llm-picker-client";
+import GenerateClient from "./generate-client";
 import {generateElement} from "@/app/lib/generation/generate_element"
-import {redirect} from "next/navigation";
 
 
 // async function generateElement_(elementName, llmName = "claude", params = {}) {
@@ -17,14 +15,17 @@ import {redirect} from "next/navigation";
 //   }
 // }
 
-export default function Generate(params) {
-  return <section className="section">
-    <div className="container">
-      <h1 className="title">
-        Generate
-      </h1>
-      <div className="block">
-        {/*
+export default async function Generate({params, searchParams}) {
+    const {articleId: articleIdArray} = await params;
+    const {llm, generator} = await searchParams;
+    const articleId = articleIdArray?.[0];
+    return <section className="section">
+        <div className="container">
+            <h1 className="title">
+                Generate
+            </h1>
+            <div className="block">
+                {/*
           Here on this page we want to be able to generate any element.
           we should be able to select the model + article.
           we should call the streaming version of the api.
@@ -43,9 +44,12 @@ export default function Generate(params) {
            Let's start with the article and llm dropdowns.
 
         */}
-        <GenerateClient generateElement={generateElement}/>
-      </div>
-    </div>
-  </section>
+                <GenerateClient articleId={articleId}
+                                llm={llm}
+                                generator={generator}
+                                generateElement={generateElement}/>
+            </div>
+        </div>
+    </section>
 }
 
