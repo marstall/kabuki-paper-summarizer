@@ -8,12 +8,14 @@ import StatefulPicker from "@/app/components/stateful-picker/stateful-picker";
 import {saveElement} from "@/app/lib/generation/generate_element";
 import {redirect} from "next/navigation";
 import {step} from "next/dist/experimental/testmode/playwright/step";
-
+import TranslationPickerClient
+    from "@/app/components/translation-picker/translation-picker-client";
 
 export default function GenerateClient(params) {
     const {generateElement} = params;
     const [llmName, setLlmName] = useState(params['llm'] || "claude-haiku-latest")
     const [articleId, setArticleId] = useState(params['articleId'])
+    const [translationId, setTranslationId] = useState(params['translationId'])
     const [generatorName, setGeneratorName] = useState(params['generator'] || "claims")
     const [step, setStep] = useState(null)
     const [generationState, setGenerationState] = useState("ready")
@@ -21,7 +23,7 @@ export default function GenerateClient(params) {
     const [thinking, setThinking] = useState("")
     const [responseVisual, setResponseVisual] = useState(null);
     const showSaveButton = !!step
-    const saveButtonDisabled = step !== 'message_stop';
+    const saveButtonDisabled = generationState !== 'complete'
     const generateButtonDisabled = !articleId
 
     useEffect(() => {
@@ -40,7 +42,10 @@ export default function GenerateClient(params) {
     const successfullyCompleted = step === 'message_stop'
 
     async function runSaveElement() {
-        await saveElement(generatorName, llmName, response, {articleId})
+        await saveElement(generatorName, llmName, response, {
+            translationId,
+            articleId
+        })
         redirect("/articles/" + articleId)
     }
 
@@ -52,6 +57,7 @@ export default function GenerateClient(params) {
         setTimeout(async () => {
             const response = await generateElement(generatorName, llmName, {
                 articleId,
+                translationId,
                 stream: true
             })
             let started = false;
@@ -143,6 +149,15 @@ export default function GenerateClient(params) {
                                      setArticleId={setArticleId}/>
             </div>
         </div>
+        {articleId && <div className="field">
+            <label className="label">Translation</label>
+            <div className="control">
+                <TranslationPickerClient
+                    articleId={articleId}
+                    translationId={translationId}
+                    setTranslationId={setTranslationId}/>
+            </div>
+        </div>}
         <div className="field">
             <label className="label">Generator</label>
             <div className="control">

@@ -69,7 +69,7 @@ export default function ArticleViewClient({
             </div>
             <div><br/>
                 <a className={'button'} href={'#'}
-                   onClick={toggleClaimsLimit}>{claimsLimit ? 'Show all claims' : 'Show fewer claims'}</a>
+                   onClick={toggleClaimsLimit}>{claimsLimit ? 'Show all ' : 'Show fewer'}</a>
             </div>
         </>
     }
@@ -136,23 +136,12 @@ export default function ArticleViewClient({
                 Generate article elements</Link>
         </div>
         <hr/>
-        <h3>Active Llm</h3>
-        <div className={'block'}>
-            <LlmPicker/>
-        </div>
         <h3>Claims</h3>
         <div className={'block'}>
             <div className={'block'}>
                 {response}
             </div>
             {claimsDescription}
-            <br/>
-            <br/>
-            <p>
-                <Link className={"button"}
-                      href={`/generate/${article.id}?generator=claims`}>
-                    {hasClaims ? 'Reg' : 'G'}enerate claims</Link>
-            </p>
             <div>
                 {hasClaims &&
                     <>
@@ -230,31 +219,6 @@ export default function ArticleViewClient({
                     Generate translation
                 </Link>
             </p>
-            <hr/>
-            {!_.isEmpty(article.translations) &&
-                <>
-                    <form
-                        action={() => performElementGeneration("headlines", {translationId: article.translations[0].id})}>
-                        <button disabled={generating} className={"button"}
-                                type={'submit'}>
-                            {generating ? "generating ... " : "Generate Headlines"}
-                        </button>
-                    </form>
-                    <br/>
-                    <>
-                        <form
-                            action={() => performElementGeneration("chat-exchange-panel-attachments", {prompt: "comic book 1"})}>
-                            <button disabled={generating} className={"button"}
-                                    type={'submit'}>
-                                {generating ? "generating ... " : "Generate Chat Exchange Attachments"}
-                            </button>
-                        </form>
-                        <hr/>
-                    </>
-
-                </>
-
-            }
             {!_.isEmpty(article.translations) &&
                 <>
                     <form action={deleteAllUnpublishedTranslationsAction}>

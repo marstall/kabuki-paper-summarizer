@@ -1,9 +1,7 @@
 import LlmGenerator from "../llm_generator";
-import Llm from "@/app/models/llm";
 import {prisma} from "@/app/lib/prisma";
 import {extractFullTextFromArticle} from "@/app/models/article";
 import {log} from "@/app/lib/logger";
-import {extractParagraphs} from "@/utils/text";
 import {loadArticle} from "@/app/lib/load-article";
 
 const USE_PARAGRAPH_BASED_CLAIMS = false;
@@ -60,20 +58,10 @@ export default class ClaimsGenerator extends LlmGenerator {
             return {answer: JSON.stringify({claims})}
         }
         else {
-            if (params.stream) {
-                const stream = await this.llm.chat(prompt, fullText, {
-                    stream: true,
-                    max_tokens: 20000
-                })
-                return stream;
-            }
-            else {
-
-                return await this.llm.chat(prompt, fullText, {
-                    stream: false,
-                    max_tokens: 20000
-                })
-            }
+            return await this.llm.chat(prompt, fullText, {
+                stream: params.stream,
+                max_tokens: 20000
+            })
         }
     }
 

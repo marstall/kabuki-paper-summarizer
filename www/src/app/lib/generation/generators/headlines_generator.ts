@@ -1,6 +1,7 @@
 import LlmGenerator from "../llm_generator";
 import Llm from "@/app/models/llm";
 import {prisma} from "@/app/lib/prisma";
+
 const headlinesPromptInstructions = `
     Given the following article, generate 2 headlines, a main headline (HED) and 
     a subheadline (DEK). These should be punchy and grabby, but fulsome to a degree in 
@@ -44,32 +45,32 @@ const headlinesPromptInstructions = `
   `
 
 export default class HeadlinesGenerator extends LlmGenerator {
-  async generate(params) {
-    const {translationId} = params
-    if (!translationId) throw ("translationId required.")
-    const translation = await prisma.translations.findUnique(({where:{id:translationId}}))
-    return await this.llm.chat(headlinesPromptInstructions, translation.body)
-  }
+    async generate(params) {
+        const {translationId} = params
+        if (!translationId) throw ("translationId required.")
+        const translation = await prisma.translations.findUnique(({where: {id: translationId}}))
+        return await this.llm.chat(headlinesPromptInstructions, translation.body, {stream: params.stream})
+    }
 
-  async save(response,params) {
-    const {translationId} = params
-    if (!translationId) throw ("translationId required.")
-    const json = JSON.parse(response.answer)
-    const translation = await prisma.translations.findUnique({
-      where:{id:translationId},
-      include: {articles:true}
-    })
-    await prisma.articles.update(
-      {
-        where: {
-          id: translation.articles.id
-        },
-        data: {
-          title:json.hed,
-          second_title:json.dek,
-          category: json.category,
-          updated_at: new Date()
-        }
-      })
-  }
+    async save(response, params) {
+        const {translationId} = params
+        if (!translationId) throw ("translationId required.")
+        const json = JSON.parse(response.answer || response)
+        const translation = await prisma.translations.findUnique({
+            where: {id: translationId},
+            include: {articles: true}
+        })
+        await prisma.articles.update(
+            {
+                where: {
+                    id: translation.articles.id
+                },
+                data: {
+                    title: json.hed,
+                    second_title: json.dek,
+                    category: json.category,
+                    updated_at: new Date()
+                }
+            })
+    }
 }
