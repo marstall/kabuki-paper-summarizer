@@ -66,35 +66,6 @@ export default class ClaimsGenerator extends LlmGenerator {
                     max_tokens: 20000
                 })
                 return stream;
-                let started = false;
-                let stopped = false;
-                let completeResponseText = ""
-                for await (const messageStreamEvent of stream) {
-                    switch (messageStreamEvent.type) {
-                        case 'content_block_delta':
-                            if (started) {
-                                const text = messageStreamEvent.delta.text
-                                console.log(text)
-                                completeResponseText += text;
-                            }
-                            break;
-                        case 'content_block_start':
-                            console.log("received content_block_start")
-                            started = true;
-                            break;
-                        case 'message_start':
-                            console.log("received message_start")
-                            break;
-                        //started=true;
-                        case 'content_block_stop':
-                            console.log("received content_block_stop")
-                            stopped = true;
-                            break;
-                        default:
-                            console.log("unknown type: " + messageStreamEvent.type)
-                    }
-                }
-                return {answer: completeResponseText}
             }
             else {
 

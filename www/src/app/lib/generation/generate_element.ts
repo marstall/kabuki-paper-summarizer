@@ -12,7 +12,6 @@ import SatoriAttachmentGenerator
     from "@/app/lib/generation/generators/satori_attachment_generator";
 import ChatExchangeAttachmentsGenerator
     from "@/app/lib/generation/generators/chat_exchange_panel_attachments_generator";
-import {json} from "node:stream/consumers";
 
 const generatorMap = {
     "headlines": HeadlinesGenerator,
@@ -33,12 +32,11 @@ export async function generateElement(elementName, llmName, params) {
         console.log("generateElement stream=false")
         const generator = await LlmGenerator.create(generatorMap[elementName], llmName)
         const response = await generator.generate(params)
-        if (params.save) {
-            log("skipped save.")
-            await generator.save(response, params)
-        }
+        log("skipped save.")
+        await generator.save(response, params)
     }
 }
+
 
 export async function saveElement(elementName, llmName, response, params) {
     const generator = await LlmGenerator.create(generatorMap[elementName], llmName)

@@ -1,9 +1,7 @@
-import BaseModel from "@/app/models/base_model";
 import {prisma} from "@/app/lib/prisma";
 import OpenAI from "openai";
 import Anthropic from "@anthropic-ai/sdk";
 import {GoogleGenAI, ThinkingLevel} from "@google/genai";
-import {log} from "@/app/lib/logger";
 import type {llms} from "@prisma/client";
 
 /*
@@ -64,6 +62,7 @@ export default class Llm {
 
     isAnthropicCompatible() {
         const compatibleProviders = ["Anthropic", "MiniMax"];
+        console.log({prismaLLM: this.prismaLlm})
         return compatibleProviders.includes(this.prismaLlm.provider);
     }
 
@@ -77,8 +76,12 @@ export default class Llm {
             model: this.prismaLlm.model,
             instructions,
             reasoning: {effort: "medium"},
+            stream: options.stream,
             input
         });
+        if (options.stream) {
+            return response;
+        }
         const answer = response?.output_text.replace(/```json|```/g, '').trim(); // deepseek wrapping json in ```json ... ```
         const {input_tokens, output_tokens, total_tokens} = response.usage
         return {
@@ -97,7 +100,11 @@ export default class Llm {
             model: this.prismaLlm.model,
             n,
             messages,
+            stream: options.stream,
         });
+        if (options.stream) {
+            return completion;
+        }
         const {
             prompt_tokens,
             completion_tokens,
@@ -151,29 +158,56 @@ export default class Llm {
     }
 
     async geminiGenerateContentTypeHandler(instructions, input, options) {
-        const response = await this.client().models.generateContent({
-            model: this.prismaLlm.model,
-            contents: input,
-            config: {
-                thinkingConfig: {
-                    thinkingLevel: ThinkingLevel.LOW,
-                },
-                systemInstruction: instructions
+        if (options.stream) {
+            const response = await this.client().models.generateContentStream({
+                model: this.prismaLlm.model,
+                contents: input,
+                config: {
+                    thinkingConfig: {
+                        thinkingLevel: ThinkingLevel.LOW,
+                    },
+                    systemInstruction: instructions
+                }
+            });
+
+            async function* generator() {
+                for await (const chunk of response) {
+                    yield {
+                        type: 'content_block_delta',
+                        delta: {'text': chunk.text}
+                    }
+                }
             }
-        });
-        const {
-            promptTokenCount,
-            candidatesTokenCount,
-            totalTokenCount,
-            thoughtsTokenCount
-        } = response.usageMetadata
-        return {
-            answer: response.text,
-            promptTokenCount,
-            candidatesTokenCount,
-            totalTokenCount,
-            thoughtsTokenCount
+
+
+            return generator()
         }
+        else {
+            const response = await this.client().models.generateContentStream({
+                model: this.prismaLlm.model,
+                contents: input,
+                config: {
+                    thinkingConfig: {
+                        thinkingLevel: ThinkingLevel.LOW,
+                    },
+                    systemInstruction: instructions
+                }
+            });
+            const {
+                promptTokenCount,
+                candidatesTokenCount,
+                totalTokenCount,
+                thoughtsTokenCount
+            } = response.usageMetadata
+            return {
+                answer: response.text,
+                promptTokenCount,
+                candidatesTokenCount,
+                totalTokenCount,
+                thoughtsTokenCount
+            }
+        }
+
     }
 
     async chat(instructions, input, options = {}): Promise<any> {

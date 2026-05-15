@@ -133,7 +133,7 @@ export default function ArticleViewClient({
         </p>
         <div className={"block"}>
             <Link className={"button"} href={`/generate/${article.id}`}>
-                Generate AI components</Link>
+                Generate article elements</Link>
         </div>
         <hr/>
         <h3>Active Llm</h3>
@@ -148,23 +148,24 @@ export default function ArticleViewClient({
             {claimsDescription}
             <br/>
             <br/>
-            <form action={() => performElementGeneration("claims")}>
-                <button disabled={generating} className={"button"}
-                        type={'submit'}>
-                    {generating ? "generating ... " : `${hasClaims ? 'Reg' : 'G'}enerate claims`}
-                </button>
-            </form>
-            {hasClaims &&
-                <>
-                    <br/>
-                    <form action={deleteClaimsAction}>
-                        <button className={"button is-danger"} type={'submit'}>
-                            Delete Claims
-                        </button>
-                    </form>
-                    <hr/>
-                </>
-            }
+            <p>
+                <Link className={"button"}
+                      href={`/generate/${article.id}?generator=claims`}>
+                    {hasClaims ? 'Reg' : 'G'}enerate claims</Link>
+            </p>
+            <div>
+                {hasClaims &&
+                    <>
+                        <br/>
+                        <form action={deleteClaimsAction}>
+                            <button className={"button is-danger"}
+                                    type={'submit'}>
+                                Delete Claims
+                            </button>
+                        </form>
+                    </>
+                }
+            </div>
             <hr/>
 
 
@@ -223,15 +224,12 @@ export default function ArticleViewClient({
                 })}
                 </tbody>
             </table>
-            {!_.isEmpty(article.claims) &&
-                <form
-                    action={() => performElementGeneration("article-translation", "eli5 with 3 examples refined")}>
-                    <button disabled={generating} className={"button"}
-                            type={'submit'}>
-                        {generating ? "generating ... " : "Generate Translation"}
-                    </button>
-                </form>
-            }
+            <p>
+                <Link className={"button"}
+                      href={`/generate/${article.id}?generator=article-translation`}>
+                    Generate translation
+                </Link>
+            </p>
             <hr/>
             {!_.isEmpty(article.translations) &&
                 <>

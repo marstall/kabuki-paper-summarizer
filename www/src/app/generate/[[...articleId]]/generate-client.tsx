@@ -1,11 +1,13 @@
 'use client'
 import styles from './generate-client.module.css'
 import LlmPickerClient from "@/app/components/llm-picker/llm-picker-client";
-import {useState} from "react";
+import {use, useEffect, useState} from "react";
 import ArticlePickerClient
     from "@/app/components/article-picker/article-picker-client";
 import StatefulPicker from "@/app/components/stateful-picker/stateful-picker";
 import {saveElement} from "@/app/lib/generation/generate_element";
+import {redirect} from "next/navigation";
+import {step} from "next/dist/experimental/testmode/playwright/step";
 
 
 export default function GenerateClient(params) {
@@ -14,6 +16,7 @@ export default function GenerateClient(params) {
     const [articleId, setArticleId] = useState(params['articleId'])
     const [generatorName, setGeneratorName] = useState(params['generator'] || "claims")
     const [step, setStep] = useState(null)
+    const [generationState, setGenerationState] = useState("ready")
     const [response, setResponse] = useState("")
     const [thinking, setThinking] = useState("")
     const [responseVisual, setResponseVisual] = useState(null);
@@ -21,28 +24,49 @@ export default function GenerateClient(params) {
     const saveButtonDisabled = step !== 'message_stop';
     const generateButtonDisabled = !articleId
 
+    useEffect(() => {
+        if (generationState === 'complete') {
+            console.log("--- response")
+            console.log(response)
+            console.log("--- response end")
+            try {
+                JSON.parse(response)
+            } catch (e) {
+                console.log({e})
+            }
+        }
+    }, [generationState]);
+
     const successfullyCompleted = step === 'message_stop'
 
     async function runSaveElement() {
         await saveElement(generatorName, llmName, response, {articleId})
+        redirect("/articles/" + articleId)
     }
 
     async function runGenerateElement() {
-        //       setTimeout(async () => {
         setStep("waiting")
         setResponse("")
-        const response = await generateElement(generatorName, llmName, {
-            articleId,
-            stream: true
-        })
-        let started = false;
-        let stopped = false;
-        setStep("waiting")
-        for await (const messageStreamEvent of response) {
-            setStep(messageStreamEvent.type)
-            switch (messageStreamEvent.type) {
-                case 'content_block_delta':
-                    if (started) {
+        setResponseVisual("")
+        setGenerationState(`sent request to ${llmName}`)
+        setTimeout(async () => {
+            const response = await generateElement(generatorName, llmName, {
+                articleId,
+                stream: true
+            })
+            let started = false;
+            let stopped = false;
+            setStep("waiting")
+            setGenerationState("response received");
+            for await (const messageStreamEvent of response) {
+                setStep(messageStreamEvent.type)
+                setGenerationState("streaming");
+
+                const type = messageStreamEvent.type || messageStreamEvent.object // openai uses object
+
+                switch (type) {
+                    case 'content_block_delta': // claude uses this one
+                        // if (started) {
                         if (messageStreamEvent.delta.type === 'thinking_delta') { // minimax does this
                             const text = messageStreamEvent.delta.thinking
                             console.log("thinking:" + text)
@@ -50,6 +74,26 @@ export default function GenerateClient(params) {
                         }
                         else {
                             const text = messageStreamEvent.delta.text
+                            if (text && text !== 'undefined') {
+                                console.log(text)
+                                setThinking("")
+                                setResponse(r => {
+                                    let ret = r + text;
+                                    ret = ret.replace(/json|```json|```/g, '').trim();
+                                    return ret;
+                                })
+                                setResponseVisual(text)
+                            }
+                        }
+                        //}
+                        break;
+                    case 'chat.completion.chunk': // openai uses this one
+                        const text = messageStreamEvent.choices[0].delta.content
+                        //                                .reduce((acc, choice)s
+                        //                                => {
+                        //     return acc + choice.delta.content
+                        // }, "");
+                        if (text && text !== 'undefined') {
                             console.log(text)
                             setThinking("")
                             setResponse(r => {
@@ -59,29 +103,30 @@ export default function GenerateClient(params) {
                             })
                             setResponseVisual(text)
                         }
-                    }
-                    break;
-                case 'content_block_start':
-                    console.log("received content_block_start")
-                    started = true;
-                    break;
-                case 'message_start':
-                    console.log("received message_start")
-                    break;
-                //started=true;
-                case 'content_block_stop':
-                    console.log("received content_block_stop")
-                    stopped = true;
-                    break;
-                case 'message_stop':
-                    console.log("received message_stop")
-                    stopped = true;
-                    break;
-                default:
-                    console.log("unknown type: " + messageStreamEvent.type)
+                        break;
+                    case 'content_block_start':
+                        console.log("received content_block_start")
+                        started = true;
+                        break;
+                    case 'message_start':
+                        console.log("received message_start")
+                        break;
+                    //started=true;
+                    case 'content_block_stop':
+                        console.log("received content_block_stop")
+                        stopped = true;
+                        break;
+                    case 'message_stop':
+                        console.log("received message_stop")
+                        stopped = true;
+                        break;
+                    default:
+                        console.log("unknown type: " + messageStreamEvent.type)
+                }
             }
-        }
-        // }, 0)
+            setGenerationState("complete");
+
+        }, 0)
     }
 
     return <div className='content'>
@@ -128,15 +173,16 @@ export default function GenerateClient(params) {
                 </button>
             </form>
         </div>
-        {step && <div className={styles.tinykeyval}>
-            <span>step</span> <span>{step || "ready"}</span>
+        {generationState !== 'ready' && <div className={styles.tinykeyval}>
+            <span>state</span> <span>{generationState} ({response.length} bytes received)</span>
         </div>}
         <div className={styles.thinking}>
             {thinking}
         </div>
         <div className={styles.response}>
-            {successfullyCompleted ?
-                <pre>{JSON.stringify(JSON.parse(response), null, 2)}</pre> : responseVisual}
+            {response}
+            {/*{generationState === 'complete' ?*/}
+            {/*    <pre>{JSON.stringify(JSON.parse(response), null, 2)}</pre> : responseVisual}*/}
         </div>
     </div>
 }
