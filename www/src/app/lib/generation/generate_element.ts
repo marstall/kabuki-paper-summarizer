@@ -32,8 +32,12 @@ export async function generateElement(elementName, llmName, params) {
         console.log("generateElement stream=false")
         const generator = await LlmGenerator.create(generatorMap[elementName], llmName)
         const response = await generator.generate(params)
-        log("skipped save.")
-        await generator.save(response, params)
+        if (params.save) {
+            return await generator.save(response, params)
+        }
+        else {
+            return response
+        }
     }
 }
 

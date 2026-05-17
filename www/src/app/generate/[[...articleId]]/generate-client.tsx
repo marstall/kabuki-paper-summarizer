@@ -1,13 +1,12 @@
 'use client'
 import styles from './generate-client.module.css'
 import LlmPickerClient from "@/app/components/llm-picker/llm-picker-client";
-import {use, useEffect, useState} from "react";
+import {useEffect, useState,} from "react";
 import ArticlePickerClient
     from "@/app/components/article-picker/article-picker-client";
 import StatefulPicker from "@/app/components/stateful-picker/stateful-picker";
 import {saveElement} from "@/app/lib/generation/generate_element";
 import {redirect} from "next/navigation";
-import {step} from "next/dist/experimental/testmode/playwright/step";
 import TranslationPickerClient
     from "@/app/components/translation-picker/translation-picker-client";
 
@@ -17,32 +16,42 @@ export default function GenerateClient(params) {
     const [articleId, setArticleId] = useState(params['articleId'])
     const [translationId, setTranslationId] = useState(params['translationId'])
     const [generatorName, setGeneratorName] = useState(params['generator'] || "claims")
-    const [step, setStep] = useState(null)
     const [generationState, setGenerationState] = useState("ready")
-    const [response, setResponse] = useState("")
+    const [responses, setResponses] = useState([])
     const [thinking, setThinking] = useState("")
-    const [responseVisual, setResponseVisual] = useState(null);
-    const showSaveButton = !!step
+    const [stream, setStream] = useState(true)
+    const [finalResponse, setFinalResponse] = useState("")
     const saveButtonDisabled = generationState !== 'complete'
     const generateButtonDisabled = !articleId
 
     useEffect(() => {
         if (generationState === 'complete') {
-            console.log("--- response")
-            console.log(response)
-            console.log("--- response end")
-            try {
-                JSON.parse(response)
-            } catch (e) {
-                console.log({e})
+            if (responses.length === 1) {
+                setFinalResponse(responses[0])
+            }
+            else {
+                let reference_id = 0
+                const claims = responses.reduce((acc, response) => {
+                    try {
+                        const json = JSON.parse(response)
+                        const claims = json.claims.map((claim) => ({
+                            ...claim,
+                            reference_id: reference_id++
+                        }))
+                        return [...acc, ...claims]
+                    } catch (e) {
+                        const errorString = "fatal error parse response json"
+                        console.log(errorString, e)
+                        window.alert(errorString)
+                    }
+                }, [])
+                setFinalResponse(JSON.stringify({claims}))
             }
         }
-    }, [generationState]);
-
-    const successfullyCompleted = step === 'message_stop'
+    }, [generationState])
 
     async function runSaveElement() {
-        await saveElement(generatorName, llmName, response, {
+        await saveElement(generatorName, llmName, finalResponse, {
             translationId,
             articleId
         })
@@ -50,91 +59,98 @@ export default function GenerateClient(params) {
     }
 
     async function runGenerateElement() {
-        setStep("waiting")
-        setResponse("")
-        setResponseVisual("")
+        console.log("runGenerateElement")
+        setResponses([])
         setGenerationState(`sent request to ${llmName}`)
         setTimeout(async () => {
             const response = await generateElement(generatorName, llmName, {
                 articleId,
                 translationId,
-                stream: true
+                stream
             })
-            let started = false;
-            let stopped = false;
-            setStep("waiting")
+
+            // Normalize to array
+            const responses = Array.isArray(response) ? response : [response];
+
             setGenerationState("response received");
-            for await (const messageStreamEvent of response) {
-                setStep(messageStreamEvent.type)
+            if (stream) {
                 setGenerationState("streaming");
+                await Promise.all(responses.map(async (stream, streamId) => {
+                    for await (const event of stream) {
+                        processStreamEvent(event, streamId)
+                    }
+                }))
 
-                const type = messageStreamEvent.type || messageStreamEvent.object // openai uses object
-
-                switch (type) {
-                    case 'content_block_delta': // claude uses this one
-                        // if (started) {
-                        if (messageStreamEvent.delta.type === 'thinking_delta') { // minimax does this
-                            const text = messageStreamEvent.delta.thinking
-                            console.log("thinking:" + text)
-                            setThinking(r => r + text)
-                        }
-                        else {
-                            const text = messageStreamEvent.delta.text
-                            if (text && text !== 'undefined') {
-                                console.log(text)
-                                setThinking("")
-                                setResponse(r => {
-                                    let ret = r + text;
-                                    ret = ret.replace(/json|```json|```/g, '').trim();
-                                    return ret;
-                                })
-                                setResponseVisual(text)
-                            }
-                        }
-                        //}
-                        break;
-                    case 'chat.completion.chunk': // openai uses this one
-                        const text = messageStreamEvent.choices[0].delta.content
-                        //                                .reduce((acc, choice)s
-                        //                                => {
-                        //     return acc + choice.delta.content
-                        // }, "");
-                        if (text && text !== 'undefined') {
-                            console.log(text)
-                            setThinking("")
-                            setResponse(r => {
-                                let ret = r + text;
-                                ret = ret.replace(/json|```json|```/g, '').trim();
-                                return ret;
-                            })
-                            setResponseVisual(text)
-                        }
-                        break;
-                    case 'content_block_start':
-                        console.log("received content_block_start")
-                        started = true;
-                        break;
-                    case 'message_start':
-                        console.log("received message_start")
-                        break;
-                    //started=true;
-                    case 'content_block_stop':
-                        console.log("received content_block_stop")
-                        stopped = true;
-                        break;
-                    case 'message_stop':
-                        console.log("received message_stop")
-                        stopped = true;
-                        break;
-                    default:
-                        console.log("unknown type: " + messageStreamEvent.type)
-                }
+                setGenerationState("complete");
             }
-            setGenerationState("complete");
+            else {
+                setGenerationState("complete")
+                setResponses([response.answer || response])
+                return;
+            }
 
-        }, 0)
+
+        }, 10)
     }
 
+    function processStreamEvent(messageStreamEvent, streamId) {
+        const type = messageStreamEvent.type || messageStreamEvent.object // openai uses object
+        switch (type) {
+            case 'content_block_delta': // claude uses this one
+                if (messageStreamEvent.delta.type === 'thinking_delta') { // minimax does this
+                    const text = messageStreamEvent.delta.thinking
+                    console.log("thinking:" + text)
+                    setThinking(r => r + text)
+                }
+                else {
+                    const text = messageStreamEvent.delta.text
+                    console.log("received text from stream " + streamId)
+                    if (text && text !== 'undefined') {
+                        console.log(text)
+                        setThinking("")
+                        setResponses(r => {
+                            const newResponses = [...r]
+                            newResponses[streamId] ||= ""
+                            newResponses[streamId] = newResponses[streamId] + text
+                            newResponses[streamId] = newResponses[streamId].replace(/json|```json|```/g, '').trim();
+                            return newResponses;
+                        })
+                    }
+                }
+                break;
+            case 'chat.completion.chunk': // openai uses this one
+                const text = messageStreamEvent.choices[0].delta.content
+                if (text && text !== 'undefined') {
+                    console.log(text)
+                    setThinking("")
+                    setResponses(r => {
+                        const newResponses = [...r]
+                        newResponses[streamId] ||= ""
+                        newResponses[streamId] = newResponses[streamId] + text
+                        newResponses[streamId] = newResponses[streamId].replace(/json|```json|```/g, '').trim();
+                        return newResponses;
+                    })
+                }
+                break;
+            case 'content_block_start':
+                console.log("received content_block_start")
+                break;
+            case 'message_start':
+                console.log("received message_start")
+                break;
+            //started=true;
+            case 'content_block_stop':
+                console.log("received content_block_stop")
+                break;
+            case 'message_stop':
+                console.log("received message_stop")
+                break;
+            default:
+                console.log("unknown type: " + messageStreamEvent.type)
+        }
+    }
+
+    const bytesReceived = responses.reduce((acc, response) => acc += response?.length, 0)
     return <div className='content'>
         <div className="field">
             <label className="label">LLM</label>
@@ -174,6 +190,13 @@ export default function GenerateClient(params) {
                 />
             </div>
         </div>
+        <div className={styles.checkboxContainer}>
+            <input onChange={() => setStream(s => !s)}
+                   checked={stream}
+                   className='checkbox'
+                   type='checkbox'/><span>stream response</span>
+        </div>
+
         <div className={styles.buttonsContainer}>
             <form action={runGenerateElement}>
                 <button disabled={generateButtonDisabled} className={"button"}
@@ -188,16 +211,14 @@ export default function GenerateClient(params) {
                 </button>
             </form>
         </div>
-        {generationState !== 'ready' && <div className={styles.tinykeyval}>
-            <span>state</span> <span>{generationState} ({response.length} bytes received)</span>
-        </div>}
+        <div className={styles.tinykeyval}>
+            <span>state</span> <span>{generationState} ({bytesReceived} bytes received)</span>
+        </div>
         <div className={styles.thinking}>
             {thinking}
         </div>
         <div className={styles.response}>
-            {response}
-            {/*{generationState === 'complete' ?*/}
-            {/*    <pre>{JSON.stringify(JSON.parse(response), null, 2)}</pre> : responseVisual}*/}
+            {finalResponse}
         </div>
     </div>
 }

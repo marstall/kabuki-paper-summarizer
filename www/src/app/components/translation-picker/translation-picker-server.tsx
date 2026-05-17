@@ -9,6 +9,5 @@ export default async function getTranslations(articleId) {
             },
             orderBy: {id: 'desc'}
         })
-    console.log({translations})
     return translations;
 }
