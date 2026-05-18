@@ -26,6 +26,7 @@ export default function GenerateClient(params) {
 
     useEffect(() => {
         if (generationState === 'complete') {
+            setResponses([])
             if (responses.length === 1) {
                 setFinalResponse(responses[0])
             }
@@ -59,8 +60,8 @@ export default function GenerateClient(params) {
     }
 
     async function runGenerateElement() {
-        console.log("runGenerateElement")
         setResponses([])
+        setFinalResponse("")
         setGenerationState(`sent request to ${llmName}`)
         setTimeout(async () => {
             const response = await generateElement(generatorName, llmName, {
@@ -69,7 +70,6 @@ export default function GenerateClient(params) {
                 stream
             })
 
-            // Normalize to array
             const responses = Array.isArray(response) ? response : [response];
 
             setGenerationState("response received");
@@ -150,7 +150,11 @@ export default function GenerateClient(params) {
         }
     }
 
-    const bytesReceived = responses.reduce((acc, response) => acc += response?.length, 0)
+    const streamingResponse = responses.map((response, i) => (<div key={i}>
+        {response}
+        <hr/>
+    </div>))
+    const bytesReceived = responses.reduce((acc, response) => acc += response?.length, 0) || finalResponse.length
     return <div className='content'>
         <div className="field">
             <label className="label">LLM</label>
@@ -218,6 +222,9 @@ export default function GenerateClient(params) {
             {thinking}
         </div>
         <div className={styles.response}>
+            {streamingResponse}
+        </div>
+        <div className={styles.finalResponse}>
             {finalResponse}
         </div>
     </div>

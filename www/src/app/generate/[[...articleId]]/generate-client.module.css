@@ -45,6 +45,14 @@
 
 .response {
     width: 100%;
+    font-style: italic;
+    background-color: white;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.finalResponse {
+    width: 100%;
     background-color: white;
     word-wrap: break-word;
     overflow-wrap: break-word;
