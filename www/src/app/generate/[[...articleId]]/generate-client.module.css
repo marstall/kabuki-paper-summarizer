@@ -73,3 +73,27 @@
     width: fit-content;
     padding: 0rem;
 }
+
+.claimsContainer {
+    margin: 0;
+}
+
+.claim {
+    font-style: italic;
+    font-family: monospace;
+    font-size: 12px;
+    color: green;
+    line-height: 1.4;
+    margin-bottom: 4px;
+}
+
+.claimSet {
+    border-bottom: 1px dotted green;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.finalResponse .claim {
+    font-style: unset;
+    color: black;
+}

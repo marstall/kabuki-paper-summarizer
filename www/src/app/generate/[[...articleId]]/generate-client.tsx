@@ -7,8 +7,40 @@ import ArticlePickerClient
 import StatefulPicker from "@/app/components/stateful-picker/stateful-picker";
 import {saveElement} from "@/app/lib/generation/generate_element";
 import {redirect} from "next/navigation";
+import {parse as parsePartialJson} from 'partial-json';
 import TranslationPickerClient
     from "@/app/components/translation-picker/translation-picker-client";
+import Markdown from "@/app/components/markdown/markdown";
+import {text} from "node:stream/consumers";
+
+function ClaimsLiveRenderer({response: responses}) {
+    return responses ? responses.map((response, i) => {
+        if (response) {
+            const json = parsePartialJson(response)
+            const numClaims = json?.claims?.length
+            return <div className={styles.claimSet} key={i}>
+                <ol className={styles.claimsContainer}>
+                    {json?.claims?.map((c, i) => <li className={styles.claim}
+                                                     key={i}>{c['claim']}</li>)}
+                </ol>
+            </div>
+        }
+    }) : "null responses"
+}
+
+function ArticleTranslationLiveRenderer({response}) {
+    //return <pre>{"fox and the \r\n confessor"}</pre>
+    return <Markdown text={response[0]}/> // <pre>{response[0]}</pre>
+}
+
+function LiveRenderer({generatorName, response}) {
+    const LiveRendererMap = {
+        "claims": ClaimsLiveRenderer,
+        "article-translation": ArticleTranslationLiveRenderer
+    }
+    const Component = LiveRendererMap[generatorName]
+    return <Component response={response}/>
+}
 
 export default function GenerateClient(params) {
     const {generateElement} = params;
@@ -43,7 +75,7 @@ export default function GenerateClient(params) {
                     } catch (e) {
                         const errorString = "fatal error parse response json"
                         console.log(errorString, e)
-                        window.alert(errorString)
+                        //window.alert(errorString)
                     }
                 }, [])
                 setFinalResponse(JSON.stringify({claims}))
@@ -112,7 +144,8 @@ export default function GenerateClient(params) {
                             const newResponses = [...r]
                             newResponses[streamId] ||= ""
                             newResponses[streamId] = newResponses[streamId] + text
-                            newResponses[streamId] = newResponses[streamId].replace(/json|```json|```/g, '').trim();
+                            //newResponses[streamId] =
+                            // newResponses[streamId].replace(/json|```json|```/g, '');
                             return newResponses;
                         })
                     }
@@ -127,7 +160,8 @@ export default function GenerateClient(params) {
                         const newResponses = [...r]
                         newResponses[streamId] ||= ""
                         newResponses[streamId] = newResponses[streamId] + text
-                        newResponses[streamId] = newResponses[streamId].replace(/json|```json|```/g, '').trim();
+                        newResponses[streamId] =
+                            newResponses[streamId].replace(/json|```json|```/g, '');
                         return newResponses;
                     })
                 }
@@ -150,10 +184,6 @@ export default function GenerateClient(params) {
         }
     }
 
-    const streamingResponse = responses.map((response, i) => (<div key={i}>
-        {response}
-        <hr/>
-    </div>))
     const bytesReceived = responses.reduce((acc, response) => acc += response?.length, 0) || finalResponse.length
     return <div className='content'>
         <div className="field">
@@ -222,10 +252,15 @@ export default function GenerateClient(params) {
             {thinking}
         </div>
         <div className={styles.response}>
-            {streamingResponse}
+            <LiveRenderer generatorName={generatorName} response={responses}/>
         </div>
         <div className={styles.finalResponse}>
-            {finalResponse}
+            <LiveRenderer generatorName={generatorName}
+                          response={[finalResponse]}/>
+
+        </div>
+        <div className={styles.articleContainer}>
+
         </div>
     </div>
 }
