@@ -301,6 +301,12 @@ figure.full {
   line-height: 1.4;
 }
 
+@media (prefers-color-scheme: dark) {
+  .infobox {
+    background: #1a1a1a;
+  }
+}
+
 /* When the rail is enabled, place these elements into the rail column. */
 .article-body:has(.pull-quote, .margin-note, .infobox) .pull-quote,
 .article-body:has(.pull-quote, .margin-note, .infobox) .margin-note,

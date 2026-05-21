@@ -35,6 +35,12 @@
   color: #444;
 }
 
+@media (prefers-color-scheme: dark) {
+  .latestPostsHeading {
+    color: #bbb;
+  }
+}
+
 @media (max-width: 600px) {
   .latestPostsHeading {
     margin-top:0rem;

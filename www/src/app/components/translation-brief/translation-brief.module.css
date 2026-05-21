@@ -27,9 +27,21 @@
   padding-bottom: 1rem;
 }
 
+@media (prefers-color-scheme: dark) {
+  .container {
+    border-bottom-color: #444;
+  }
+}
+
 .expandedContainer {
   padding-bottom: 1rem;
   border-bottom: 4px solid lightgray;
+}
+
+@media (prefers-color-scheme: dark) {
+  .expandedContainer {
+    border-bottom-color: #444;
+  }
 }
 
 .container h1 {
@@ -41,6 +53,12 @@
 .secondTitle {
   font-family: var(--ui-font);
   color: #333;
+}
+
+@media (prefers-color-scheme: dark) {
+  .secondTitle {
+    color: #ccc;
+  }
 }
 
 .supertitle {
@@ -59,8 +77,20 @@
   margin-bottom: 0.25rem;
 }
 
+@media (prefers-color-scheme: dark) {
+  .dateline {
+    color: #888;
+  }
+}
+
 .dateline a {
   color: #999;
+}
+
+@media (prefers-color-scheme: dark) {
+  .dateline a {
+    color: #888;
+  }
 }
 
 .readMoreLink {

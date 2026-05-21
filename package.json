@@ -1,0 +1,5 @@
+{
+	"dependencies": {
+		"partial-json": "^0.1.7"
+	}
+}

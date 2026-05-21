@@ -33,6 +33,11 @@
   color: green;
 }
 
+@media (prefers-color-scheme: dark) {
+  .logo, .logo a {
+    color: rgb(100, 200, 85);
+  }
+}
 
 .admin_logo {
   color: green;
@@ -47,12 +52,24 @@
   color: green;
 }
 
+@media (prefers-color-scheme: dark) {
+  .admin_logo, .admin_logo a {
+    color: rgb(100, 200, 85);
+  }
+}
+
 .slogan {
   margin-top:-7px;
   color: darkseagreen;
   font-family: var(--body-font);
   font-size: clamp(16px, 4vw, 28px);
   line-height: 1.1;
+}
+
+@media (prefers-color-scheme: dark) {
+  .slogan {
+    color: rgb(150, 220, 140);
+  }
 }
 
 

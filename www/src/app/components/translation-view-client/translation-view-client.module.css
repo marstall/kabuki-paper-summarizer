@@ -25,9 +25,21 @@
   color: #666666;
 }
 
+@media (prefers-color-scheme: dark) {
+  .container h2 {
+    color: #999;
+  }
+}
+
 .secondTitle {
   font-family: var(--ui-font);
   color: #333;
+}
+
+@media (prefers-color-scheme: dark) {
+  .secondTitle {
+    color: #ccc;
+  }
 }
 
 .highlight {
@@ -39,6 +51,13 @@
   padding: 2px;
   padding-left: 7px;
   border-radius: 0px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .highlight {
+    color: #bbb;
+    background-color: rgba(255, 255, 221, 0.15);
+  }
 }
 
 .highlight .icon {

@@ -42,6 +42,13 @@
     border-radius: 4px;
 }
 
+@media (prefers-color-scheme: dark) {
+    .superheader a {
+        background-color: rgba(173, 216, 230, 0.3);
+        color: #e0e0e0;
+    }
+}
+
 @media (max-width: 600px) {
     .superheader {
         display: none;
@@ -89,6 +96,13 @@
     :root {
         --background: #0a0a0a;
         --foreground: #ededed;
+        --text-main: #e0e0e0;
+        --text-emphasized: #ffffff;
+        --text-muted: #999;
+        --rule: #333;
+        --accent: #4d9eff;
+        --accent-2: rgb(100, 200, 85);
+        --link: rgb(255, 150, 140);
     }
 }
 
@@ -126,11 +140,11 @@ body {
 }
 
 a:link {
-    color: black;
+    color: var(--foreground);
 }
 
 a:visited {
-    color: black;
+    color: var(--foreground);
 }
 
 
@@ -142,6 +156,13 @@ a:visited {
 
 .subscribeBar {
     background-color: #ffc;
+}
+
+@media (prefers-color-scheme: dark) {
+    .subscribeBar {
+        background-color: #1a1a1a;
+        border-bottom: 1px solid #333;
+    }
 }
 
 @media (max-width: 600px) {
@@ -188,20 +209,32 @@ a {
 }
 
 .translation-container p:hover {
-    background-color: #ffc;
+    background-color: rgba(255, 255, 204, 0.2);
+}
+
+@media (prefers-color-scheme: dark) {
+    .translation-container p:hover {
+        background-color: rgba(255, 255, 204, 0.1);
+    }
 }
 
 .above-h1 {
     font-size: smaller;
     text-transform: uppercase;
-    color: #cccccc;
+    color: var(--text-muted);
 }
 
 .article-plain a {
-    color: black;
+    color: var(--foreground);
     text-decoration: underline;
 }
 
 .article-plain {
     background-color: lightblue;
+}
+
+@media (prefers-color-scheme: dark) {
+    .article-plain {
+        background-color: rgba(173, 216, 230, 0.2);
+    }
 }
