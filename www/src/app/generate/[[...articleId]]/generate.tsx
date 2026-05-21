@@ -1,5 +1,7 @@
 import GenerateClient from "./generate-client";
 import {generateElement} from "@/app/lib/generation/generate_element"
+import {loadArticle} from "@/app/lib/load-article";
+import {loadTranslation} from "@/app/lib/load-translation";
 
 
 // async function generateElement_(elementName, llmName = "claude", params = {}) {
@@ -16,9 +18,13 @@ import {generateElement} from "@/app/lib/generation/generate_element"
 // }
 
 export default async function Generate({params, searchParams}) {
-    const {articleId: articleIdArray} = await params;
-    const {llm, generator} = await searchParams;
+    const _params = await params;
+    const {articleId: articleIdArray} = _params;
+    const {translationId, llm, generator} = await searchParams;
     const articleId = articleIdArray?.[0];
+    console.log({_params, translationId})
+    const article = articleId ? await loadArticle(articleId) : null;
+    const translation = translationId ? await loadTranslation(translationId) : null;
     return <section className="section">
         <div className="container">
             <h1 className="title">
@@ -44,7 +50,8 @@ export default async function Generate({params, searchParams}) {
            Let's start with the article and llm dropdowns.
 
         */}
-                <GenerateClient articleId={articleId}
+                <GenerateClient article={article}
+                                translation={translation}
                                 llm={llm}
                                 generator={generator}
                                 generateElement={generateElement}/>

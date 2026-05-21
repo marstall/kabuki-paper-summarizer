@@ -1,5 +1,8 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Next client debug" type="JavascriptDebugType" uri="http://localhost:3000">
+    <mapping url="webpack://_N_E" local-file="$PROJECT_DIR$" />
+    <mapping url="webpack://www" local-file="$PROJECT_DIR$" />
+    <mapping url="file://$PROJECT_DIR$" local-file="$PROJECT_DIR$" />
     <method v="2" />
   </configuration>
 </component>

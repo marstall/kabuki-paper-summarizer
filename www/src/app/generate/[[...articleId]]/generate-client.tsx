@@ -1,7 +1,7 @@
 'use client'
 import styles from './generate-client.module.css'
 import LlmPickerClient from "@/app/components/llm-picker/llm-picker-client";
-import {useEffect, useState,} from "react";
+import {useEffect, useState} from "react";
 import ArticlePickerClient
     from "@/app/components/article-picker/article-picker-client";
 import StatefulPicker from "@/app/components/stateful-picker/stateful-picker";
@@ -10,13 +10,13 @@ import {redirect} from "next/navigation";
 import {parse as parsePartialJson} from 'partial-json';
 import TranslationPickerClient
     from "@/app/components/translation-picker/translation-picker-client";
-import Markdown from "@/app/components/markdown/markdown";
-import {text} from "node:stream/consumers";
+import TranslationViewClient
+    from "@/app/components/translation-view-client/translation-view-client";
 
 function ClaimsLiveRenderer({response: responses}) {
     return responses ? responses.map((response, i) => {
         if (response) {
-            const json = parsePartialJson(response)
+            const json = parsePartialJson(response);
             const numClaims = json?.claims?.length
             return <div className={styles.claimSet} key={i}>
                 <ol className={styles.claimsContainer}>
@@ -28,33 +28,93 @@ function ClaimsLiveRenderer({response: responses}) {
     }) : "null responses"
 }
 
-function ArticleTranslationLiveRenderer({response}) {
+function ArticleTranslationLiveRenderer({
+    article,
+    translation,
+    llmName,
+    response: responses
+}) {
+    const _response = responses[0]
+    let _translation = translation ? {...translation} : null
     //return <pre>{"fox and the \r\n confessor"}</pre>
-    return <Markdown text={response[0]}/> // <pre>{response[0]}</pre>
+    console.log({ArticleTranslationLiveRendererArticle: article})
+    // add headlines if they were part of the response
+    if (_translation) { // if the translation is here, it means it was
+        // selected in the dropdown and we're probably generating another
+        // piece of translation-dependent metadata,
+
+        // like headlines
+        try {
+            const responseJSON = parsePartialJson(_response);
+            if (responseJSON['hed']) _translation.title = responseJSON['hed']
+            if (responseJSON['dek']) _translation.second_title = responseJSON['dek']
+
+            // or chat-exchange-panels
+            if (responseJSON['panels']) {
+                _translation.attachments = responseJSON['panels'].map((panel, i) => {
+                    return {
+                        llm_id: llmName,
+                        type: 'component',
+                        component: 'chat-exchange-panel',
+                        params: panel,
+                        article_id: article.id,
+                        order: i,
+                        active: true
+                    }
+                })
+            }
+        } catch (e) {
+
+        }
+    }
+    else {
+        _translation = {
+            body: _response,
+            claims: article.claims,
+            article
+        }
+    }
+    return article && <TranslationViewClient
+        showHeader={false}
+        translation={_translation}
+        article={article}
+        llm={llmName}
+        promptTitle={"prompt"}
+        showAttachmentCaptions={false}
+        //attachments={_.get(translation,'articles.attachments',[])}
+        attachments={_translation.attachments}
+    />
+    // return <article>
+    //     <div className={styles.articleTranslation}>
+    //         <Markdown text={response[0]}/>
+    //     </div>
+    // </article>
 }
 
-function LiveRenderer({generatorName, response}) {
+function LiveRenderer(params) {
     const LiveRendererMap = {
+        "headlines": ArticleTranslationLiveRenderer,
         "claims": ClaimsLiveRenderer,
-        "article-translation": ArticleTranslationLiveRenderer
+        "article-translation": ArticleTranslationLiveRenderer,
+        "chat-exchange-panel-attachments": ArticleTranslationLiveRenderer
     }
-    const Component = LiveRendererMap[generatorName]
-    return <Component response={response}/>
+    const Component = LiveRendererMap[params['generatorName']]
+    return <Component {...params}/>
 }
 
 export default function GenerateClient(params) {
     const {generateElement} = params;
-    const [llmName, setLlmName] = useState(params['llm'] || "claude-haiku-latest")
-    const [articleId, setArticleId] = useState(params['articleId'])
-    const [translationId, setTranslationId] = useState(params['translationId'])
-    const [generatorName, setGeneratorName] = useState(params['generator'] || "claims")
+    const [llmName, setLlmName] = useState(params['llm'] || "deepseek")
+    const [article, setArticle] = useState(params['article'])
+    const [translation, setTranslation] = useState(params['translation'])
+    const [generatorName, setGeneratorName] = useState(params['generator'] || "article-translation")
     const [generationState, setGenerationState] = useState("ready")
     const [responses, setResponses] = useState([])
     const [thinking, setThinking] = useState("")
     const [stream, setStream] = useState(true)
     const [finalResponse, setFinalResponse] = useState("")
     const saveButtonDisabled = generationState !== 'complete'
-    const generateButtonDisabled = !articleId
+    const generateButtonDisabled = !article
 
     useEffect(() => {
         if (generationState === 'complete') {
@@ -83,12 +143,17 @@ export default function GenerateClient(params) {
         }
     }, [generationState])
 
+    useEffect(() => {
+        setFinalResponse("")
+        setResponses([])
+    }, [translation, generatorName, article, llmName]);
+
     async function runSaveElement() {
         await saveElement(generatorName, llmName, finalResponse, {
-            translationId,
-            articleId
+            translationId: translation.id,
+            articleId: article.id
         })
-        redirect("/articles/" + articleId)
+        redirect("/articles/" + article.id)
     }
 
     async function runGenerateElement() {
@@ -97,8 +162,8 @@ export default function GenerateClient(params) {
         setGenerationState(`sent request to ${llmName}`)
         setTimeout(async () => {
             const response = await generateElement(generatorName, llmName, {
-                articleId,
-                translationId,
+                articleId: article.id,
+                translationId: translation?.id,
                 stream
             })
 
@@ -120,8 +185,6 @@ export default function GenerateClient(params) {
                 setResponses([response.answer || response])
                 return;
             }
-
-
         }, 10)
     }
 
@@ -136,9 +199,7 @@ export default function GenerateClient(params) {
                 }
                 else {
                     const text = messageStreamEvent.delta.text
-                    console.log("received text from stream " + streamId)
                     if (text && text !== 'undefined') {
-                        console.log(text)
                         setThinking("")
                         setResponses(r => {
                             const newResponses = [...r]
@@ -154,7 +215,6 @@ export default function GenerateClient(params) {
             case 'chat.completion.chunk': // openai uses this one
                 const text = messageStreamEvent.choices[0].delta.content
                 if (text && text !== 'undefined') {
-                    console.log(text)
                     setThinking("")
                     setResponses(r => {
                         const newResponses = [...r]
@@ -195,17 +255,26 @@ export default function GenerateClient(params) {
         <div className="field">
             <label className="label">Article</label>
             <div className="control">
-                <ArticlePickerClient articleId={articleId}
-                                     setArticleId={setArticleId}/>
+                <ArticlePickerClient
+                    articleId={article?.id}
+                    setArticle={(article) => setArticle(article)}/>
+                {article && <div className={styles.pills}>
+                    <div className={styles.pill}>
+                        claims: {article?.claims?.claims?.length || 0}
+                    </div>
+                    <div className={styles.pill}>
+                        attachments: {article.attachments?.length || 0}
+                    </div>
+                </div>}
             </div>
         </div>
-        {articleId && <div className="field">
+        {article && <div className="field">
             <label className="label">Translation</label>
             <div className="control">
                 <TranslationPickerClient
-                    articleId={articleId}
-                    translationId={translationId}
-                    setTranslationId={setTranslationId}/>
+                    articleId={article.id}
+                    translationId={translation?.id}
+                    setTranslation={setTranslation}/>
             </div>
         </div>}
         <div className="field">
@@ -252,15 +321,21 @@ export default function GenerateClient(params) {
             {thinking}
         </div>
         <div className={styles.response}>
-            <LiveRenderer generatorName={generatorName} response={responses}/>
+            {responses && responses.length > 0 &&
+                <LiveRenderer generatorName={generatorName}
+                              article={article}
+                              translation={translation}
+                              llmName={llmName}
+                              response={responses}/>}
         </div>
         <div className={styles.finalResponse}>
-            <LiveRenderer generatorName={generatorName}
-                          response={[finalResponse]}/>
-
+            {finalResponse && finalResponse.length > 0 &&
+                <LiveRenderer generatorName={generatorName}
+                              translation={translation}
+                              article={article}
+                              llmName={llmName}
+                              response={[finalResponse]}/>}
         </div>
-        <div className={styles.articleContainer}>
 
-        </div>
     </div>
 }

@@ -45,7 +45,7 @@
 
 .response {
     width: 100%;
-    font-style: italic;
+    font-style: normal;
     background-color: white;
     word-wrap: break-word;
     overflow-wrap: break-word;
@@ -61,6 +61,23 @@
 .buttonsContainer {
     display: flex;
     gap: 0.5rem;
+}
+
+.pills {
+    display: flex;
+    flex-direction: row;
+}
+
+.pill {
+    background-color: lightblue;
+    padding: 2px 4px;
+    margin: 4px 4px 0px 0px;
+    border-radius: 4px;
+    font-size: 10px;
+    text-transform: uppercase;
+    color: black;
+    font-weight: bold;
+    width: fit-content;
 }
 
 .checkboxContainer {
@@ -96,4 +113,12 @@
 .finalResponse .claim {
     font-style: unset;
     color: black;
+}
+
+.articleTranslation {
+    font-style: unset;
+    font-family: "charter" !important;
+    border: 1px solid lightblue;
+    margin-bottom: 1rem;
+    font-family: var(--body-font);
 }

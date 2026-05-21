@@ -6,7 +6,7 @@ import getTranslations from "./translation-picker-server";
 export default function TranslationPickerClient({
     articleId,
     translationId,
-    setTranslationId
+    setTranslation
 }) {
     const [translations, setTranslations] = useState([]);
     useEffect(() => {
@@ -19,7 +19,7 @@ export default function TranslationPickerClient({
     return <select
         className='select'
         value={translationId}
-        onChange={(e) => setTranslationId(e.target.value)}
+        onChange={(e) => setTranslation(translations.find(a => `${a.id}` === e.target.value))}
         name={'article_id'}>
         <option value={""}></option>
         {translations.map(translation => {

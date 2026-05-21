@@ -11,7 +11,7 @@
     "db:generate": "prisma generate",
     "postinstall": "prisma generate",
     "dev": "next dev",
-    "dev:debug": "NODE_OPTIONS='--inspect' next dev",
+    "dev:debug": "NODE_OPTIONS='--inspect=9230' next dev --webpack",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
@@ -39,6 +39,7 @@
     "react": "19.2.3",
     "react-cookie": "^8.0.1",
     "react-dom": "19.2.3",
+    "superjson": "^2.2.6",
     "underscore": "^1.13.7",
     "yargs": "^17.7.2"
   },

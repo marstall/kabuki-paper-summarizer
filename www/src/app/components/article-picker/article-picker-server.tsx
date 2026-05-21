@@ -12,6 +12,7 @@ export default async function getArticles() {
                             {NOT: {type: 'plain'}}
                         ]
                 },
-            orderBy: {id: 'desc'}
+            orderBy: {id: 'desc'},
+            include: {attachments: {where: {active: true}}}
         })
 }

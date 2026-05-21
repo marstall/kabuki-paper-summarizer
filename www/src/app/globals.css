@@ -3,6 +3,10 @@
     src: url(/fonts/charter_regular-webfont.woff);
 }
 
+.poop {
+    background-color: saddlebrown;
+}
+
 /*@font-face {*/
 /*  font-family: playfair;*/
 /*  src: url(/fonts/PlayfairDisplay-VariableFont_wght.ttf);*/
@@ -133,6 +137,7 @@ a:visited {
 .pageContent {
     padding-top: 4vw;
     padding-bottom: 4vw;
+
 }
 
 .subscribeBar {

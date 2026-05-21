@@ -1,5 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Next server debug" type="NodeJSRemoteDebugConfigurationType" path-mappings="[]" port="9229" host="localhost">
+  <configuration default="false" name="Next server debug" type="NodeJSRemoteDebugConfigurationType" port="9230" host="localhost">
+    <path-mappings>
+      <mapping local-root="$PROJECT_DIR$" remote-root="/Users/marstall/kabuki-paper-summarizer/www" />
+    </path-mappings>
     <method v="2" />
   </configuration>
 </component>

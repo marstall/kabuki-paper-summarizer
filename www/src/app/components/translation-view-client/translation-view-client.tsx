@@ -1,14 +1,15 @@
 'use client'
+import superjson from 'superjson';
 import TranslationSentenceBySentence
-  from "@/app/components/translation-sentence-by-sentence/translation-sentence-by-sentence"
+    from "@/app/components/translation-sentence-by-sentence/translation-sentence-by-sentence"
 import {shortDateTime, shortDate} from "@/utils/date";
 import Attachment from "@/app/components/attachment/attachment";
 import NavTabs from "@/app/components/nav-panel/nav-tabs";
 import {
-  initialState,
-  translationReducer,
-  TranslationContext,
-  TranslationDispatchContext
+    initialState,
+    translationReducer,
+    TranslationContext,
+    TranslationDispatchContext
 } from "@/app/components/translation-view-client/translation-context";
 
 import styles from './translation-view-client.module.css'
@@ -21,95 +22,128 @@ import Header from "@/app/components/header/header";
 import AdminSection from '@/app/components/admin-section/admin-section'
 import Link from "next/link";
 import EditableText from "@/app/components/editable-text/editable-text";
-import regenerateHeadlines from "@/app/components/translation-view-client/regenerate-headlines";
+import regenerateHeadlines
+    from "@/app/components/translation-view-client/regenerate-headlines";
 import SubscribeForm from "@/app/components/subscribe-form/subscribe-form";
-export default function TranslationViewClient({translation, promptTitle,article, llm, attachments}) {
-  // translation.claims.claims.map((claim,i)=>{
-  //   console.log(":::::: "+i+" ::::::")
-  //   for (const basedOnText of claim.basedOnText) {
-  //     console.log("- "+basedOnText)
-  //   }
-  //   console.log("")
-  // })
-  const numAttachments = attachments.length;
-  const [state, dispatch] = useReducer(translationReducer, initialState)
 
-  function dismissOriginalOverlay() {
-    dispatch({
-      type: 'hideOriginalOverlay'
-    })
-  }
+export default function TranslationViewClient({
+    translation, promptTitle, article, llm, attachments, showAttachmentCaptions,
+    showHeader = true
+}) {
+    // translation.claims.claims.map((claim,i)=>{
+    //   console.log(":::::: "+i+" ::::::")
+    //   for (const basedOnText of claim.basedOnText) {
+    //     console.log("- "+basedOnText)
+    //   }
+    //   console.log("")
+    // })
+    const numAttachments = attachments?.length;
+    const [state, dispatch] = useReducer(translationReducer, initialState)
 
-  async function regenHeadlines() {
-    await regenerateHeadlines(translation.id)
-    window.location.reload();
-  }
+    function dismissOriginalOverlay() {
+        dispatch({
+            type: 'hideOriginalOverlay'
+        })
+    }
 
-  return <TranslationContext.Provider value={state}>
-    <TranslationDispatchContext.Provider value={dispatch}>
-      <div>
-        {/*<img src={`/api/translation/${translation.id}/share-image`}/>*/}
-        <Header minimal={true}/>
-        <article >
-          <header className="article-header">
-            <div className={'article-supertitle'}>
-              <EditableText id={article.id} model='article' field="category">
-                {article.category}
-              </EditableText>
+    async function regenHeadlines() {
+        await regenerateHeadlines(translation.id)
+        window.location.reload();
+    }
+
+    return <TranslationContext.Provider value={state}>
+        <TranslationDispatchContext.Provider value={dispatch}>
+            <div>
+                {/*<img src={`/api/translation/${translation.id}/share-image`}/>*/}
+                {showHeader && <Header minimal={true}/>}
+                <article>
+                    <header className="article-header">
+                        <div className={'article-supertitle'}>
+                            <EditableText id={article.id} model='article'
+                                          field="category">
+                                {article.category}
+                            </EditableText>
+                        </div>
+
+                        <h1>
+                            <EditableText id={article.id} model='article'
+                                          field="title">
+                                {article.title || article.original_title}
+                            </EditableText>
+                        </h1>
+                        <div className={styles.secondTitle}><EditableText
+                            id={article.id} model='article'
+                            field="second_title">
+                            {article.second_title}
+                        </EditableText>
+                        </div>
+                        <div className="byline">
+                            This is an AI-written plain-English version of
+                            the {article.year} paper <span
+                            className={styles.articleLink}>&ldquo;<a
+                            href={article.url}>{article.original_title}</a>&rdquo;</span> by {article.attribution.trim()}.
+                            {/*We use a variety of tactics to reduce errors and hallucinations. However, it's possible for some to creep*/}
+                            {/*through, so don't take this as gospel.*/}
+                            {/*<br/>Written by {llm.provider} AI. Edited by <span*/}
+                            {/*  className={styles.meLink}><a href={'https://www.linkedin.com/in/chrismarstall/'}>KabukiDadChris</a></span>.*/}
+                            {/*Art by Gus.*/}
+                            <AdminSection span={true}>
+                                <span> prompt: '{promptTitle}'.</span> &nbsp;
+                                <Link href={'#'} onClick={regenHeadlines}>regenerate
+                                    headlines</Link>
+                            </AdminSection>
+                        </div>
+                    </header>
+                    <div className="content">
+                        {/*<div className={styles.highlight}><span className={styles.icon}>👉</span>Click on an individual sentence to see its basis in the {article.year} study.</div>*/}
+                        {/*<NavTabs/>*/}
+                        {attachments?.length > 0 &&
+                            <Attachment key={attachments[0].id}
+                                        showCaption={showAttachmentCaptions}
+                                        article={translation?.article}
+                                        attachment={attachments[0]}/>}
+
+                        {state.selectedTab === 0 &&
+                            <TranslationSentenceBySentence
+                                showAttachmentCaptions={showAttachmentCaptions}
+                                translation={translation}
+                                attachments={attachments}/>}
+                        {state.selectedTab == 1 && <ClaimsTab article={article}
+                                                              translation={translation}/>}
+                        {state.selectedTab == 2 &&
+                            <OriginalTab article={article}
+                                         translation={translation}/>}
+                        <div style={{
+                            fontFamily: 'Arial',
+                            fontSize: 12,
+                            opacity: "75%"
+                        }}>generated by by {llm.model}
+                        </div>
+                    </div>
+                    <AdminSection>
+                        <div><Link className='button is-primary'
+                                   href={`/articles/${article.id}`}>view
+                            article</Link></div>
+                        <div><Link className='button is-primary'
+                                   href={`/articles/${article.id}/edit`}>edit
+                            article</Link></div>
+                        <div><Link className='button is-primary'
+                                   href={`/translations/${translation.id}/edit`}>edit
+                            translation</Link></div>
+                        {/*<div>{attachment && <Link className='button is-primary' href={`/articles/${article.id}/attachments/${attachment.id}`}>edit*/}
+                        {/*  attachment</Link>}</div>*/}
+                    </AdminSection>
+                    <SubscribeForm/>
+                </article>
             </div>
+            {state.originalOverlayShown &&
+                <Overlay dismiss={dismissOriginalOverlay}>
+                    <div className="content">
+                        <Article highlightClaims={state.selectedClaims}
+                                 key={article.id} article={article}/>
+                    </div>
+                </Overlay>}
 
-            <h1>
-              <EditableText id={article.id} model='article' field="title">
-                {article.title || article.original_title}
-              </EditableText>
-            </h1>
-            <div className={styles.secondTitle}><EditableText id={article.id} model='article' field="second_title">
-              {article.second_title}
-            </EditableText>
-            </div>
-            <div className="byline">
-              This is an AI-written plain-English version of the {article.year} paper <span className={styles.articleLink}>&ldquo;<a
-              href={article.url}>{article.original_title}</a>&rdquo;</span> by {article.attribution.trim()}.
-              {/*We use a variety of tactics to reduce errors and hallucinations. However, it's possible for some to creep*/}
-              {/*through, so don't take this as gospel.*/}
-              {/*<br/>Written by {llm.provider} AI. Edited by <span*/}
-              {/*  className={styles.meLink}><a href={'https://www.linkedin.com/in/chrismarstall/'}>KabukiDadChris</a></span>.*/}
-              {/*Art by Gus.*/}
-              <AdminSection span={true}>
-                <span> prompt: '{promptTitle}'.</span> &nbsp;
-                <Link href={'#'} onClick={regenHeadlines}>regenerate headlines</Link>
-              </AdminSection>
-            </div>
-          </header>
-          <div className="content">
-            {/*<div className={styles.highlight}><span className={styles.icon}>👉</span>Click on an individual sentence to see its basis in the {article.year} study.</div>*/}
-            {/*<NavTabs/>*/}
-            {attachments.length>0 && <Attachment key={attachments[0].id} article={translation?.article} attachment={attachments[0]}/>}
-
-            {state.selectedTab === 0 &&
-              <TranslationSentenceBySentence translation={translation} attachments={attachments}/>}
-            {state.selectedTab == 1 && <ClaimsTab article={article} translation={translation}/>}
-            {state.selectedTab == 2 && <OriginalTab article={article} translation={translation}/>}
-            <div style={{fontFamily: 'Arial', fontSize: 12, opacity: "75%"}}>generated by by {llm.model}
-            </div>
-          </div>
-          <AdminSection>
-            <div><Link className='button is-primary' href={`/articles/${article.id}`}>view article</Link></div>
-            <div><Link className='button is-primary' href={`/articles/${article.id}/edit`}>edit article</Link></div>
-            <div><Link className='button is-primary' href={`/translations/${translation.id}/edit`}>edit
-              translation</Link></div>
-            {/*<div>{attachment && <Link className='button is-primary' href={`/articles/${article.id}/attachments/${attachment.id}`}>edit*/}
-            {/*  attachment</Link>}</div>*/}
-          </AdminSection>
-            <SubscribeForm/>
-        </article>
-      </div>
-      {state.originalOverlayShown && <Overlay dismiss={dismissOriginalOverlay}>
-        <div className="content">
-          <Article highlightClaims={state.selectedClaims} key={article.id} article={article}/>
-        </div>
-      </Overlay>}
-
-    </TranslationDispatchContext.Provider>
-  </TranslationContext.Provider>
+        </TranslationDispatchContext.Provider>
+    </TranslationContext.Provider>
 }

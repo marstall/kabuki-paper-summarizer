@@ -8,26 +8,26 @@ import {Fragment} from "react";
 import Attachment from "@/app/components/attachment/attachment";
 
 function extractAnnotatedSentences(paragraph) {
-  const matches = [...paragraph.matchAll(/(.+?\.)\s*(\(\d[^)]*\))?/g)];
-  if ((paragraph?.length > 0) && matches.length == 0) {
-    return [[paragraph, ""]];
-  }
-  return matches.map((match) => {
-    return [match[1], match[2]]
-  })
+    const matches = [...paragraph.matchAll(/(.+?\.)\s*(\(\d[^)]*\))?/g)];
+    if ((paragraph?.length > 0) && matches.length == 0) {
+        return [[paragraph, ""]];
+    }
+    return matches.map((match) => {
+        return [match[1], match[2]]
+    })
 }
 
 function parseAnnotatedSentence(paragraphText) { // returns ["bare sentence",[2,3]]
-  const matches = paragraphText.match(/(.+)(?:\s)(\((?:\d.*)\))$/)
-  if (!matches) {
-    console.log("no matches")
-    return null;
-  }
-  const text = matches[1]
-  const parens = matches[2]
+    const matches = paragraphText.match(/(.+)(?:\s)(\((?:\d.*)\))$/)
+    if (!matches) {
+        console.log("no matches")
+        return null;
+    }
+    const text = matches[1]
+    const parens = matches[2]
 
-  const claimIndexes = parens.match(/\d+/g).map(id => Number(id))
-  return [text, claimIndexes]
+    const claimIndexes = parens.match(/\d+/g).map(id => Number(id))
+    return [text, claimIndexes]
 }
 
 
@@ -67,74 +67,80 @@ function parseAnnotatedSentence(paragraphText) { // returns ["bare sentence",[2,
  */
 
 function Paragraph({index, translation, processedParagraph}) {
-  if (processedParagraph.length == 0) return null;
-  // const subheader = translation.subheaders[index+1];
-  // const definition = translation.definitions[index];
-  const pullquote = translation.pull_quote_index === index && translation.pull_quote;
+    if (processedParagraph.length == 0) return null;
+    // const subheader = translation.subheaders[index+1];
+    // const definition = translation.definitions[index];
+    const pullquote = translation.pull_quote_index === index && translation.pull_quote;
 
-  return <div style={{marginBottom: "1em"}}>
-    {pullquote && <aside className="pull-quote">
-      &ldquo;{pullquote}&rdquo;
-    </aside>
-    }
-    {/*<div className={'article-subheader'}>{subheader}</div>*/}
-    {processedParagraph.map(([text, claimIndexes], i) => <Sentence
-      key={i}
-      paragraphIndex={index}
-      sentenceIndex={i}
-      translation={translation}
-      sentenceText={text}
-      sentenceClaimIndexes={claimIndexes}/>)}
+    return <div style={{marginBottom: "1em"}}>
+        {pullquote && <aside className="pull-quote">
+            &ldquo;{pullquote}&rdquo;
+        </aside>
+        }
+        {/*<div className={'article-subheader'}>{subheader}</div>*/}
+        {processedParagraph.map(([text, claimIndexes], i) => <Sentence
+            key={i}
+            paragraphIndex={index}
+            sentenceIndex={i}
+            translation={translation}
+            sentenceText={text}
+            sentenceClaimIndexes={claimIndexes}/>)}
 
-  </div>
+    </div>
 }
 
-export default function TranslationSentenceBySentence({translation,
-                                                        showSubscribeForm = true,
-                                                        numParagraphsToShow = null,
-                                                        attachments=[]}) {
-  const unprocessedParagraphs = extractParagraphs(translation?.body)
-  if (!unprocessedParagraphs||unprocessedParagraphs.length==0) return null;
-  const processedParagraphsArray = []
-  for (const [i, unprocessedParagraph] of unprocessedParagraphs.entries()) {
-    if (numParagraphsToShow === null || numParagraphsToShow && i <= numParagraphsToShow) {
-      const processedSentences = []
-      const sentencesEntries = extractAnnotatedSentences(unprocessedParagraph) // [['s','(1,2)'],etc.]
-      for (const sentenceEntry of sentencesEntries) {
-        const text = sentenceEntry[0];
-        const parens = sentenceEntry[1];
-        const claimIndexes = parens?.match(/\d+/g)?.map(id => Number(id))
-        processedSentences.push([text, claimIndexes])
-      }
-      processedParagraphsArray.push(processedSentences)
+export default function TranslationSentenceBySentence({
+    translation,
+    showSubscribeForm = true,
+    showAttachmentCaptions = true,
+    numParagraphsToShow = null,
+    attachments = []
+}) {
+    const unprocessedParagraphs = extractParagraphs(translation?.body)
+    if (!unprocessedParagraphs || unprocessedParagraphs.length == 0) return null;
+    const processedParagraphsArray = []
+    for (const [i, unprocessedParagraph] of unprocessedParagraphs.entries()) {
+        if (numParagraphsToShow === null || numParagraphsToShow && i <= numParagraphsToShow) {
+            const processedSentences = []
+            const sentencesEntries = extractAnnotatedSentences(unprocessedParagraph) // [['s','(1,2)'],etc.]
+            for (const sentenceEntry of sentencesEntries) {
+                const text = sentenceEntry[0];
+                const parens = sentenceEntry[1];
+                const claimIndexes = parens?.match(/\d+/g)?.map(id => Number(id))
+                processedSentences.push([text, claimIndexes])
+            }
+            processedParagraphsArray.push(processedSentences)
+        }
     }
-  }
-  // so we now have an array of paragraphs, each containing an array of sentences.
-  const len = processedParagraphsArray.length;
-  return processedParagraphsArray.map((processedParagraph, i) => {
-      return <Fragment key={i}>
-        {i==0 && attachments.length>1 &&
-          <Attachment key={attachments[1].id}
-                      article={translation?.article}
-                      attachment={attachments[1]}/>}
-        {i==0 && attachments.length>2 &&
-          <Attachment key={attachments[2].id}
-                      article={translation?.article}
-                      attachment={attachments[2]}/>}
-        {(i==0) && attachments.length>=3 &&
-          <Attachment key={attachments[3].id}
-                      article={translation?.article}
-                      attachment={attachments[3]}/>}
-        {/*{(i==0) && attachments.length>=4 &&*/}
-        {/*  <Attachment key={attachments[4].id}*/}
-        {/*              article={translation?.article}*/}
-        {/*              attachment={attachments[3]}/>}*/}
-        <Paragraph key={i} index={i} translation={translation}
-                   processedParagraph={processedParagraph}/>
-        {/*{i === 10 && processedParagraphsArray.length>20*/}
-        {/*  && showSubscribeForm && <SubscribeForm/>}*/}
+    // so we now have an array of paragraphs, each containing an array of sentences.
+    const len = processedParagraphsArray.length;
+    return processedParagraphsArray.map((processedParagraph, i) => {
+            return <Fragment key={i}>
+                {i == 0 && attachments.length > 1 && attachments[1] &&
+                    <Attachment key={attachments[1].id}
+                                showCaption={showAttachmentCaptions}
+                                article={translation?.article}
+                                attachment={attachments[1]}/>}
+                {i == 0 && attachments.length > 2 && attachments[2] &&
+                    <Attachment key={attachments[2].id}
+                                showCaption={showAttachmentCaptions}
+                                article={translation?.article}
+                                attachment={attachments[2]}/>}
+                {(i == 0) && attachments.length >= 3 && attachments[3] &&
+                    <Attachment key={attachments[3].id}
+                                showCaption={showAttachmentCaptions}
+                                article={translation?.article}
+                                attachment={attachments[3]}/>}
+                {/*{(i==0) && attachments.length>=4 &&*/}
+                {/*  <Attachment key={attachments[4].id}*/}
+                {/*              article={translation?.article}*/}
+                {/*              attachment={attachments[3]}/>}*/}
+                <Paragraph key={i} index={i} translation={translation}
+                           processedParagraph={processedParagraph}/>
+                {/*{i === 10 && processedParagraphsArray.length>20*/}
+                {/*  && showSubscribeForm && <SubscribeForm/>}*/}
 
-      </Fragment>
-    }
-  )
+            </Fragment>
+        }
+    )
 }
