@@ -117,9 +117,13 @@ export default function GenerateClient(params) {
     const generateButtonDisabled = !article
 
     useEffect(() => {
+        console.log("useEffect, generationSstate is:", generationState)
         if (generationState === 'complete') {
+            console.log("generationState=complete")
+
             setResponses([])
             if (responses.length === 1) {
+                console.log("setting final response w length 1")
                 setFinalResponse(responses[0])
             }
             else {
@@ -138,6 +142,7 @@ export default function GenerateClient(params) {
                         //window.alert(errorString)
                     }
                 }, [])
+                console.log("setting final response w length> 1,", claims)
                 setFinalResponse(JSON.stringify({claims}))
             }
         }
@@ -150,7 +155,7 @@ export default function GenerateClient(params) {
 
     async function runSaveElement() {
         await saveElement(generatorName, llmName, finalResponse, {
-            translationId: translation.id,
+            translationId: translation?.id,
             articleId: article.id
         })
         redirect("/articles/" + article.id)
@@ -201,12 +206,12 @@ export default function GenerateClient(params) {
                     const text = messageStreamEvent.delta.text
                     if (text && text !== 'undefined') {
                         setThinking("")
+                        console.log(text)
                         setResponses(r => {
                             const newResponses = [...r]
                             newResponses[streamId] ||= ""
                             newResponses[streamId] = newResponses[streamId] + text
-                            //newResponses[streamId] =
-                            // newResponses[streamId].replace(/json|```json|```/g, '');
+                            newResponses[streamId] = newResponses[streamId].replace(/json|```json|```/g, '');
                             return newResponses;
                         })
                     }
@@ -220,8 +225,7 @@ export default function GenerateClient(params) {
                         const newResponses = [...r]
                         newResponses[streamId] ||= ""
                         newResponses[streamId] = newResponses[streamId] + text
-                        newResponses[streamId] =
-                            newResponses[streamId].replace(/json|```json|```/g, '');
+                        newResponses[streamId] = newResponses[streamId].replace(/json|```json|```/g, '');
                         return newResponses;
                     })
                 }

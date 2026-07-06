@@ -277,6 +277,12 @@ export default function ArticleViewClient({
                 View Sections</Link>
         </div>
         <hr/>
+        <div className={"block"}>
+            <Link className={"button"}
+                  href={`/articles/${article.id}/ingest`}>
+                Ingest URL</Link>
+        </div>
+        <hr/>
         {article.sections.map((section) => {
             return <div key={section.id}>
                 <h3>{section.title}</h3>

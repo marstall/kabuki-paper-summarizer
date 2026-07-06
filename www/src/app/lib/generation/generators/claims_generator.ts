@@ -6,7 +6,7 @@ import {loadArticle} from "@/app/lib/load-article";
 import {EventEmitter} from 'events';
 
 // Increase max listeners for parallel streaming requests
-EventEmitter.defaultMaxListeners = 30;
+EventEmitter.defaultMaxListeners = 50;
 
 const USE_PARAGRAPH_BASED_CLAIMS = true;
 

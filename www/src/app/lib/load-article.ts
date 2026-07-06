@@ -1,9 +1,18 @@
-import TranslationViewClient
-    from "@/app/components/translation-view-client/translation-view-client";
-import _ from "lodash";
 import {prisma} from "./prisma";
 import {cache} from "react";
 
+/*
+    const translation = await prisma.translations.findUnique({
+        where: {id: translationId},
+        select: {
+            id: true,
+            article_id: true,
+            title: true,
+            second_title: true,
+            body: true,
+        }
+    })
+ */
 export const loadArticle = cache(async (article_id) => {
     return prisma.articles.findUnique({
             where: {id: article_id},
