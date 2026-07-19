@@ -280,7 +280,7 @@ export default function ArticleViewClient({
         <div className={"block"}>
             <Link className={"button"}
                   href={`/articles/${article.id}/ingest`}>
-                Ingest URL</Link>
+                Ingest web page/PDF</Link>
         </div>
         <hr/>
         {article.sections.map((section) => {

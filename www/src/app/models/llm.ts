@@ -30,6 +30,12 @@ export default class Llm {
             throw (`can't find llm ${name}`);
         }
         const prismaLlm = prismaLlms[0]
+        const api_key_env_key = prismaLlm.provider.toUpperCase() + '_API_KEY'
+        if (!process.env[api_key_env_key]) {
+            const error = "could not find api key " + api_key_env_key
+            console.log(error)
+            throw (error)
+        }
         return new Llm(prismaLlm)
     }
 
@@ -40,16 +46,26 @@ export default class Llm {
 
     client() {
         let client: any;
-        // check first if we've alread loaded this client into static <clients> map
+        // check first if we've already loaded this client into static
+        // <clients> map
+        const api_key_env_key = this.prismaLlm.provider.toUpperCase() + '_API_KEY'
+        const api_key = process.env[api_key_env_key]
+        console.log({api_key})
+        if (!api_key) {
+            const error = "could not find api key " + api_key_env_key
+            console.log(error)
+            throw (error)
+        }
+//     }
         if (this.isOpenAICompatible()) {
             client = Llm.clients[Number(this.prismaLlm.id)] || new OpenAI({
-                apiKey: this.prismaLlm.api_key,
+                apiKey: api_key,
                 baseURL: this.prismaLlm.url,
             })
         }
         else if (this.isAnthropicCompatible()) {
             client = Llm.clients[Number(this.prismaLlm.id)] || new Anthropic({
-                apiKey: this.prismaLlm.api_key,
+                apiKey: api_key,
                 baseURL: this.prismaLlm.url,
             })
         }
