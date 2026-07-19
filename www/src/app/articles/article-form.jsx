@@ -48,6 +48,16 @@ export default function ArticleForm({article, action}) {
                 </div>
             </div>}
             {!isPlain && <div className="field">
+                <label className="label">PDF</label>
+                <div className="control">
+                    <input className="input"
+                           defaultValue={getval("pdf")}
+                           type="file"
+                           name="pdf"/>
+                </div>
+            </div>
+            }
+            {!isPlain && <div className="field">
                 <label className="label">Category</label>
                 <div className="control">
                     <input className="input" type="text"

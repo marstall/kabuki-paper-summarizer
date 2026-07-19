@@ -7,8 +7,6 @@ export default async function Homepage() {
         <div style={{border: '0px solid red'}}>
             <Header minimal={false}/>
         </div>
-        <div>env
-            item: {process.env['Anthropic'.toUpperCase() + '_API_KEY']}</div>
         <div style={{border: '0px solid blue'}}
              className={styles.latestPostsHeading}>Latest posts
         </div>

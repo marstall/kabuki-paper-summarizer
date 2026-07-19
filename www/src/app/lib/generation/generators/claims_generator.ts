@@ -4,9 +4,10 @@ import {extractFullTextFromArticle} from "@/app/models/article";
 import {log} from "@/app/lib/logger";
 import {loadArticle} from "@/app/lib/load-article";
 import {EventEmitter} from 'events';
+import {map} from "eslint-config-next";
 
 // Increase max listeners for parallel streaming requests
-EventEmitter.defaultMaxListeners = 50;
+EventEmitter.defaultMaxListeners = 200;
 
 const USE_PARAGRAPH_BASED_CLAIMS = true;
 
@@ -61,15 +62,18 @@ export default class ClaimsGenerator extends LlmGenerator {
         for (const section of article.sections) {
             paragraphs = [...paragraphs, ...section.paragraphs]
         }
+        //paragraphs = [paragraphs[1]]
         const responses = await Promise.all(
-            paragraphs.map(
-                (paragraph) => {
-                    return this.llm.chat(prompt, paragraph.body, {
-                        stream: params.stream,
-                        max_tokens: 20000
-                    })
-                }
-            )
+            paragraphs
+                .filter(paragraph => paragraph.body && paragraph.body.trim().length > 0)
+                .map(
+                    (paragraph) => {
+                        return this.llm.chat(prompt, paragraph.body, {
+                            stream: params.stream,
+                            max_tokens: 20000
+                        })
+                    }
+                )
         );
         if (params.stream) {
             return responses
@@ -77,7 +81,13 @@ export default class ClaimsGenerator extends LlmGenerator {
         else {
             let i = 0
             const claims = responses.reduce((acc, response) => {
-                const json = JSON.parse(response.answer);
+                let json = null;
+                try {
+                    json = JSON.parse(response.answer);
+                } catch (e) {
+                    console.log('error parsing non-streaming response.')
+                }
+                if (!json) return acc;
                 const claims = json.claims.map((claim, j) => ({
                     ...claim,
                     reference_id: i++

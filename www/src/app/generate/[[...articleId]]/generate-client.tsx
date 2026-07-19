@@ -16,7 +16,15 @@ import TranslationViewClient
 function ClaimsLiveRenderer({response: responses}) {
     return responses ? responses.map((response, i) => {
         if (response) {
-            const json = parsePartialJson(response);
+            console.log("response", response)
+            let json;
+            try {
+                json = parsePartialJson(response);
+            } catch (e) {
+                console.log("error encountered segement:", response)
+                console.log("continuing ...")
+            }
+
             const numClaims = json?.claims?.length
             return <div className={styles.claimSet} key={i}>
                 <ol className={styles.claimsContainer}>
