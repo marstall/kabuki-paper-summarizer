@@ -5,6 +5,8 @@ import {useActionState, useState} from "react";
 import Errors from '@/app/components/errors'
 import {useFormStatus} from "react-dom";
 import LlmPickerClient from "@/app/components/llm-picker/llm-picker-client";
+import StatefulPicker from "@/app/components/stateful-picker/stateful-picker";
+import {LiveRenderer} from "@/app/generate/[[...articleId]]/generate-client";
 
 export default function TranslationForm({
     translation,
@@ -22,13 +24,15 @@ export default function TranslationForm({
     const [suggestedEdit, setSuggestedEdit] = useState('')
     const [llmName, setLlmName] = useState("deepseek")
     const [generatedBody, setGeneratedBody] = useState(null)
+    const [generatorName, setGeneratorName] = useState("article-translation")
 
 
     async function regenerate() {
         // need to call a server action that initiates a regeneration of the
         // prompt and updates the client via SSR. look at /generate route
         // to see how this works
-        const response = await generateElement('article-translation', llmName, {
+        console.log({generatorName})
+        const response = await generateElement(generatorName, llmName, {
             articleId: article?.id,
             translationId: translation?.id,
             additionalPrompt: suggestedEdit,
@@ -107,6 +111,19 @@ export default function TranslationForm({
             borderRadius: 8
         }}>
             <label className="label">suggest a change</label>
+            <div className="field">
+                <StatefulPicker
+                    values={[
+                        "",
+                        "headlines",
+                        "claims",
+                        "article-translation",
+                        "chat-exchange-panel-attachments"
+                    ]}
+                    value={generatorName}
+                    setter={setGeneratorName}
+                />
+            </div>
             <div className="control">
           <textarea
               className="textarea"
@@ -119,26 +136,23 @@ export default function TranslationForm({
           ></textarea>
             </div>
             {suggestedEdit.length > 0 && <>
-            <br/>
-            <div className={'field'}>
-                <LlmPickerClient llmName={llmName} setLlmName={setLlmName}/>
-            </div>
-
-            <button onClick={() => {
-                regenerate();
-                return true;
-            }}
-                    className={'button'}
-                    type={'submit'}>
-                Generate
-            </button>
                 <br/>
-                <br/>
-            {generatedBody && <textarea rows={30}
-                                        defaultValue={generatedBody as String}
-                                        style={{width:'100%',resize: 'vertical'}}/>}
-                </>}
-            </div>
-
+                <div className={'field'}>
+                    <LlmPickerClient llmName={llmName} setLlmName={setLlmName}/>
                 </div>
-            }
+
+                <button onClick={() => {
+                    regenerate();
+                    return true;
+                }}
+                        className={'button'}
+                        type={'submit'}>
+                    Generate
+                </button>
+                <br/>
+                <br/>
+                {generatedBody && <textarea readOnly={true} value={generatedBody as String} rows={10} style={{width:'100%'}}/>}</>}
+        </div>
+
+    </div>
+}

@@ -46,10 +46,19 @@ const headlinesPromptInstructions = `
 
 export default class HeadlinesGenerator extends LlmGenerator {
     async generate(params) {
+        let prompt = headlinesPromptInstructions
         const {translationId} = params
+        if (params.additionalPrompt) {
+            prompt=prompt+"\r\nThe editor has added these" +
+                " special" +
+                " instructions for you follow closely while " +
+                " generating this article: "+
+                params.additionalPrompt;
+        }
+        console.log({prompt})
         if (!translationId) throw ("translationId required.")
         const translation = await prisma.translations.findUnique(({where: {id: translationId}}))
-        return await this.llm.chat(headlinesPromptInstructions, translation.body, {stream: params.stream})
+        return await this.llm.chat(prompt, translation.body, {stream: params.stream})
     }
 
     async save(response, params) {

@@ -17,8 +17,16 @@ export default class ChatExchangeAttachmentsGenerator extends LlmGenerator {
             return;
         }
         const prompt = prompts[0]
-        const instructions = prompt.body
-
+        let instructions = prompt.body
+        const {translationId} = params
+        if (params.additionalPrompt) {
+            instructions=instructions+"\r\nThe editor has added these" +
+                " special" +
+                " instructions for you follow closely while " +
+                " generating this article: "+
+                params.additionalPrompt;
+        }
+        console.log({prompt})
         return await this.llm.chat(instructions, input, {stream: params.stream})
     }
 

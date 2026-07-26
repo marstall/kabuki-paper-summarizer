@@ -99,7 +99,7 @@ function ArticleTranslationLiveRenderer({
     // </article>
 }
 
-function LiveRenderer(params) {
+export function LiveRenderer(params) {
     const LiveRendererMap = {
         "headlines": ArticleTranslationLiveRenderer,
         "claims": ClaimsLiveRenderer,
