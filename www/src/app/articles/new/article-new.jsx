@@ -8,7 +8,7 @@ when you press submit, submit() is run on the server. so there is no true way of
 that. but a POST is also seen in the Network tab. I wonder if the POST is how the server
 picks up that the submit() function should then be run.
 
-In the old days, the POST would re-render the same page, with the same params - so you
+In the ol   d days, the POST would re-render the same page, with the same params - so you
 could re-populate the fields with the right data.
  */
 

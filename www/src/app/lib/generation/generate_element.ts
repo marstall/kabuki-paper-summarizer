@@ -22,7 +22,7 @@ const generatorMap = {
     "chat-exchange-panel-attachments": ChatExchangeAttachmentsGenerator
 }
 
-export async function generateElement(elementName, llmName, params) {
+export async function generateElement(elementName, llmName,params) {
     if (params.stream) {
         console.log("generateElement stream=true")
         const generator = await LlmGenerator.create(generatorMap[elementName], llmName)

@@ -3,6 +3,7 @@ import ArticleForm from '../translation-form'
 import {redirect} from 'next/navigation'
 import {PrismaClientValidationError} from "@prisma/client/runtime/client";
 import TranslationForm from "../translation-form";
+import {generateElement} from "@/app/lib/generation/generate_element"
 
 /*
 this form is being rendered on the server (and returned to the client as RSC).
@@ -93,8 +94,13 @@ async function submit(prevState, formData) {
 
 export default async function TranslationNew({article_id, translation_id}) {
   const translation = translation_id && await prisma.translations.findUnique({where: {id: translation_id}});
-
+  const article = await prisma.articles.findUnique({where: {id: translation.article_id}});
+  console.log({article_id})
   return (
-    <TranslationForm translation={translation} action={submit}/>
+    <TranslationForm
+        translation={translation}
+        article={article}
+        generateElement={generateElement}
+        action={submit}/>
   );
 }

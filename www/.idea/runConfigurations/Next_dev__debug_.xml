@@ -6,6 +6,7 @@
       <script value="dev:debug" />
     </scripts>
     <node-interpreter value="project" />
+    <package-manager value="/opt/homebrew/Cellar/pnpm@9/9.15.9/libexec/lib/node_modules/pnpm/bin/pnpm.cjs" />
     <envs />
     <method v="2" />
   </configuration>

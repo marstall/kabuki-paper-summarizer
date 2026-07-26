@@ -47,7 +47,7 @@ export default class ChatExchangeAttachmentsGenerator extends LlmGenerator {
                         created_at: now,
                         updated_at: now,
                         order,
-                        active: false,
+                        active: true,
                         prompt_id: prompt.id,
                         prompt_text: prompt.body
                     }

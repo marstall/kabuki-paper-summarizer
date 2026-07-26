@@ -9,13 +9,13 @@ export default function LlmPickerClient({llmName, setLlmName}) {
         getLlms().then(setLlms)
     }, [])
     return <select className='select'
-                value={llmName}
-                onChange={(e) => setLlmName(e.target.value)}
-                name={'llm'}>
-            {llms.map(llm => {
-                    return <option value={llm.name} key={llm.id}>{llm.name}</option>
-                }
-            )}
-        </select>
+                   value={llmName}
+                   onChange={(e) => setLlmName(e.target.value)}
+                   name={'llm'}>
+        {llms.map(llm => {
+                return <option value={llm.name} key={llm.id}>{llm.version}</option>
+            }
+        )}
+    </select>
 
 }

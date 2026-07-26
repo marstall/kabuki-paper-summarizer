@@ -148,6 +148,7 @@ export default function GenerateClient(params) {
                         const errorString = "fatal error parse response json"
                         console.log(errorString, e)
                         //window.alert(errorString)
+                        return acc;
                     }
                 }, [])
                 console.log("setting final response w length> 1,", claims)

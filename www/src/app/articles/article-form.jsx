@@ -47,25 +47,25 @@ export default function ArticleForm({article, action}) {
                            placeholder="Text input"/>
                 </div>
             </div>}
-            {!isPlain && <div className="field">
-                <label className="label">PDF</label>
-                <div className="control">
-                    <input className="input"
-                           defaultValue={getval("pdf")}
-                           type="file"
-                           name="pdf"/>
-                </div>
-            </div>
-            }
-            {!isPlain && <div className="field">
-                <label className="label">Category</label>
-                <div className="control">
-                    <input className="input" type="text"
-                           name="category"
-                           defaultValue={getval("category")}
-                           placeholder="Text input"/>
-                </div>
-            </div>}
+            {/*{!isPlain && <div className="field">*/}
+            {/*    <label className="label">PDF</label>*/}
+            {/*    <div className="control">*/}
+            {/*        <input className="input"*/}
+            {/*               defaultValue={getval("pdf")}*/}
+            {/*               type="file"*/}
+            {/*               name="pdf"/>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
+            {/*}*/}
+            {/*{!isPlain && <div className="field">*/}
+            {/*    <label className="label">Category</label>*/}
+            {/*    <div className="control">*/}
+            {/*        <input className="input" type="text"*/}
+            {/*               name="category"*/}
+            {/*               defaultValue={getval("category")}*/}
+            {/*               placeholder="Text input"/>*/}
+            {/*    </div>*/}
+            {/*</div>}*/}
             {!isPlain && <div className="field">
                 <label className="label">{isPlain ? "Title" : "Original" +
                     " Title"}</label>
@@ -85,19 +85,19 @@ export default function ArticleForm({article, action}) {
                            placeholder="Text input"/>
                 </div>
             </div>}
-            <div className="field">
-                <label className="label">Second Title</label>
-                <div className="control">
-        <textarea
-            className="textarea"
-            name="second_title"
-            defaultValue={getval("second_title")}
-            placeholder="Text input"
-            rows="3"
-            style={{resize: 'vertical'}}
-        ></textarea>
-                </div>
-            </div>
+            {/*    <div className="field">*/}
+            {/*        <label className="label">Second Title</label>*/}
+            {/*        <div className="control">*/}
+            {/*<textarea*/}
+            {/*    className="textarea"*/}
+            {/*    name="second_title"*/}
+            {/*    defaultValue={getval("second_title")}*/}
+            {/*    placeholder="Text input"*/}
+            {/*    rows="3"*/}
+            {/*    style={{resize: 'vertical'}}*/}
+            {/*></textarea>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
             {!isPlain && <div className="field">
                 <label className="label">Publication year</label>
                 <div className="control">

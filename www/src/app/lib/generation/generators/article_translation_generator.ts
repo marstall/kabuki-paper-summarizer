@@ -21,7 +21,13 @@ export default class ArticleTranslationGenerator extends LlmGenerator {
             return;
         }
         const prompt = prompts[0]
-        const instructions = prompt.body
+        let instructions = prompt.body
+        if (params.additionalPrompt) {
+            instructions+="\r\nThe editor has added these special" +
+                " instructions for you follow closely while " +
+                " generating this article: "
+            instructions+=params.additionalPrompt
+        }
 
         return await this.llm.chat(instructions, input, options)
     }
