@@ -23,7 +23,8 @@
 /*}*/
 .superheader {
     position: absolute;
-    width: 100%;
+    right:0;
+    top:0;
     display: flex;
     justify-content: end;
     align-items: center;
@@ -35,6 +36,8 @@
 }
 
 .superheader a {
+    border: 1px solid lightblue;
+    margin-left:0.5em;
     background-color: lightblue;
     padding: 2px;
     padding-left: 4px;

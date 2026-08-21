@@ -21,7 +21,7 @@ function ClaimsLiveRenderer({response: responses}) {
             try {
                 json = parsePartialJson(response);
             } catch (e) {
-                console.log("error encountered segement:", response)
+                console.log("error encountered w segment:", response)
                 console.log("continuing ...")
             }
 
@@ -203,7 +203,7 @@ export default function GenerateClient(params) {
     }
 
     function processStreamEvent(messageStreamEvent, streamId) {
-        const type = messageStreamEvent.type || messageStreamEvent.object // openai uses object
+        const type = messageStreamEvent.type || messageStreamEvent.object // openai uses .object
         switch (type) {
             case 'content_block_delta': // claude uses this one
                 if (messageStreamEvent.delta.type === 'thinking_delta') { // minimax does this

@@ -23,7 +23,6 @@ const generatorMap = {
 }
 
 export async function generateElement(elementName, llmName,params) {
-
     if (params.stream) {
         console.log("generateElement stream=true")
         const generator = await LlmGenerator.create(generatorMap[elementName], llmName)

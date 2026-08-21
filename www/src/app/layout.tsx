@@ -77,8 +77,12 @@ export default function RootLayout({
         </head>
         <body>
         <PlausibleProvider domain="thekabukipapers.org">
-            <div className={'superheader'}><Link
-                href={'/articles/36'}>about</Link></div>
+            <div className={'superheader'}>
+                {/*<Link*/}
+                {/*    href={'/signin'}>sign in/up</Link>*/}
+                <Link
+                href={'/articles/36'}>about</Link>
+            </div>
             <div className="page subscribeBar">
                 <div className="pageInner">
                     <WelcomeOverlay/>

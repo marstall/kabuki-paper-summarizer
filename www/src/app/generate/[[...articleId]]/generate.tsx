@@ -44,7 +44,8 @@ export default async function Generate({params, searchParams}) {
            The general pattern is that we will be calling server actions
            to do the necessary work - but the server actions should stream
            data back to the client as they receives packets from the LLMs.
-           The front end should subscibe to the updates and show them in the UI.
+           The front end should subscribe to the updates and show them in
+            the UI.
            If there is partial json returned, it should figure out a way to
            complete the json.
            Let's start with the article and llm dropdowns.

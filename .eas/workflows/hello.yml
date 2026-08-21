@@ -1,0 +1,6 @@
+name: Hello
+
+jobs:
+  greet:
+    steps:
+      - run: echo "Hello, Workflows"
