@@ -8,6 +8,7 @@ import {SpeedInsights} from "@vercel/speed-insights/next"
 import WelcomeOverlay from "@/app/components/welcome-overlay/welcome-overlay";
 import PlausibleProvider from 'next-plausible'
 import Link from "next/link";
+import {isLocal} from "@/app/lib/misc";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -78,8 +79,8 @@ export default function RootLayout({
         <body>
         <PlausibleProvider domain="thekabukipapers.org">
             <div className={'superheader'}>
-                <Link
-                    href={'/signin'}>sign in/up</Link>
+                {isLocal && <Link
+                    href={'/signin'}>sign in/up</Link>}
                 <Link
                 href={'/articles/36'}>about</Link>
             </div>
