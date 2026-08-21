@@ -151,7 +151,7 @@ export default function TranslationForm({
                 </button>
                 <br/>
                 <br/>
-                {generatedBody && <textarea readOnly={true} value={generatedBody as String} rows={10} style={{width:'100%'}}/>}</>}
+                {generatedBody && <textarea readOnly={true} value={generatedBody as string} rows={10} style={{width:'100%'}}/>}</>}
         </div>
 
     </div>

@@ -28,11 +28,13 @@ async function submit(prevState, formData) {
   const translation = translationId && await prisma.translations.findUnique({where: {id: translationId}});
   let article;
   let attachment;
-  if (translation.article_id) {
-    article = await prisma.articles.findUnique({where:{id:translation.article_id}})
-  } else {
-    attachment =  await prisma.attachments.findUnique({where:{id:translation.attachment_id}})
-    article = await prisma.articles.findUnique({where:{id:attachment.article_id}})
+  if (translation) {
+    if (translation.article_id) {
+      article = await prisma.articles.findUnique({where:{id:translation.article_id}})
+    } else {
+      attachment =  await prisma.attachments.findUnique({where:{id:translation.attachment_id}})
+      article = await prisma.articles.findUnique({where:{id:attachment.article_id}})
+    }
   }
 
   const errors = []
@@ -94,7 +96,9 @@ async function submit(prevState, formData) {
 
 export default async function TranslationNew({article_id, translation_id}) {
   const translation = translation_id && await prisma.translations.findUnique({where: {id: translation_id}});
-  const article = await prisma.articles.findUnique({where: {id: translation.article_id}});
+  const article = translation?.article_id
+    ? await prisma.articles.findUnique({where: {id: translation.article_id}})
+    : null;
   console.log({article_id})
   return (
     <TranslationForm
